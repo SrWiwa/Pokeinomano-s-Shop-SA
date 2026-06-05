@@ -3,27 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sindicato Oculto - Poké Tienda Centro Oculto</title>
+    <title>Sistema de Gestión Pokédólares y Puntos de Favor</title>
     <style>
-        /* Importamos una tipografía Pixel Art estilo Pokémon */
-        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Montserrat:wght@400;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 
         :root {
-            --bg-principal: #eef5f9; /* Azul cielo muy claro estilo menú limpio */
-            --bg-panel: #ffffff;
-            --borde-pixel: #4a4a4a;
-            --color-texto: #222222;
-            --color-azul-poke: #3a86c8;
-            --color-rojo-poke: #e63946;
-            --color-oro-poke: #ffb703;
-            --color-verde-poke: #2a9d8f;
+            --bg-principal: #0b0f19;
+            --bg-panel: #161c2d;
+            --borde-pixel: #3b4252;
+            --color-texto: #e5e9f0;
+            --color-azul: #4c566a;
+            --color-legal: #2ecc71;
+            --color-packs: #f1c40f;
+            --color-ilegal: #e74c3c;
+            --color-oro: #f39c12;
         }
 
         * { 
             box-sizing: border-box; 
-            font-family: 'Press Start 2P', monospace; /* Forzamos estilo pixel */
-            font-size: 11px;
-            image-rendering: pixelated;
+            font-family: 'Press Start 2P', monospace; 
+            font-size: 10px;
         }
 
         body {
@@ -31,352 +30,296 @@
             color: var(--color-texto);
             margin: 0;
             padding: 15px;
-            overflow-x: hidden;
-        }
-
-        /* ICONOS GENERADOS POR CSS ESTILO PIXEL SIMPLIFICADO */
-        .item-icon {
-            width: 50px;
-            height: 50px;
-            margin: 0 auto 10px auto;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 3px solid var(--borde-pixel);
-            font-size: 14px;
-            font-weight: bold;
-            color: #fff;
-            background: #cbd5e1;
-            box-shadow: 2px 2px 0px #888;
-        }
-        .icon-iron { background: #94a3b8; border-radius: 4px; }
-        .icon-protein { background: #f87171; border-radius: 4px; }
-        .icon-berry { background: #4ade80; border-radius: 50%; }
-        .icon-evo { background: #c084fc; clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%); }
-        .icon-pack { background: #fbbf24; border-radius: 2px; }
-        .icon-hack { background: #334155; border-color: var(--color-rojo-poke); }
-        .icon-generic { background: #cbd5e1; }
-
-        /* REWORK COMPLETO DE ANIMACIÓN DE PUERTAS (SIN BUGS DE BLOQUEO) */
-        .puerta-animacion {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            display: flex;
-            z-index: 9998;
-            pointer-events: none; /* No bloquea clics mientras no actúe */
-            transition: visibility 0.8s;
-            visibility: visible;
-        }
-        .puerta-animacion.oculta {
-            visibility: hidden;
-        }
-        .puerta-izq, .puerta-der {
-            width: 50%; height: 100%; 
-            background: #f1f5f9;
-            border: 6px solid var(--borde-pixel);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .puerta-izq { border-right: 3px solid var(--borde-pixel); transform: translateX(0); }
-        .puerta-der { border-left: 3px solid var(--borde-pixel); transform: translateX(0); }
-        
-        /* Estados de animación */
-        .puerta-animacion.abrir .puerta-izq { transform: translateX(-100%); }
-        .puerta-animacion.abrir .puerta-der { transform: translateX(100%); }
-
-        /* REPRODUCTOR AUDIO */
-        .audio-controller {
-            background: var(--bg-panel);
-            border: 4px solid var(--borde-pixel);
-            padding: 8px 12px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            max-width: 320px;
-            margin: 0 auto 15px auto;
-            box-shadow: 4px 4px 0px rgba(0,0,0,0.1);
-        }
-        .audio-controller input[type="range"] { accent-color: var(--color-azul-poke); cursor: pointer; }
-
-        /* INTERFAZ GENERAL */
-        .panel-elegante {
-            background: var(--bg-panel);
-            border: 4px solid var(--borde-pixel);
-            padding: 20px;
-            box-shadow: 4px 4px 0px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
-            border-radius: 8px;
-        }
-
-        h1, h2, h3 {
-            color: var(--color-azul-poke);
-            text-align: center;
-            margin-top: 0;
             line-height: 1.5;
         }
 
-        /* PESTAÑAS POKÉMON */
-        .tabs-container { display: flex; justify-content: center; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
-        .tab-button {
-            background: #e2e8f0; color: #64748b; border: 3px solid var(--borde-pixel);
-            padding: 10px 14px; cursor: pointer; border-radius: 6px; box-shadow: 2px 2px 0px rgba(0,0,0,0.1);
+        /* DISEÑO DE ICONOS CSS */
+        .item-icon {
+            width: 45px; height: 45px; margin: 0 auto 10px auto;
+            display: flex; align-items: center; justify-content: center;
+            border: 2px solid var(--color-texto); font-size: 14px; color: #fff;
+            box-shadow: 3px 3px 0px rgba(0,0,0,0.3);
         }
-        .tab-button:hover, .tab-button.active { color: #fff; background: var(--color-azul-poke); border-color: var(--borde-pixel); }
-        .tab-button.btn-ilegal.active { background: var(--color-rojo-poke); }
+        .icon-ev { background: #27ae60; border-radius: 50%; }
+        .icon-baya { background: #9b59b6; border-radius: 50%; }
+        .icon-ball { background: #2980b9; border-radius: 50%; }
+        .icon-expl { background: #d35400; border-radius: 4px; }
+        .icon-comb { background: #c0392b; border-radius: 4px; }
+        .icon-comp { background: #f1c40f; border-radius: 4px; }
+        .icon-pack { background: #16a085; border-radius: 6px; border-top: 5px solid #e74c3c; }
+        .icon-ilegal-item { background: #2c3e50; border: 2px solid var(--color-ilegal); transform: rotate(45deg); }
+        .icon-ilegal-item span { transform: rotate(-45deg); }
+
+        /* REPRODUCTOR DE AUDIO */
+        .audio-controller {
+            background: var(--bg-panel); border: 3px solid var(--color-azul);
+            padding: 10px; display: flex; align-items: center; gap: 10px;
+            max-width: 360px; margin: 0 auto 15px auto; border-radius: 4px;
+        }
+        .audio-controller input[type="range"] { accent-color: var(--color-oro); cursor: pointer; }
+
+        /* CONTENEDORES GENERALES */
+        .panel-elegante {
+            background: var(--bg-panel); border: 3px solid var(--borde-pixel);
+            padding: 15px; margin-bottom: 15px; border-radius: 6px;
+            box-shadow: 0px 4px 10px rgba(0,0,0,0.5);
+        }
+
+        .cuadro-info {
+            background: #1f293d; border: 2px dashed #4b5563;
+            padding: 12px; margin-top: 15px; border-radius: 4px;
+        }
+        .cuadro-info h4 { margin: 0 0 8px 0; font-size: 9px; }
+        .cuadro-info ul { margin: 0; padding-left: 15px; }
+        .cuadro-info li { font-size: 8px; margin-bottom: 5px; color: #9ca3af; line-height: 1.4; }
+
+        /* SISTEMA DE PESTAÑAS */
+        .tabs-container { display: flex; justify-content: center; gap: 6px; margin-bottom: 15px; flex-wrap: wrap; }
+        .tab-button {
+            background: #2e3440; color: #d8dee9; border: 2px solid var(--borde-pixel);
+            padding: 10px; cursor: pointer; border-radius: 4px;
+        }
+        .tab-button.active { color: #fff; }
+        .tab-button.tab-legal.active { background: var(--color-legal); border-color: #27ae60; }
+        .tab-button.tab-pack.active { background: var(--color-packs); color: #000; border-color: #f39c12; }
+        .tab-button.tab-illegal.active { background: var(--color-ilegal); border-color: #c0392b; }
 
         .market-view { display: none; }
         .market-view.active { display: block; }
 
-        /* TARJETAS TIENDA */
-        .items-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 20px; padding: 5px; }
+        /* GRID DE TIENDAS */
+        .items-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 15px; }
         .item-card {
-            background: #fff; border: 4px solid var(--borde-pixel); border-radius: 8px;
-            padding: 15px; display: flex; flex-direction: column; justify-content: space-between;
-            box-shadow: 3px 3px 0px rgba(0,0,0,0.05);
+            background: #1d2433; border: 2px solid var(--borde-pixel); border-radius: 6px;
+            padding: 12px; display: flex; flex-direction: column; justify-content: space-between;
+            text-align: center; position: relative;
         }
-        .item-card:hover { transform: translateY(-2px); box-shadow: 5px 5px 0px rgba(0,0,0,0.1); }
+        .item-card.card-ilegal { border-color: #551a1a; }
+        .categoria-tag { font-size: 7px; color: #6b7280; text-transform: uppercase; margin-bottom: 6px; }
 
         button.btn-accion { 
-            background: var(--color-oro-poke); 
-            color: #000; 
-            border: 3px solid var(--borde-pixel); 
-            padding: 8px; 
-            cursor: pointer; 
-            width: 100%;
-            box-shadow: 2px 2px 0px rgba(0,0,0,0.1);
+            background: var(--color-oro); color: #000; border: 2px solid var(--borde-pixel); 
+            padding: 8px; cursor: pointer; width: 100%; border-radius: 4px; font-weight: bold;
         }
-        button.btn-accion:hover { background: #ffe169; }
-        button:disabled { background: #cbd5e1 !important; color: #94a3b8 !important; border-color: #94a3b8 !important; cursor: not-allowed; box-shadow: none !important; }
+        button.btn-accion:hover { background: #f39c12; }
+        button:disabled { background: #3b4252 !important; color: #4c566a !important; border-color: #2e3440 !important; cursor: not-allowed; box-shadow: none; }
 
-        /* KEYPAD MASTER */
-        .modal-master { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: none; justify-content: center; align-items: center; z-index: 10000; }
-        .pad-container { background: #fff; border: 4px solid var(--borde-pixel); padding: 20px; width: 300px; text-align: center; border-radius: 8px; }
-        .pad-display { background: #000; color: #fff; font-size: 16px; padding: 10px; margin-bottom: 15px; border-radius: 4px; min-height: 40px; }
-        .pad-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-        .pad-btn { background: #f1f5f9; border: 3px solid var(--borde-pixel); font-size: 14px; padding: 12px; cursor: pointer; border-radius: 4px; }
-        .pad-btn:active { background: var(--color-azul-poke); color: #fff; }
+        /* PANTALLA LOGIN LIMPIA */
+        .lobby-box { max-width: 400px; margin: 100px auto; text-align: center; }
+        .lobby-box input { background: #1d2433; color: #fff; border: 2px solid var(--borde-pixel); padding: 12px; width: 100%; margin-bottom: 15px; text-align: center; border-radius: 4px; }
 
-        /* LOBBY INICIAL */
-        .lobby-box { max-width: 420px; margin: 80px auto; text-align: center; }
-        .lobby-box input { background: #fff; color: #000; border: 3px solid var(--borde-pixel); padding: 10px; width: 100%; margin-bottom: 15px; text-align: center; border-radius: 4px; }
-
-        /* CONSOLA MASTER */
-        .consola-admin-screen { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #fff; z-index: 10001; padding: 20px; overflow-y: auto; border: 6px solid var(--color-rojo-poke); }
-        .grid-admin { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; margin-top: 15px; }
+        /* PANEL DM COMPLETO */
+        .consola-admin-screen { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0b0f19; z-index: 9999; padding: 20px; overflow-y: auto; border: 4px solid var(--color-ilegal); }
+        .grid-admin { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; }
     </style>
 </head>
 <body>
 
-<!-- REPRODUCTORES DE AUDIO ESTILO SHOP CHILL MEDLEY -->
 <audio id="musica-legal" loop>
-    <source src="https://bitmidi.com/uploads/15119.mp3" type="audio/mp3">
+    <source src="https://vgmsite.com/soundtracks/pokemon-game-boy-sound-collection/isgntvhu/24%20Pok%C3%A9mon%20Center.mp3" type="audio/mp3">
 </audio>
 <audio id="musica-hacker" loop>
-    <source src="https://bitmidi.com/uploads/48593.mp3" type="audio/mp3">
+    <source src="https://vgmsite.com/soundtracks/pokemon-game-boy-sound-collection/mlwepvst/13%20Pok%C3%A9mon%20Gym.mp3" type="audio/mp3">
 </audio>
 
-<!-- COMPUERTAS MECÁNICAS (LOBBY INTERFAZ) -->
-<div class="puerta-animacion" id="puertas-mecanicas">
-    <div class="puerta-izq"><div>===</div></div>
-    <div class="puerta-der"><div>===</div></div>
-</div>
-
-<!-- VOLUMEN -->
 <div class="audio-controller">
-    <span style="font-size: 9px; color: var(--color-azul-poke);">🎵 CANAL AUDIO:</span>
+    <span>🔊 VOLUMEN:</span>
     <input type="range" id="slider-volumen" min="0" max="1" step="0.1" value="0.3" oninput="cambiarVolumenGlobal(this.value)">
-    <button onclick="conmutarMute()" id="btn-mute" style="background:none; border:none; cursor:pointer; font-size:12px; padding:0;">🔊</button>
+    <button onclick="conmutarMute()" id="btn-mute" style="background:none; border:none; color:white; cursor:pointer;">🔇/🔊</button>
 </div>
 
 <div class="container">
 
-    <!-- PANTALLA LOBBY -->
     <div id="pantalla-lobby" class="panel-elegante lobby-box">
-        <h1 style="color: var(--color-rojo-poke);">POKÉ TIENDA</h1>
-        <p style="font-size: 9px; color:#64748b; margin-bottom: 25px; line-height: 1.6;">CONECTANDO AL TERMINAL DE SUMINISTROS OCULTOS</p>
-        <input type="text" id="login-nombre" placeholder="OPERADOR ID">
-        <button class="btn-accion" onclick="conectarLobby()">ACCEDER</button>
+        <h1 style="color: var(--color-legal); font-size:12px; margin-bottom:5px;">SISTEMA CONECTADO</h1>
+        <p style="font-size: 7px; color: #9ca3af; margin-bottom: 20px;">INGRESE ID DE ENTRENADOR</p>
+        <input type="text" id="login-nombre" placeholder="ENTRENADOR ID">
+        <button class="btn-accion" onclick="conectarLobby()">ACCEDER A LA RED</button>
     </div>
 
-    <!-- MERCADO GENERAL -->
     <div id="pantalla-mercado" style="display:none;">
-        <div class="panel-elegante" style="display:flex; justify-content:space-between; align-items:center; padding:12px; flex-wrap:wrap; gap:10px;">
-            <div>👤 OPERADOR: <span id="usr-nombre" style="color:var(--color-azul-poke);">---</span></div>
-            <div>🪙 CRÉDITOS: <span id="usr-dinero" style="color:var(--color-verde-poke);">0</span> P₠</div>
-            <div>⭐ FAVOR: <span id="usr-pf" style="color:var(--color-rojo-poke);">0</span> PF</div>
+        <div class="panel-elegante" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; border-color: var(--color-oro);">
+            <div>👤 ENTRENADOR: <span id="usr-nombre" style="color:var(--color-packs);">---</span></div>
+            <div>🪙 CARTERA: <span id="usr-dinero" style="color:var(--color-legal);">0</span> P₠</div>
+            <div>⭐ FAVOR: <span id="usr-pf" style="color:var(--color-ilegal);">0</span> PF</div>
         </div>
 
-        <!-- ALMACÉN PROPIO / INVENTARIO -->
-        <div class="panel-elegante" style="padding: 15px;">
-            <h3 style="text-align:left; font-size: 10px; margin-bottom:12px; color: #475569;">🎒 TU BOLSA DE OBJETOS</h3>
-            <div id="lista-inventario" style="display:flex; gap:10px; flex-wrap:wrap;"></div>
+        <div class="panel-elegante">
+            <div style="font-size: 8px; margin-bottom:10px; color: #9ca3af;">🎒 OBJETOS EN TU BOLSA:</div>
+            <div id="lista-inventario" style="display:flex; gap:8px; flex-wrap:wrap;"></div>
         </div>
 
-        <!-- PESTAÑAS DE LAS TIENDAS -->
         <div class="tabs-container">
-            <button class="tab-button active" id="tab-legal" onclick="cambiarTienda('legal')">MATERIALES</button>
-            <button class="tab-button" id="tab-pack" onclick="cambiarTienda('pack')">LOTES PF</button>
-            <button class="tab-button btn-ilegal" id="tab-illegal" onclick="cambiarTienda('illegal')">CONTRABANDO</button>
+            <button class="tab-button tab-legal active" id="tab-legal" onclick="cambiarTienda('legal')">TIENDA LEGAL</button>
+            <button class="tab-button tab-pack" id="tab-pack" onclick="cambiarTienda('pack')">SHOP PF PACK</button>
+            <button class="tab-button tab-illegal" id="tab-illegal" onclick="cambiarTienda('illegal')">TIENDA DE ILEGALIDADES</button>
         </div>
 
-        <!-- VISTAS DE LAS TIENDAS -->
-        <div id="vista-legal" class="market-view active"><div class="items-grid" id="grid-legal"></div></div>
-        <div id="vista-pack" class="market-view"><div class="items-grid" id="grid-pack"></div></div>
-        <div id="vista-illegal" class="market-view"><div id="contenedor-hacker-view"></div></div>
+        <div id="vista-legal" class="market-view active">
+            <div class="items-grid" id="grid-legal"></div>
+            
+            <div class="cuadro-info" style="border-color: var(--color-legal);">
+                <h4 style="color: var(--color-legal);">ℹ️ INFORMACIÓN IMPORTANTE (TIENDA LEGAL):</h4>
+                <ul>
+                    <li>Tienes 3 compras diarias en la Tienda Legal.</li>
+                    <li>El stock es GLOBAL y LIMITADO. Se agota para todos los jugadores.</li>
+                    <li>La tienda se RENUEVA cada DÍA a la hora establecida.</li>
+                </ul>
+                <h4 style="color: var(--color-legal); margin-top:10px;">❓ ¿CÓMO FUNCIONA?</h4>
+                <ol style="margin: 0; padding-left: 15px; font-size: 8px; color: #9ca3af;">
+                    <li>Elige tus objetos (máx. 3 al día).</li>
+                    <li>Paga el precio en Pokédólares (P₠).</li>
+                    <li>Recibe el objeto y los PF al instante.</li>
+                    <li>Acumula PF y úsalos en la Tienda de Ilegalidades.</li>
+                </ol>
+            </div>
+        </div>
+
+        <div id="vista-pack" class="market-view">
+            <div class="items-grid" id="grid-pack"></div>
+
+            <div class="cuadro-info" style="border-color: var(--color-packs);">
+                <h4 style="color: var(--color-packs);">📜 REGLA DE PF PACK:</h4>
+                <p style="font-size: 8px; color: #9ca3af; margin: 0 0 10px 0; line-height: 1.4;">Los PF PACK otorgan 1 PF adicional respecto a la suma de los PF de los objetos que contienen. ¡Planifica tus compras y consigue más PF!</p>
+                <h4 style="color: var(--color-packs);">⚠️ NOTA ADICIONAL:</h4>
+                <ul>
+                    <li>Los Pokédólares se obtienen explorando, completando misiones y venciendo entrenadores.</li>
+                    <li>El stock de la tienda se renueva cada día.</li>
+                    <li>Se mantiene el límite general de 3 compras diarias dentro del ecosistema comercial legal.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div id="vista-illegal" class="market-view">
+            <div id="contenedor-hacker-view"></div>
+
+            <div class="cuadro-info" style="border-color: var(--color-ilegal);">
+                <h4 style="color: var(--color-ilegal);">🔒 MONEDA: PUNTOS DE FAVOR (PF)</h4>
+                <p style="font-size: 8px; color: #9ca3af; margin: 0; line-height: 1.4;">Consigue Puntos de Favor realizando compras en tiendas legales. No pueden comprarse directamente. ¡Artículos muy limitados! Solo 1 unidad de cada objeto disponible.</p>
+            </div>
+        </div>
+
     </div>
 </div>
 
-<!-- BOTÓN ACCESO MASTER -->
-<button onclick="abrirTecladoMaster()" style="position:fixed; bottom:10px; left:10px; background:#fff; border:2px solid var(--borde-pixel); color:#888; padding:4px; font-size:8px; cursor:pointer; border-radius:4px;">MSTR_PAD</button>
+<button onclick="abrirTerminalMaster()" style="position:fixed; bottom:5px; left:5px; background:none; border:none; color:#2e3440; cursor:pointer; font-size:8px;">🛠️</button>
 
-<!-- MODAL MASTER KEYPAD -->
-<div class="modal-master" id="modal-keypad">
-    <div class="pad-container">
-        <div style="font-size:9px; margin-bottom:10px;">LLAVE MAESTRA</div>
-        <div class="pad-display" id="keypad-screen"></div>
-        <div class="pad-grid">
-            <button class="pad-btn" onclick="presionarTecla('1')">1</button>
-            <button class="pad-btn" onclick="presionarTecla('2')">2</button>
-            <button class="pad-btn" onclick="presionarTecla('3')">3</button>
-            <button class="pad-btn" onclick="presionarTecla('4')">4</button>
-            <button class="pad-btn" onclick="presionarTecla('5')">5</button>
-            <button class="pad-btn" onclick="presionarTecla('6')">6</button>
-            <button class="pad-btn" onclick="presionarTecla('7')">7</button>
-            <button class="pad-btn" onclick="presionarTecla('8')">8</button>
-            <button class="pad-btn" onclick="presionarTecla('9')">9</button>
-            <button class="pad-btn" onclick="limpiarTeclado()" style="color:var(--color-rojo-poke);">C</button>
-            <button class="pad-btn" onclick="presionarTecla('0')">0</button>
-            <button class="pad-btn" onclick="cerrarTeclado()" style="color:#64748b;">X</button>
-        </div>
-    </div>
-</div>
-
-<!-- TERMINAL CONSOLA MASTER -->
 <div class="consola-admin-screen" id="pantalla-admin-master">
-    <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:4px solid var(--borde-pixel); padding-bottom:15px; flex-wrap:wrap; gap:10px;">
-        <h1 style="margin:0; text-align:left; color:var(--color-rojo-poke);">🛠️ PANEL DE CONTROL DM</h1>
-        <button onclick="cerrarConsolaMasterCompleta()" style="background:#f1f5f9; border:3px solid var(--borde-pixel); padding:8px 12px; cursor:pointer;">CERRAR TERMINAL</button>
+    <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid var(--borde-pixel); padding-bottom:10px; margin-bottom:15px;">
+        <h2 style="color:var(--color-ilegal); margin:0; font-size:11px;">⚙️ CONSOLA DE ADMINISTRACIÓN DM</h2>
+        <button onclick="cerrarConsolaMaster()" style="background:#3b4252; color:white; border:1px solid #fff; padding:5px; cursor:pointer;">CERRAR TERMINAL</button>
     </div>
     <div class="grid-admin">
         <div class="panel-elegante">
-            <h3>👥 AJUSTES JUGADORES</h3>
+            <h3>👥 ASIGNACIÓN DE SALDOS</h3>
             <div id="admin-jugadores-lista"></div>
         </div>
         <div class="panel-elegante">
-            <h3>🔓 SEGURIDAD RED</h3>
+            <h3>🔓 CONFIGURACIÓN RED</h3>
             <label style="display:block; margin-bottom:15px; cursor:pointer; line-height:1.4;">
-                <input type="checkbox" id="chk-master-illegal" onchange="conmutarCanalIlegalMaster(this.checked)"> PERMITIR ACCESO CONTRABANDO
+                <input type="checkbox" id="chk-master-illegal" onchange="conmutarCanalIlegalMaster(this.checked)"> CONEXIÓN TIENDA DE ILEGALIDADES
             </label>
-            <hr style="border:2px solid var(--borde-pixel);">
-            <h4 style="margin-top:10px;">CREAR NUEVO ITEM</h4>
-            <input type="text" id="ins-nombre" placeholder="Nombre Item" style="width:100%; padding:6px; margin-bottom:6px; border:2px solid var(--borde-pixel);">
-            <select id="ins-tienda" style="width:100%; padding:6px; margin-bottom:6px; border:2px solid var(--borde-pixel);">
-                <option value="legal">Materiales</option>
-                <option value="pack">Lotes PF</option>
-                <option value="illegal">Contrabando</option>
+            <hr style="border-color:#3b4252; margin:10px 0;">
+            <h4>INYECTAR NUEVO OBJETO</h4>
+            <input type="text" id="ins-nombre" placeholder="Nombre" style="width:100%; margin-bottom:5px; padding:5px; background:#1d2433; color:#fff; border:1px solid #4c566a;">
+            <select id="ins-tienda" style="width:100%; margin-bottom:5px; padding:5px; background:#1d2433; color:#fff; border:1px solid #4c566a;">
+                <option value="legal">Tienda Legal</option>
+                <option value="pack">Shop PF Pack</option>
+                <option value="illegal">Ilegalidades</option>
             </select>
-            <input type="number" id="ins-precio" placeholder="Precio (P₠ o PF)" style="width:100%; padding:6px; margin-bottom:6px; border:2px solid var(--borde-pixel);">
-            <input type="number" id="ins-stock" placeholder="Stock Inicial" style="width:100%; padding:6px; margin-bottom:6px; border:2px solid var(--borde-pixel);">
-            <button class="btn-accion" onclick="inyectarObjetoNuevoMaster()">PUBLICAR</button>
+            <input type="number" id="ins-precio" placeholder="Precio (P₠ / PF)" style="width:100%; margin-bottom:5px; padding:5px; background:#1d2433; color:#fff; border:1px solid #4c566a;">
+            <input type="number" id="ins-stock" placeholder="Stock" style="width:100%; margin-bottom:5px; padding:5px; background:#1d2433; color:#fff; border:1px solid #4c566a;">
+            <button class="btn-accion" onclick="inyectarObjetoNuevoMaster()">PUBLICAR ARTÍCULO</button>
         </div>
         <div class="panel-elegante">
-            <h3>📦 STOCK Y CATÁLOGO</h3>
-            <div id="admin-inventario-global" style="max-height:250px; overflow-y:auto;"></div>
+            <h3>📦 EDICIÓN DE EXISTENCIAS</h3>
+            <div id="admin-inventario-global" style="max-height:220px; overflow-y:auto;"></div>
         </div>
     </div>
 </div>
 
 <script>
-// BASE DE DATOS COMPLETA CON TODOS LOS OBJETOS HISTÓRICOS Y NUEVOS
-const inicialDb = [
-    // Tienda Legal (Materiales Base)
-    { id: 1, tienda: 'legal', nombre: 'Hierro', precio: 1000, pf: 2, stock: 10, icon: 'icon-iron', txt: 'Fe' },
-    { id: 2, tienda: 'legal', nombre: 'Proteína', precio: 1000, pf: 2, stock: 10, icon: 'icon-protein', txt: 'PRT' },
-    { id: 3, tienda: 'legal', nombre: 'Calcio', precio: 1000, pf: 2, stock: 10, icon: 'icon-protein', txt: 'Ca' },
-    { id: 4, tienda: 'legal', nombre: 'Carburante', precio: 1000, pf: 2, stock: 10, icon: 'icon-iron', txt: 'GAS' },
-    { id: 5, tienda: 'legal', nombre: 'Baya Oran', precio: 90, pf: 1, stock: 20, icon: 'icon-berry', txt: 'BY' },
-    { id: 6, tienda: 'legal', nombre: 'Baya Zidra', precio: 200, pf: 1, stock: 15, icon: 'icon-berry', txt: 'BZ' },
-    { id: 7, tienda: 'legal', nombre: 'Piedra Fuego', precio: 2100, pf: 4, stock: 3, icon: 'icon-evo', txt: '🔥' },
-    { id: 8, tienda: 'legal', nombre: 'Piedra Agua', precio: 2100, pf: 4, stock: 3, icon: 'icon-evo', txt: '💧' },
-    { id: 9, tienda: 'legal', nombre: 'Piedra Trueno', precio: 2100, pf: 4, stock: 3, icon: 'icon-evo', txt: '⚡' },
+// EXTRACCIÓN LITERAL COMPLETA DE CADA UNA DE LAS TRES IMÁGENES SUBIDAS
+const baseDatosInicial = [
+    // IMAGEN 1: TIENDA LEGAL
+    { id: 1, tienda: 'legal', cat: 'EV/IV', nombre: 'Hierro', precio: 1000, pf: 2, stock: 10, icon: 'icon-ev', txt: 'Fe' },
+    { id: 2, tienda: 'legal', cat: 'EV/IV', nombre: 'Proteína', precio: 1000, pf: 2, stock: 10, icon: 'icon-ev', txt: 'Pr' },
+    { id: 3, tienda: 'legal', cat: 'Bayas', nombre: 'Baya Atania', precio: 80, pf: 1, stock: 12, icon: 'icon-baya', txt: 'BA' },
+    { id: 4, tienda: 'legal', cat: 'Bayas', nombre: 'Baya Oran', precio: 90, pf: 1, stock: 12, icon: 'icon-baya', txt: 'BO' },
+    { id: 5, tienda: 'legal', cat: 'Poké Balls', nombre: 'Buceo Ball', precio: 200, pf: 2, stock: 8, icon: 'icon-ball', txt: 'BB' },
+    { id: 6, tienda: 'legal', cat: 'Poké Balls', nombre: 'Nivel Ball', precio: 250, pf: 3, stock: 8, icon: 'icon-ball', txt: 'NB' },
+    { id: 7, tienda: 'legal', cat: 'Objetos de Exploración', nombre: 'Cuerda Huida', precio: 120, pf: 1, stock: 8, icon: 'icon-expl', txt: 'CH' },
+    { id: 8, tienda: 'legal', cat: 'Objetos de Exploración', nombre: 'Repelente', precio: 70, pf: 1, stock: 20, icon: 'icon-expl', txt: 'RP' },
+    { id: 9, tienda: 'legal', cat: 'Objetos de Combat (X)', nombre: 'X Defensa', precio: 600, pf: 2, stock: 6, icon: 'icon-comb', txt: 'XD' },
+    { id: 10, tienda: 'legal', cat: 'Objetos de Combat (X)', nombre: 'X Velocidad', precio: 700, pf: 3, stock: 6, icon: 'icon-comb', txt: 'XV' },
+    { id: 11, tienda: 'legal', cat: 'Objetos Competitivos', nombre: 'Banda Focus', precio: 2500, pf: 3, stock: 4, icon: 'icon-comp', txt: 'BF' },
+    { id: 12, tienda: 'legal', cat: 'Objetos Competitivos', nombre: 'Gafas Elegidas', precio: 5000, pf: 3, stock: 4, icon: 'icon-comp', txt: 'GE' },
 
-    // Shop Packs (Lotes Especiales)
-    { id: 101, tienda: 'pack', nombre: 'PACK BALLS MIXTAS', precio: 750, pf: 11, stock: 5, icon: 'icon-pack', txt: 'PK' },
-    { id: 102, tienda: 'pack', nombre: 'LOTE EXP SUPERIOR', precio: 1500, pf: 20, stock: 4, icon: 'icon-pack', txt: 'EXP' },
-    { id: 103, tienda: 'pack', nombre: 'KIT CRIANZA PREMIUM', precio: 3000, pf: 45, stock: 2, icon: 'icon-pack', txt: 'EGG' },
+    // IMAGEN 2: SHOP PF PACK
+    { id: 101, tienda: 'pack', cat: 'Pack Oferta', nombre: 'Pack Balls (Captura Controlada)', desc: 'Contiene: 2 Buceo Ball + 2 Nivel Ball. Incentiva estrategia de captura mixta.', precio: 750, pf: 11, stock: 3, icon: 'icon-pack', txt: 'PK1' },
+    { id: 102, tienda: 'pack', cat: 'Pack Oferta', nombre: 'Pack Exploración', desc: 'Contiene: 2 Cuerda Huida + 4 Repelente. Reduce fricción de rutas largas.', precio: 460, pf: 7, stock: 3, icon: 'icon-pack', txt: 'PK2' },
+    { id: 103, tienda: 'pack', cat: 'Pack Oferta', nombre: 'Pack Combate Temprano', desc: 'Contiene: 2 X Defensa + 2 X Velocidad. Premia preparación de combate.', precio: 1300, pf: 11, stock: 3, icon: 'icon-pack', txt: 'PK3' },
+    { id: 104, tienda: 'pack', cat: 'Pack Oferta', nombre: 'Pack Supervivencia', desc: 'Contiene: 3 Baya Oran + 3 Baya Atania. Ahorro pequeño pero constante.', precio: 460, pf: 7, stock: 3, icon: 'icon-pack', txt: 'PK4' },
+    { id: 105, tienda: 'pack', cat: 'Pack Oferta', nombre: 'Pack "Segundo Intento"', desc: 'Contiene: 1 Banda Focus + 1 Hierro. Supervivencia + mejora permanente.', precio: 2800, pf: 6, stock: 3, icon: 'icon-pack', txt: 'PK5' },
 
-    // Red Ilegal (Contrabando por Puntos de Favor)
-    { id: 201, tienda: 'illegal', nombre: 'HACK: ESCUDO POKE', precioPf: 5, stock: 2, desc: 'Evita la muerte de un Pokémon.', icon: 'icon-hack', txt: '☠' },
-    { id: 202, tienda: 'illegal', nombre: 'DATAHACK: MT PROHIBIDA', precioPf: 8, stock: 1, desc: 'Desbloquea movimiento ilegal.', icon: 'icon-hack', txt: '💿' },
-    { id: 203, tienda: 'illegal', nombre: 'RARE CANDY INYECTADO', precioPf: 4, stock: 5, desc: 'Sube 5 niveles instantáneos.', icon: 'icon-hack', txt: '🍬' }
+    // IMAGEN 3: TIENDA DE ILEGALIDADES
+    { id: 201, tienda: 'illegal', cat: 'Ilegalidad 1', nombre: 'Escudo Poke', precioPf: 5, stock: 1, desc: 'Debe asignarse antes del combate. Si el Poke iba a morir, el escudo se activa y evita la muerte.', icon: 'icon-ilegal-item', txt: '🛡️' },
+    { id: 202, tienda: 'illegal', cat: 'Ilegalidad 2', nombre: 'Captura Selectiva', precioPf: 4, stock: 1, desc: 'Permite elegir el Poke capturable de una ruta. Tras su uso, no puedes capturar en las 2 siguientes rutas.', icon: 'icon-ilegal-item', txt: '🎯' },
+    { id: 203, tienda: 'illegal', cat: 'Ilegalidad 3', nombre: 'Licencia de Caza', precioPf: 3, stock: 1, desc: 'Permite repetir la captura de una ruta si el Poke es derrotado o huye. No se activa si el jugador es derrotado.', icon: 'icon-ilegal-item', txt: '📜' },
+    { id: 204, tienda: 'illegal', cat: 'Ilegalidad 4', nombre: 'Falsificación de Registro', precioPf: 5, stock: 1, desc: 'Permite sustituir 1 Poke del equipo clasificado al torneo por otro Poke válido de la caja.', icon: 'icon-ilegal-item', txt: '🆔' },
+    { id: 205, tienda: 'illegal', cat: 'Ilegalidad 5', nombre: 'Plaza Fantasma', precioPf: 6, stock: 1, desc: 'Si un Poke muere contra el líder, permite sustituir su plaza en el torneo por otro Poke de la caja.', icon: 'icon-ilegal-item', txt: '👻' },
+    { id: 206, tienda: 'illegal', cat: 'Ilegalidad 6', nombre: 'Evolución Forzada', precioPf: 5, stock: 1, desc: 'Permite evolucionar un Poke que requiera amistad para evolucionar.', icon: 'icon-ilegal-item', txt: '❤️' },
+    { id: 207, tienda: 'illegal', cat: 'Ilegalidad 7', nombre: 'Reconfiguración', precioPf: 2, stock: 1, desc: 'Permite modificar los movimientos de 1 Poke después del combate contra el líder y antes del torneo.', icon: 'icon-ilegal-item', txt: '🔄' },
+    { id: 208, tienda: 'illegal', cat: 'Ilegalidad 8', nombre: 'Modificación Genética', precioPf: 4, stock: 1, desc: 'Permite cambiar la habilidad de 1 Poke por otra de sus habilidades posibles.', icon: 'icon-ilegal-item', txt: '🧬' },
+    { id: 209, tienda: 'illegal', cat: 'Ilegalidad 9', nombre: 'Alteración de Personalidad', precioPf: 2, stock: 1, desc: 'Permite cambiar la naturaleza de 1 Poke.', icon: 'icon-ilegal-item', txt: '🎭' },
+    { id: 210, tienda: 'illegal', cat: 'Ilegalidad 10', nombre: 'Resurrección Robada', precioPf: 8, stock: 1, desc: 'Robas 1 Poke muerto de otro jugador y pasa a estar en tu caja vivo.', icon: 'icon-ilegal-item', txt: '💀' }
 ];
 
-let baseDatos = JSON.parse(localStorage.getItem('sindicato_db_poke_2026')) || {
-    productos: inicialDb,
+let baseDatos = JSON.parse(localStorage.getItem('poke_store_db_2026')) || {
+    productos: baseDatosInicial,
     jugadores: {},
     ilegalAbierto: false
 };
 
-let userSesion = sessionStorage.getItem('sindicato_sesion') || null;
-let combinacionIntroducida = "";
+let userSesion = sessionStorage.getItem('poke_user_sesion') || null;
 
 const mLegal = document.getElementById('musica-legal');
 const mHacker = document.getElementById('musica-hacker');
 
 function cambiarVolumenGlobal(v) { mLegal.volume = v; mHacker.volume = v; }
-
 function conmutarMute() {
-    let btn = document.getElementById('btn-mute');
-    if(mLegal.muted || mHacker.muted) { mLegal.muted = false; mHacker.muted = false; btn.innerText = "🔊"; } 
-    else { mLegal.muted = true; mHacker.muted = true; btn.innerText = "🔇"; }
+    let m = mLegal.muted || mHacker.muted;
+    mLegal.muted = !m; mHacker.muted = !m;
 }
 
-function gestionarReproduccionMusica(tiendaActual) {
+function gestionarAudioEntornos(tipoTienda) {
     if(!userSesion) return;
-    if(tiendaActual === 'illegal' && baseDatos.ilegalAbierto) {
+    if(tipoTienda === 'illegal' && baseDatos.ilegalAbierto) {
         mLegal.pause(); if(mHacker.paused) mHacker.play().catch(()=>{});
     } else {
         mHacker.pause(); if(mLegal.paused) mLegal.play().catch(()=>{});
     }
 }
 
-// LOGIN CON COMPUERTAS SIN BUGS
+// INGRESO DIRECTO DE USUARIOS SIN COMPUERTAS QUE PROVOQUEN ERRORES
 function conectarLobby() {
-    let nombre = document.getElementById('login-nombre').value.trim();
-    if(!nombre) return alert("¡Introduce tu ID de Operador!");
+    let idUser = document.getElementById('login-nombre').value.trim();
+    if(!idUser) return alert("Por favor inserte un ID válido");
 
-    if(!baseDatos.jugadores[nombre]) {
-        baseDatos.jugadores[nombre] = { dinero: 0, pf: 0, inventario: [] };
+    if(!baseDatos.jugadores[idUser]) {
+        baseDatos.jugadores[idUser] = { dinero: 5000, pf: 0, comprasHoy: 0, inventario: [] };
     }
-    userSesion = nombre;
-    sessionStorage.setItem('sindicato_sesion', nombre);
-    localStorage.setItem('sindicato_db_poke_2026', JSON.stringify(baseDatos));
 
-    let puertas = document.getElementById('puertas-mecanicas');
-    
-    // Primero cerramos visualmente las compuertas (por si acaso estuvieran abiertas)
-    puertas.classList.remove('abrir');
-    puertas.classList.remove('oculta');
+    userSesion = idUser;
+    sessionStorage.setItem('poke_user_sesion', idUser);
+    localStorage.setItem('poke_store_db_2026', JSON.stringify(baseDatos));
 
-    setTimeout(() => {
-        // Intercambiamos pantallas en el fondo
-        document.getElementById('pantalla-lobby').style.display = 'none';
-        document.getElementById('pantalla-mercado').style.display = 'block';
-        renderizarContenido();
-        
-        cambiarVolumenGlobal(0.2);
-        mLegal.play().catch(()=>{});
+    document.getElementById('pantalla-lobby').style.display = 'none';
+    document.getElementById('pantalla-mercado').style.display = 'block';
 
-        // Activamos animación de apertura hacia los lados
-        puertas.classList.add('abrir');
-        
-        // Al terminar la animación, ocultamos por completo el contenedor para que NO bloquee la pantalla
-        setTimeout(() => {
-            puertas.classList.add('oculta');
-        }, 600);
-    }, 300);
+    renderizarAplicacion();
+    cambiarVolumenGlobal(0.3);
+    mLegal.play().catch(()=>{});
 }
 
 function cambiarTienda(tipo) {
@@ -385,82 +328,95 @@ function cambiarTienda(tipo) {
     
     document.getElementById(`tab-${tipo}`).classList.add('active');
     document.getElementById(`vista-${tipo}`).classList.add('active');
-    gestionarReproduccionMusica(tipo);
-
-    if(tipo === 'illegal' && baseDatos.ilegalAbierto) {
-        alert("[ALERTA ENCRIPTADA] Accediendo al mercado negro de contrabando...");
-    }
+    gestionarAudioEntornos(tipo);
 }
 
-// RENDERIZADO DE INTERFAZ 
-function renderizarContenido() {
+// RENDERIZADO COMPLETO DE PRODUCTOS E INVENTARIO Y TEXTOS EXTRAÍDOS
+function renderizarAplicacion() {
     if(!userSesion) return;
     let u = baseDatos.jugadores[userSesion];
+    
     document.getElementById('usr-nombre').innerText = userSesion.toUpperCase();
     document.getElementById('usr-dinero').innerText = u.dinero.toLocaleString();
     document.getElementById('usr-pf').innerText = u.pf;
 
-    // Bolsa / Inventario personal
-    let divInv = document.getElementById('lista-inventario'); divInv.innerHTML = '';
-    if(u.inventario.length === 0) divInv.innerHTML = '<span style="color:#94a3b8; font-size:9px;">[ Bolsa vacía ]</span>';
+    // Renderizar Bolsa / Inventario del jugador
+    let boxBolsa = document.getElementById('lista-inventario'); boxBolsa.innerHTML = '';
+    if(u.inventario.length === 0) {
+        boxBolsa.innerHTML = '<span style="color:#6b7280; font-size:8px;">[ Tu bolsa está vacía ]</span>';
+    }
     u.inventario.forEach((item, idx) => {
-        divInv.innerHTML += `
-            <div style="background:#f8fafc; border:3px solid var(--borde-pixel); padding:8px; text-align:center; min-width:85px; border-radius:6px;">
-                <div class="item-icon ${item.icon || 'icon-generic'}" style="width:30px; height:30px; font-size:9px; margin-bottom:5px;">${item.txt || '?'}</div>
-                <p style="margin:4px 0; font-size:8px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${item.nombre}</p>
-                <button onclick="consumirObjeto('${idx}')" style="background:var(--color-rojo-poke); color:#fff; border:2px solid var(--borde-pixel); font-size:7px; padding:2px; cursor:pointer; width:100%;">USAR</button>
+        boxBolsa.innerHTML += `
+            <div style="background:#1d2433; border:1px solid #4c566a; padding:6px; text-align:center; min-width:80px; border-radius:4px;">
+                <div style="font-size:8px; margin-bottom:4px; max-width:75px; overflow:hidden; white-space:nowrap;">${item.nombre}</div>
+                <button onclick="utilizarObjetoBolsa('${idx}')" style="background:var(--color-ilegal); color:#fff; border:none; padding:3px; font-size:6px; cursor:pointer; width:100%; border-radius:2px;">USAR</button>
             </div>
         `;
     });
 
-    // Tienda Materiales Base
+    // Renderizar Tienda Legal (Imagen 1)
     let gl = document.getElementById('grid-legal'); gl.innerHTML = '';
     baseDatos.productos.filter(p => p.tienda === 'legal').forEach(p => {
-        let ok = p.stock > 0 && u.dinero >= p.precio;
+        let habilitado = p.stock > 0 && u.dinero >= p.precio && u.comprasHoy < 3;
         gl.innerHTML += `
             <div class="item-card">
-                <div class="item-icon ${p.icon || 'icon-generic'}">${p.txt || '?'}</div>
-                <div style="font-size:10px; font-weight:bold; margin-bottom:8px;">${p.nombre.toUpperCase()}</div>
-                <div style="margin-bottom:8px; color:var(--color-azul-poke);">🪙 ${p.precio} P₠</div>
-                <div style="font-size:8px; color:var(--color-rojo-poke); margin-bottom:8px;">+ ${p.pf} Ptos Favor</div>
-                <div style="font-size:8px; color:#64748b; margin-bottom:10px;">STOCK: ${p.stock} UDS</div>
-                <button class="btn-accion" ${!ok?'disabled':''} onclick="comprarItem(${p.id})">COMPRAR</button>
+                <div>
+                    <div class="categoria-tag">${p.cat}</div>
+                    <div class="item-icon ${p.icon}">${p.txt}</div>
+                    <div style="font-size:9px; font-weight:bold; margin-bottom:8px; color:#fff;">${p.nombre}</div>
+                </div>
+                <div>
+                    <div style="color:var(--color-packs); margin-bottom:4px;">Precio: 🪙 ${p.precio}</div>
+                    <div style="color:var(--color-legal); font-size:8px; margin-bottom:6px;">Recompensa: +${p.pf} PF</div>
+                    <div style="font-size:8px; color:#9ca3af; margin-bottom:8px;">DISPONIBLE: (${p.stock})</div>
+                    <button class="btn-accion" ${!habilitado?'disabled':''} onclick="ejecutarCompraLegal(${p.id})">COMPRAR</button>
+                </div>
             </div>
         `;
     });
 
-    // Lotes Especiales
+    // Renderizar Shop PF Pack (Imagen 2)
     let gp = document.getElementById('grid-pack'); gp.innerHTML = '';
     baseDatos.productos.filter(p => p.tienda === 'pack').forEach(p => {
-        let ok = p.stock > 0 && u.dinero >= p.precio;
+        let habilitado = p.stock > 0 && u.dinero >= p.precio && u.comprasHoy < 3;
         gp.innerHTML += `
             <div class="item-card">
-                <div class="item-icon ${p.icon || 'icon-pack'}">${p.txt || 'BOX'}</div>
-                <div style="font-size:10px; font-weight:bold; margin-bottom:8px;">${p.nombre.toUpperCase()}</div>
-                <div style="margin-bottom:8px; color:var(--color-azul-poke);">🪙 ${p.precio} P₠</div>
-                <div style="font-size:8px; color:var(--color-rojo-poke); margin-bottom:8px;">+ ${p.pf} Ptos Favor</div>
-                <div style="font-size:8px; color:#64748b; margin-bottom:10px;">STOCK: ${p.stock} UDS</div>
-                <button class="btn-accion" ${!ok?'disabled':''} onclick="comprarItem(${p.id})">ADQUIRIR LOT</button>
+                <div>
+                    <div class="categoria-tag">${p.cat}</div>
+                    <div class="item-icon ${p.icon}">📦</div>
+                    <div style="font-size:9px; font-weight:bold; margin-bottom:6px; color:#fff;">${p.nombre}</div>
+                    <p style="font-size:7px; color:#9ca3af; line-height:1.3; margin:0 0 10px 0; text-align:left;">${p.desc}</p>
+                </div>
+                <div>
+                    <div style="color:var(--color-packs); margin-bottom:4px;">Precio: 🪙 ${p.precio}</div>
+                    <div style="color:var(--color-legal); font-size:8px; margin-bottom:6px;">Pack total: +${p.pf} PF</div>
+                    <button class="btn-accion" ${!habilitado?'disabled':''} onclick="ejecutarCompraLegal(${p.id})">COMPRAR PACK</button>
+                </div>
             </div>
         `;
     });
 
-    // Contrabando Encriptado
+    // Renderizar Tienda de Ilegalidades (Imagen 3)
     let vi = document.getElementById('contenedor-hacker-view');
     if(!baseDatos.ilegalAbierto) {
-        vi.innerHTML = `<div style="text-align:center; padding:40px; color:#94a3b8; line-height:1.6;">[ CONEXIÓN RESTRINGIDA: ESTA LÍNEA DE CONTRABANDO DEBE SER ACTIVADA POR EL MÁSTER ]</div>`;
+        vi.innerHTML = `<div style="text-align:center; padding:40px; color:#6b7280; font-size:8px;">[ CONEXIÓN SEGURA RESTRINGIDA: EL TERMINAL DE ILEGALIDADES SE ENCUENTRA APAGADO POR EL DM ]</div>`;
     } else {
-        let htmlIlegal = `<h2 style="color:var(--color-rojo-poke); font-size:12px; margin-bottom:15px; text-align:center;">⚠ TERMINAL DE CONTRABANDO CLANDESTINO ⚠</h2><div class="items-grid">`;
+        let htmlIlegal = `<div class="items-grid">`;
         baseDatos.productos.filter(p => p.tienda === 'illegal').forEach(p => {
-            let ok = p.stock > 0 && u.pf >= p.precioPf;
+            let habilitado = p.stock > 0 && u.pf >= p.precioPf;
             htmlIlegal += `
-                <div class="item-card" style="border-color:var(--color-rojo-poke);">
-                    <div class="item-icon ${p.icon || 'icon-hack'}">${p.txt || '☠'}</div>
-                    <div style="font-size:10px; color:var(--color-rojo-poke); font-weight:bold; margin-bottom:6px;">${p.nombre.toUpperCase()}</div>
-                    <p style="font-size:8px; color:#475569; margin:0 0 10px 0; line-height:1.4;">${p.desc}</p>
-                    <div style="margin-bottom:8px; color:var(--color-azul-poke);">⭐ COSTE: ${p.precioPf} PF</div>
-                    <div style="font-size:8px; color:#94a3b8; margin-bottom:10px;">DISPONIBLES: ${p.stock} UDS</div>
-                    <button class="btn-accion" style="background:var(--color-rojo-poke); color:#fff;" ${!ok?'disabled':''} onclick="comprarItemIlegal(${p.id})">CANJEAR</button>
+                <div class="item-card card-ilegal">
+                    <div>
+                        <div class="categoria-tag" style="color:var(--color-ilegal);">${p.cat}</div>
+                        <div class="item-icon ${p.icon}"><span>${p.txt}</span></div>
+                        <div style="font-size:9px; color:var(--color-ilegal); font-weight:bold; margin-bottom:6px;">${p.nombre.toUpperCase()}</div>
+                        <p style="font-size:7px; color:#9ca3af; margin:0 0 10px 0; text-align:left; line-height:1.3;">${p.desc}</p>
+                    </div>
+                    <div>
+                        <div style="color:var(--color-packs); margin-bottom:6px; font-size:8px;">FAVOR NECESARIO: ${p.precioPf} PF</div>
+                        <div style="font-size:7px; color:#6b7280; margin-bottom:8px;">STOCK: ${p.stock} UD</div>
+                        <button class="btn-accion" style="background:var(--color-ilegal); color:#fff; border-color:#c0392b;" ${!habilitado?'disabled':''} onclick="ejecutarCompraIlegal(${p.id})">ADQUIRIR</button>
+                    </div>
                 </div>
             `;
         });
@@ -468,114 +424,128 @@ function renderizarContenido() {
     }
 }
 
-function comprarItem(id) {
+function ejecutarCompraLegal(id) {
     let u = baseDatos.jugadores[userSesion];
     let p = baseDatos.productos.find(pr => pr.id === id);
-    if(p && p.stock > 0 && u.dinero >= p.precio) {
-        p.stock--; u.dinero -= p.precio; u.pf += p.pf;
-        u.inventario.push({ nombre: p.nombre, icon: p.icon, txt: p.txt });
-        localStorage.setItem('sindicato_db_poke_2026', JSON.stringify(baseDatos)); renderizarContenido();
+    if(p && p.stock > 0 && u.dinero >= p.precio && u.comprasHoy < 3) {
+        p.stock--;
+        u.dinero -= p.precio;
+        u.pf += p.pf;
+        u.comprasHoy++;
+        u.inventario.push({ nombre: p.nombre });
+        localStorage.setItem('poke_store_db_2026', JSON.stringify(baseDatos));
+        renderizarAplicacion();
     }
 }
 
-function comprarItemIlegal(id) {
+function ejecutarCompraIlegal(id) {
     let u = baseDatos.jugadores[userSesion];
     let p = baseDatos.productos.find(pr => pr.id === id);
     if(p && p.stock > 0 && u.pf >= p.precioPf) {
-        p.stock--; u.pf -= p.precioPf;
-        u.inventario.push({ nombre: p.nombre, icon: p.icon, txt: p.txt });
-        localStorage.setItem('sindicato_db_poke_2026', JSON.stringify(baseDatos)); renderizarContenido();
+        p.stock--;
+        u.pf -= p.precioPf;
+        u.inventario.push({ nombre: p.nombre });
+        localStorage.setItem('poke_store_db_2026', JSON.stringify(baseDatos));
+        renderizarAplicacion();
     }
 }
 
-function consumirObjeto(idx) {
+function utilizarObjetoBolsa(idx) {
     baseDatos.jugadores[userSesion].inventario.splice(idx, 1);
-    localStorage.setItem('sindicato_db_poke_2026', JSON.stringify(baseDatos)); renderizarContenido();
+    localStorage.setItem('poke_store_db_2026', JSON.stringify(baseDatos));
+    renderizarAplicacion();
 }
 
-// PANEL MÁSTER KEYPAD
-function abrirTecladoMaster() { combinacionIntroducida = ""; document.getElementById('keypad-screen').innerText = ""; document.getElementById('modal-keypad').style.display = 'flex'; }
-function cerrarTeclado() { document.getElementById('modal-keypad').style.display = 'none'; }
-function limpiarTeclado() { combinacionIntroducida = ""; document.getElementById('keypad-screen').innerText = ""; }
-function presionarTecla(n) {
-    combinacionIntroducida += n; document.getElementById('keypad-screen').innerText = "*".repeat(combinacionIntroducida.length);
-    if(combinacionIntroducida === "1234") {
-        cerrarTeclado(); document.getElementById('pantalla-admin-master').style.display = 'block'; renderizarPanelesMasterCompleto();
-    } else if(combinacionIntroducida.length >= 4) { alert("CÓDIGO DE ACCESO INCORRECTO"); limpiarTeclado(); }
+// GESTIÓN DM / CONTROL CENTRAL
+function abrirTerminalMaster() {
+    let llave = prompt("LLAVE MAESTRA DM:");
+    if(llave === "1234") {
+        document.getElementById('pantalla-admin-master').style.display = 'block';
+        renderizarConsolaMaster();
+    } else if(llave !== null) { alert("CÓDIGO INVÁLIDO"); }
 }
 
-function cerrarConsolaMasterCompleta() { document.getElementById('pantalla-admin-master').style.display = 'none'; }
-function conmutarCanalIlegalMaster(val) { baseDatos.ilegalAbierto = val; localStorage.setItem('sindicato_db_poke_2026', JSON.stringify(baseDatos)); renderizarContenido(); }
+function cerrarConsolaMaster() { document.getElementById('pantalla-admin-master').style.display = 'none'; }
+function conmutarCanalIlegalMaster(val) { baseDatos.ilegalAbierto = val; localStorage.setItem('poke_store_db_2026', JSON.stringify(baseDatos)); renderizarAplicacion(); }
 
 function inyectarObjetoNuevoMaster() {
     let n = document.getElementById('ins-nombre').value.trim();
     let t = document.getElementById('ins-tienda').value;
     let p = parseInt(document.getElementById('ins-precio').value) || 0;
     let s = parseInt(document.getElementById('ins-stock').value) || 0;
-    if(!n) return alert("Asigna un nombre al item");
+    if(!n) return;
     
-    let obj = { id: Date.now(), tienda: t, nombre: n, stock: s, icon: t==='illegal'?'icon-hack':'icon-generic', txt: n.substring(0,3).toUpperCase() };
-    if(t === 'illegal') { obj.precioPf = p; obj.desc = "Añadido manualmente por el DM."; } else { obj.precio = p; obj.pf = 1; }
-    baseDatos.productos.push(obj); localStorage.setItem('sindicato_db_poke_2026', JSON.stringify(baseDatos));
-    renderizarPanelesMasterCompleto(); renderizarContenido();
+    let obj = { id: Date.now(), tienda: t, cat: 'Añadido DM', nombre: n, stock: s, icon: t==='illegal'?'icon-ilegal-item':'icon-expl', txt: n.substring(0,2).toUpperCase() };
+    if(t === 'illegal') { obj.precioPf = p; obj.desc = "Añadido de forma remota por el Máster de partida."; } else { obj.precio = p; obj.pf = 1; }
+    
+    baseDatos.productos.push(obj);
+    localStorage.setItem('poke_store_db_2026', JSON.stringify(baseDatos));
+    renderizarConsolaMaster(); renderizarAplicacion();
 }
 
-function alterarCarteraMaster(jugador, tipo, valor) {
-    baseDatos.jugadores[jugador][tipo] += valor;
-    if(baseDatos.jugadores[jugador][tipo] < 0) baseDatos.jugadores[jugador][tipo] = 0;
-    localStorage.setItem('sindicato_db_poke_2026', JSON.stringify(baseDatos)); renderizarPanelesMasterCompleto(); renderizarContenido();
+function ajustarCarteraMaster(jugador, campo, cantidad) {
+    baseDatos.jugadores[jugador][campo] += cantidad;
+    if(baseDatos.jugadores[jugador][campo] < 0) baseDatos.jugadores[jugador][campo] = 0;
+    localStorage.setItem('poke_store_db_2026', JSON.stringify(baseDatos));
+    renderizarConsolaMaster(); renderizarAplicacion();
 }
 
-function alterarStockDirectoMaster(id, cantidad) {
+function resetearComprasDiariasMaster(jugador) {
+    baseDatos.jugadores[jugador].comprasHoy = 0;
+    localStorage.setItem('poke_store_db_2026', JSON.stringify(baseDatos));
+    renderizarConsolaMaster(); renderizarAplicacion();
+}
+
+function ajustarStockDirectoMaster(id, cantidad) {
     let p = baseDatos.productos.find(pr => pr.id === id);
-    if(p) { p.stock += cantidad; if(p.stock < 0) p.stock = 0; localStorage.setItem('sindicato_db_poke_2026', JSON.stringify(baseDatos)); renderizarPanelesMasterCompleto(); renderizarContenido(); }
+    if(p) { p.stock += cantidad; if(p.stock < 0) p.stock = 0; localStorage.setItem('poke_store_db_2026', JSON.stringify(baseDatos)); renderizarConsolaMaster(); renderizarAplicacion(); }
 }
 
 function eliminarObjetoCatalogoMaster(id) {
     baseDatos.productos = baseDatos.productos.filter(pr => pr.id !== id);
-    localStorage.setItem('sindicato_db_poke_2026', JSON.stringify(baseDatos)); renderizarPanelesMasterCompleto(); renderizarContenido();
+    localStorage.setItem('poke_store_db_2026', JSON.stringify(baseDatos));
+    renderizarConsolaMaster(); renderizarAplicacion();
 }
 
-function renderizarPanelesMasterCompleto() {
+function renderizarConsolaMaster() {
     document.getElementById('chk-master-illegal').checked = baseDatos.ilegalAbierto;
-    let divJ = document.getElementById('admin-jugadores-lista'); divJ.innerHTML = '';
+    let listJ = document.getElementById('admin-jugadores-lista'); listJ.innerHTML = '';
     for(let k in baseDatos.jugadores) {
         let ju = baseDatos.jugadores[k];
-        divJ.innerHTML += `
-            <div style="background:#f1f5f9; border:2px solid var(--borde-pixel); padding:8px; margin-bottom:6px; font-size:9px; border-radius:4px;">
-                <strong>${k.toUpperCase()}</strong><br>(${ju.dinero} P₠ | ${ju.pf} PF)
+        listJ.innerHTML += `
+            <div style="background:#1d2433; border:1px solid #4c566a; padding:8px; margin-bottom:8px; font-size:8px; border-radius:4px;">
+                <strong>${k.toUpperCase()}</strong><br>
+                Saldo: ${ju.dinero} P₠ | Favor: ${ju.pf} PF<br>
+                Compras de Hoy: ${ju.comprasHoy}/3
                 <div style="margin-top:6px; display:flex; gap:4px; flex-wrap:wrap;">
-                    <button onclick="alterarCarteraMaster('${k}','dinero',1000)" style="font-size:8px; padding:2px;">+1k P₠</button>
-                    <button onclick="alterarCarteraMaster('${k}','dinero',-1000)" style="font-size:8px; padding:2px;">-1k P₠</button>
-                    <button onclick="alterarCarteraMaster('${k}','pf',1)" style="font-size:8px; padding:2px; background:var(--color-rojo-poke); color:#fff;">+1 PF</button>
-                    <button onclick="alterarCarteraMaster('${k}','pf',-1)" style="font-size:8px; padding:2px; background:var(--color-rojo-poke); color:#fff;">-1 PF</button>
+                    <button onclick="ajustarCarteraMaster('${k}','dinero',1000)" style="font-size:7px;">+1k P₠</button>
+                    <button onclick="ajustarCarteraMaster('${k}','dinero',-1000)" style="font-size:7px;">-1k P₠</button>
+                    <button onclick="ajustarCarteraMaster('${k}','pf',1)" style="font-size:7px; background:var(--color-ilegal); color:#fff;">+1 PF</button>
+                    <button onclick="ajustarCarteraMaster('${k}','pf',-1)" style="font-size:7px; background:var(--color-ilegal); color:#fff;">-1 PF</button>
+                    <button onclick="resetearComprasDiariasMaster('${k}')" style="font-size:7px; background:var(--color-legal); color:#000; width:100%; margin-top:3px;">RESET DIARIO COMPRAS</button>
                 </div>
             </div>`;
     }
-    let divS = document.getElementById('admin-inventario-global'); divS.innerHTML = '';
+    let listS = document.getElementById('admin-inventario-global'); listS.innerHTML = '';
     baseDatos.productos.forEach(p => {
-        divS.innerHTML += `
-            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid #cbd5e1; padding:6px 0; font-size:8px;">
-                <span>[${p.tienda.toUpperCase()}] ${p.nombre} (${p.stock} UDS)</span>
+        listS.innerHTML += `
+            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #2e3440; padding:4px 0; font-size:7px;">
+                <span>[${p.tienda.toUpperCase()}] ${p.nombre} (${p.stock})</span>
                 <div>
-                    <button onclick="alterarStockDirectoMaster(${p.id}, 1)" style="padding:2px;">+</button>
-                    <button onclick="alterarStockDirectoMaster(${p.id}, -1)" style="padding:2px;">-</button>
-                    <button onclick="eliminarObjetoCatalogoMaster(${p.id})" style="color:var(--color-rojo-poke); font-size:10px; background:none; border:none; cursor:pointer;">🗑</button>
+                    <button onclick="ajustarStockDirectoMaster(${p.id}, 1)">+</button>
+                    <button onclick="ajustarStockDirectoMaster(${p.id}, -1)">-</button>
+                    <button onclick="eliminarObjetoCatalogoMaster(${p.id})" style="color:var(--color-ilegal); background:none; border:none; cursor:pointer; font-size:10px;">🗑</button>
                 </div>
             </div>`;
     });
 }
 
-// COMPROBACIÓN RE-LOG AUTOMÁTICO
+// CHEQUEO AUTOMÁTICO DE RECONEXIÓN
 if(userSesion && baseDatos.jugadores[userSesion]) {
     document.getElementById('pantalla-lobby').style.display = 'none';
     document.getElementById('pantalla-mercado').style.display = 'block';
-    // Forzamos la ocultación de compuertas si ya está logueado
-    document.getElementById('puertas-mecanicas').classList.add('abrir');
-    document.getElementById('puertas-mecanicas').classList.add('oculta');
-    renderizarContenido();
+    renderizarAplicacion();
 }
 </script>
 </body>
 </html>
-
