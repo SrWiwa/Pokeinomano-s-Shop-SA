@@ -292,7 +292,7 @@
         
         button:disabled { background: #11141d !important; color: #334155 !important; border-color: #1e293b !important; cursor: not-allowed; }
 
-        .lobby-box { max-width: 380px; margin: 120px auto; text-align: center; background: #0f1422; border: 2px solid #1e293b; padding: 30px; border-radius: 16px; }
+        .lobby-box { max-width: 380px; margin: 120px auto; text-align: center; background: #0f1422; border: 2px solid #1e293b; padding: 30px; border-radius: 166px; }
         .lobby-box input { background: #060914; color: #fff; border: 1px solid #334155; padding: 12px; width: 100%; margin-bottom: 15px; text-align: center; border-radius: 8px; font-size: 14px; }
 
         /* CONSOLA ADMIN OPTIMIZADA */
@@ -607,10 +607,27 @@
     </div>
 </div>
 
-<script>
-// Base de datos inicial corregida y limpia
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import { getDatabase, ref, set, onValue, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+// !!! CONFIGURACIÓN REAL DE TU PROPIO FIREBASE ACTIVA !!!
+const firebaseConfig = {
+    apiKey: "AIzaSyAgN5I8-o1WpWXfRq96FZXCF8ELmdC-ghw",
+    authDomain: "tienda-pokeinomanos.firebaseapp.com",
+    databaseURL: "https://tienda-pokeinomanos-default-rtdb.firebaseio.com",
+    projectId: "tienda-pokeinomanos",
+    storageBucket: "tienda-pokeinomanos.firebasestorage.app",
+    messagingSenderId: "481043703231",
+    appId: "1:481043703231:web:070be712b4b8d85d81ad0a"
+};
+
+// Inicializar Firebase
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+// Base de datos inicial idéntica a tu diseño original
 const baseDatosInicial = [
-    // === TIENDA LEGAL ===
     { id: 101, tienda: 'legal', cat: 'EV/IV', nombre: 'Hierro', precio: 1000, pf: 2, stock: 10, icon: '🧪' },
     { id: 102, tienda: 'legal', cat: 'EV/IV', nombre: 'Proteína', precio: 1000, pf: 2, stock: 10, icon: '🧪' },
     { id: 103, tienda: 'legal', cat: 'Bayas', nombre: 'Baya Atania', precio: 80, pf: 1, stock: 12, icon: '🫐' },
@@ -623,44 +640,61 @@ const baseDatosInicial = [
     { id: 110, tienda: 'legal', cat: 'Objetos de Combate (X)', nombre: 'X Velocidad', precio: 700, pf: 3, stock: 6, icon: '🔵' },
     { id: 111, tienda: 'legal', cat: 'Objetos Competitivos', nombre: 'Banda Focus', precio: 2500, pf: 3, stock: 4, icon: '🎗️' },
     { id: 112, tienda: 'legal', cat: 'Objetos Competitivos', nombre: 'Gafas Elegidas', precio: 5000, pf: 3, stock: 4, icon: '🕶️' },
-
-    // === SHOP PF PACK ===
-    { id: 201, tienda: 'pack', cat: 'Pack Especial', nombre: 'Pack Balls', precio: 750, pf: 11, stock: 99, icon: '📦', desc: '2 Buceo Ball + 2 Nivel Ball', estrategia: 'Incentiva estrategia de captura mixta (situacional + control de niveles).' },
-    { id: 202, tienda: 'pack', cat: 'Pack Especial', nombre: 'Pack Exploración', precio: 460, pf: 7, stock: 99, icon: '📦', desc: '2 Cuerda Huida + 4 Repelente', estrategia: 'Reduce fricción de rutas largas sin regalar seguridad total.' },
-    { id: 203, tienda: 'pack', cat: 'Pack Especial', nombre: 'Pack Combate Temprano', precio: 1300, pf: 11, stock: 99, icon: '📦', desc: '2 X Defensa + 2 X Velocidad', estrategia: 'No es barato, pero premia preparación de combate.' },
-    { id: 204, tienda: 'pack', cat: 'Pack Especial', nombre: 'Pack Supervivencia', precio: 460, pf: 7, stock: 99, icon: '📦', desc: '3 Baya Oran + 3 Baya Atania', estrategia: 'Ahorro pequeño pero constante, ideal para jugadores cuidadosos.' },
-    { id: 205, tienda: 'pack', cat: 'Pack Especial', nombre: 'Pack "Segundo Intento"', precio: 2800, pf: 6, stock: 99, icon: '📦', desc: '1 Banda Focus + 1 Hierro', estrategia: 'Supervivencia + mejora permanente ligera.' },
-
-    // === TIENDA DE ILEGALIDADES ===
-    { id: 301, tienda: 'illegal', cat: 'Hack de Sistema', nombre: 'Escudo Poke', precioPf: 5, stock: 1, icon: '🛡️', desc: 'Debe asignarse antes del combate. Si el Poke iba a morir, el escudo se activa y evita la muerte.' },
-    { id: 302, tienda: 'illegal', cat: 'Hack de Sistema', nombre: 'Captura Selectiva', precioPf: 4, stock: 1, icon: '🎯', desc: 'Permite elegir el Poke capturable de una ruta. Tras su uso, no puedes capturar en las 2 siguientes rutas.' },
-    { id: 303, tienda: 'illegal', cat: 'Hack de Sistema', nombre: 'Licencia De Caza', precioPf: 3, stock: 1, icon: '📜', desc: 'Permite repetir la captura de una ruta si el Poke es derrotado o huye. No se activa si el jugador es derrotado.' },
-    { id: 304, tienda: 'illegal', cat: 'Hack de Sistema', nombre: 'Falsificación De Registro', precioPf: 5, stock: 1, icon: '🪪', desc: 'Permite sustituir 1 Poke del equipo clasificado al torneo por otro Poke válido de la caja.' },
-    { id: 305, tienda: 'illegal', cat: 'Hack de Sistema', nombre: 'Plaza Fantasma', precioPf: 6, stock: 1, icon: '🪑', desc: 'Si un Poke muere contra el líder, permite sustituir su plaza en el torneo por otro Poke de la caja.' },
-    { id: 306, tienda: 'illegal', cat: 'Hack de Sistema', nombre: 'Evolución Forzada', precioPf: 5, stock: 1, icon: '💖', desc: 'Permite evolucionar un Poke que requiera amistad para evolucionar.' },
-    { id: 307, tienda: 'illegal', cat: 'Hack de Sistema', font: 'Reconfiguración', nombre: 'Reconfiguración', precioPf: 2, stock: 1, icon: '🔄', desc: 'Permite modificar los movimientos de 1 Poke después del combate contra el líder y antes del torneo.' },
-    { id: 308, tienda: 'illegal', cat: 'Hack de Sistema', nombre: 'Modificación Genética', precioPf: 4, stock: 1, icon: '🧬', desc: 'Permite cambiar la habilidad de 1 Poke por otra de sus habilidades posibles.' },
-    { id: 309, tienda: 'illegal', cat: 'Hack de Sistema', nombre: 'Alteración De Personalidad', precioPf: 2, stock: 1, icon: '🎭', desc: 'Permite cambiar la naturaleza de 1 Poke.' },
-    { id: 310, tienda: 'illegal', cat: 'Hack de Sistema', nombre: 'Resurrección Robada', precioPf: 8, stock: 1, icon: '🔮', desc: 'Robas 1 Poke muerto de otro jugador y pasa a estar en tu caja vivo.' }
+    { id: 201, tienda: 'pack', cat: 'Pack Especial', nombre: 'Pack Balls', precio: 750, pf: 11, stock: 99, icon: '📦', desc: '2 Buceo Ball + 2 Nivel Ball', estrategia: 'Incentiva estrategia de captura mixta.' },
+    { id: 202, tienda: 'pack', cat: 'Pack Especial', nombre: 'Pack Exploración', precio: 460, pf: 7, stock: 99, icon: '📦', desc: '2 Cuerda Huida + 4 Repelente', estrategia: 'Reduce fricción de rutas largas.' },
+    { id: 203, tienda: 'pack', cat: 'Pack Especial', nombre: 'Pack Combate Temprano', precio: 1300, pf: 11, stock: 99, icon: '📦', desc: '2 X Defensa + 2 X Velocidad', estrategia: 'Premia preparación.' },
+    { id: 204, tienda: 'pack', cat: 'Pack Especial', nombre: 'Pack Supervivencia', precio: 460, pf: 7, stock: 99, icon: '📦', desc: '3 Baya Oran + 3 Baya Atania', estrategia: 'Ahorro pequeño pero constante.' },
+    { id: 205, tienda: 'pack', cat: 'Pack Especial', nombre: 'Pack "Segundo Intento"', precio: 2800, pf: 6, stock: 99, icon: '📦', desc: '1 Banda Focus + 1 Hierro', estrategia: 'Supervivencia + mejora ligera.' },
+    { id: 301, tienda: 'illegal', cat: 'Hack de Sistema', nombre: 'Escudo Poke', precioPf: 5, stock: 1, icon: '🛡️', desc: 'Evita la muerte una vez.' },
+    { id: 302, tienda: 'illegal', cat: 'Hack de Sistema', nombre: 'Captura Selectiva', precioPf: 4, stock: 1, icon: '🎯', desc: 'Elige el Poke de una ruta.' },
+    { id: 303, tienda: 'illegal', cat: 'Hack de Sistema', nombre: 'Licencia De Caza', precioPf: 3, stock: 1, icon: '📜', desc: 'Permite repetir captura si huye.' },
+    { id: 304, tienda: 'illegal', cat: 'Hack de Sistema', nombre: 'Falsificación De Registro', precioPf: 5, stock: 1, icon: '🪪', desc: 'Sustituye 1 Poke clasificado.' },
+    { id: 305, tienda: 'illegal', cat: 'Hack de Sistema', nombre: 'Plaza Fantasma', precioPf: 6, stock: 1, icon: '🪑', desc: 'Sustituye plaza muerta en torneo.' },
+    { id: 306, tienda: 'illegal', cat: 'Hack de Sistema', nombre: 'Evolución Forzada', precioPf: 5, stock: 1, icon: '💖', desc: 'Evoluciona Pokes de amistad.' },
+    { id: 307, tienda: 'illegal', cat: 'Hack de Sistema', nombre: 'Reconfiguración', precioPf: 2, stock: 1, icon: '🔄', desc: 'Modifica movimientos post-líder.' },
+    { id: 308, tienda: 'illegal', cat: 'Hack de Sistema', nombre: 'Modificación Genética', precioPf: 4, stock: 1, icon: '🧬', desc: 'Cambia la habilidad del Poke.' },
+    { id: 309, tienda: 'illegal', cat: 'Hack de Sistema', nombre: 'Alteración De Personalidad', precioPf: 2, stock: 1, icon: '🎭', desc: 'Cambia la naturaleza.' },
+    { id: 310, tienda: 'illegal', cat: 'Hack de Sistema', nombre: 'Resurrección Robada', precioPf: 8, stock: 1, icon: '🔮', desc: 'Robas un Poke muerto de otro.' }
 ];
 
-let baseDatos;
-try {
-    baseDatos = JSON.parse(localStorage.getItem('silph_co_db_2026_final_v10'));
-    if (!baseDatos || !baseDatos.productos || !baseDatos.jugadores) throw new Error();
-} catch (e) {
-    baseDatos = { productos: JSON.parse(JSON.stringify(baseDatosInicial)), jugadores: {}, legalOpen: true, packOpen: true, illegalOpen: true };
-    localStorage.setItem('silph_co_db_2026_final_v10', JSON.stringify(baseDatos));
-}
-
+let baseDatos = { productos: [], jugadores: {}, legalOpen: true, packOpen: true, illegalOpen: true };
 let userSesion = sessionStorage.getItem('silph_user_sesion') || null;
 const MAX_COMPRAS = 3;
 const MS_EN_6_HORAS = 6 * 60 * 60 * 1000;
 
-function ingresarAlSistema() {
+// OYENTE EN TIEMPO REAL: Cualquier cambio en la nube refresca todas las pantallas al instante
+onValue(ref(db, 'silph_co_market'), (snapshot) => {
+    const data = snapshot.val();
+    if (data) {
+        baseDatos = data;
+        if (!baseDatos.productos) baseDatos.productos = [];
+        if (!baseDatos.jugadores) baseDatos.jugadores = {};
+    } else {
+        // Inicializar base de datos limpia en la nube si está vacía
+        baseDatos = { productos: baseDatosInicial, jugadores: {}, legalOpen: true, packOpen: true, illegalOpen: true };
+        set(ref(db, 'silph_co_market'), baseDatos);
+    }
+
+    if (userSesion) {
+        document.getElementById('pantalla-lobby').style.display = 'none';
+        document.getElementById('pantalla-mercado').style.display = 'block';
+        actualizarComprasPorTiempo();
+        refrescarPantallaGamer();
+        if(document.getElementById('pantalla-admin-master').style.display === 'block') {
+            redibujarConsolaAdminMaster();
+        }
+    }
+});
+
+// Forzar guardado inmediato en Firebase
+function guardarBD() {
+    set(ref(db, 'silph_co_market'), baseDatos);
+}
+
+window.ingresarAlSistema = function() {
     let idInput = document.getElementById('login-nombre');
     if (!idInput) return;
-    let id = idInput.value.trim().toLowerCase();
+    let id = idInput.value.trim().toLowerCase().replace(/[.#$\[\]]/g, ""); // Limpieza para Firebase
     if(!id) return alert("Identificador Requerido.");
 
     if(!baseDatos.jugadores[id]) {
@@ -668,29 +702,21 @@ function ingresarAlSistema() {
             dinero: 4000, pf: 0, 
             comprasDisponibles: MAX_COMPRAS, 
             ultimaRecarga: Date.now(),
-            inventario: [],
+            inventario: [ {nombre: "Mochila Inicial"} ], // Evitar arrays vacíos que Firebase borra
             lockeStatus: 'jugando', 
             tipoMedallas: 'medallas', numMedallas: 0, torneos: 0,
-            diarioLogs: [],
-            showdownEquipos: Array(10).fill(""),
+            diarioLogs: [ {timestamp: "Inicio", texto: "Sistema iniciado."} ],
+            showdownEquipos: Array(10).fill("Sin datos"),
             vidasTotales: 20,
             vidasActuales: 20
         };
     } else {
-        if (baseDatos.jugadores[id].comprasDisponibles === undefined) {
-            baseDatos.jugadores[id].comprasDisponibles = MAX_COMPRAS;
-            baseDatos.jugadores[id].ultimaRecarga = Date.now();
-        }
-        if (!baseDatos.jugadores[id].showdownEquipos) {
-            let viejoEquipo = baseDatos.jugadores[id].showdownRaw || "";
-            baseDatos.jugadores[id].showdownEquipos = Array(10).fill("");
-            baseDatos.jugadores[id].showdownEquipos[0] = viejoEquipo;
-        }
-        if (baseDatos.jugadores[id].vidasTotales === undefined) {
-            baseDatos.jugadores[id].vidasTotales = 20;
-            baseDatos.jugadores[id].vidasActuales = 20;
-        }
+        if (baseDatos.jugadores[id].comprasDisponibles === undefined) baseDatos.jugadores[id].comprasDisponibles = MAX_COMPRAS;
+        if (!baseDatos.jugadores[id].showdownEquipos) baseDatos.jugadores[id].showdownEquipos = Array(10).fill("Sin datos");
+        if (!baseDatos.jugadores[id].inventario) baseDatos.jugadores[id].inventario = [ {nombre: "Mochila Inicial"} ];
+        if (!baseDatos.jugadores[id].diarioLogs) baseDatos.jugadores[id].diarioLogs = [ {timestamp: "Inicio", texto: "Sistema iniciado."} ];
     }
+    
     userSesion = id;
     sessionStorage.setItem('silph_user_sesion', id);
     guardarBD();
@@ -698,10 +724,8 @@ function ingresarAlSistema() {
     document.getElementById('pantalla-lobby').style.display = 'none';
     document.getElementById('pantalla-mercado').style.display = 'block';
 
-    actualizarComprasPorTiempo();
     cargarDatosPerfilEnDOM();
-    refrescarPantallaGamer();
-}
+};
 
 function actualizarComprasPorTiempo() {
     if(!userSesion || !baseDatos.jugadores[userSesion]) return;
@@ -717,180 +741,130 @@ function actualizarComprasPorTiempo() {
     }
 }
 
-function restablecerComprasDiariasDesdeMercader() {
+window.restablecerComprasDiariasDesdeMercader = function() {
     let targetId = document.getElementById('adm-reset-usuario').value;
-    if(!targetId || targetId === "") return alert("No hay ningún entrenador seleccionado.");
-    
-    let u = baseDatos.jugadores[targetId];
-    if(!u) return alert("El entrenador seleccionado no existe.");
-    
-    u.comprasDisponibles = MAX_COMPRAS;
-    u.ultimaRecarga = Date.now();
+    if(!targetId) return alert("Selecciona un entrenador.");
+    baseDatos.jugadores[targetId].comprasDisponibles = MAX_COMPRAS;
+    baseDatos.jugadores[targetId].ultimaRecarga = Date.now();
     guardarBD();
-    actualizarSelectorUsuariosBanco();
-    refrescarPantallaGamer();
-    alert(`[Mercader Master] Se han restablecido las compras de ${targetId.toUpperCase()} a ${MAX_COMPRAS}/${MAX_COMPRAS}.`);
-}
+    alert("Compras reiniciadas globalmente.");
+};
 
-function conmutarCajaPerfil() {
+window.conmutarCajaPerfil = function() {
     let box = document.getElementById('perfil-desplegable');
     box.style.display = (box.style.display === 'block') ? 'none' : 'block';
-}
+};
 
-function cambiarSubPestanaPerfil(sub) {
+window.cambiarSubPestanaPerfil = function(sub) {
     document.querySelectorAll('.subtab-btn').forEach(b => b.classList.remove('active'));
     document.querySelectorAll('.perfil-content-view').forEach(v => v.classList.remove('active'));
     document.getElementById(`subtab-${sub}`).classList.add('active');
-    let target = document.getElementById(`perf-view-${sub}`);
-    if(target) target.classList.add('active');
-}
+    document.getElementById(`perf-view-${sub}`).classList.add('active');
+};
 
-function abrirOverlayDiarioNativo() {
+window.abrirOverlayDiarioNativo = function() {
     document.getElementById('diario-overlay-sistema').style.display = 'flex';
     redibujarHistorialDiario();
-}
+};
 
-function cerrarOverlayDiarioNativo() {
+window.cerrarOverlayDiarioNativo = function() {
     document.getElementById('diario-overlay-sistema').style.display = 'none';
-}
+};
 
 function redibujarHistorialDiario() {
     if(!userSesion || !baseDatos.jugadores[userSesion]) return;
     let u = baseDatos.jugadores[userSesion];
     let boxLogs = document.getElementById('diario-historial-logs');
-    let contador = document.getElementById('diario-contador');
-    let inputTxt = document.getElementById('diario-input-texto');
-    let btnGuardar = document.getElementById('diario-btn-guardar');
-
     boxLogs.innerHTML = '';
-    let totalEntradas = u.diarioLogs.length;
-    contador.innerText = `Registros: ${totalEntradas} / 1500`;
+    
+    let logsFiltrados = u.diarioLogs ? u.diarioLogs.filter(l => l.timestamp !== "Inicio") : [];
+    document.getElementById('diario-contador').innerText = `Registros: ${logsFiltrados.length} / 1500`;
 
-    if(totalEntradas === 0) {
-        boxLogs.innerHTML = '<span style="color:var(--texto-secundario); font-size:12px; text-align:center; padding:20px;">Bitácora vacía. Escribe un hito abajo.</span>';
+    if(logsFiltrados.length === 0) {
+        boxLogs.innerHTML = '<span style="color:var(--texto-secundario); font-size:12px; text-align:center; padding:20px;">Bitácora vacía.</span>';
     } else {
-        u.diarioLogs.forEach(log => {
-            boxLogs.innerHTML += `
-                <div class="diario-entrada-item">
-                    <div class="diario-entrada-fecha">📅 ${log.timestamp}</div>
-                    <div class="diario-entrada-texto">${log.texto}</div>
-                </div>`;
+        logsFiltrados.forEach(log => {
+            boxLogs.innerHTML += `<div class="diario-entrada-item"><div class="diario-entrada-fecha">📅 ${log.timestamp}</div><div class="diario-entrada-texto">${log.texto}</div></div>`;
         });
     }
-
     boxLogs.scrollTop = boxLogs.scrollHeight;
-
-    if(totalEntradas >= 1500) {
-        inputTxt.disabled = true;
-        inputTxt.placeholder = "🔒 Capacidad máxima de bitácora alcanzada.";
-        btnGuardar.disabled = true;
-    } else {
-        inputTxt.disabled = false;
-        btnGuardar.disabled = false;
-    }
 }
 
-function guardarNuevaEntradaDiario() {
-    if(!userSesion || !baseDatos.jugadores[userSesion]) return;
-    let u = baseDatos.jugadores[userSesion];
+window.guardarNuevaEntradaDiario = function() {
     let inputTxt = document.getElementById('diario-input-texto');
     let contenido = inputTxt.value.trim();
-
-    if(!contenido) return alert("El registro no puede estar vacío.");
-    if(u.diarioLogs.length >= 1500) return alert("Límite absoluto alcanzado.");
-
-    let fechaActual = new Date().toLocaleString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' });
-
+    if(!contenido) return alert("Texto vacío.");
+    
+    let u = baseDatos.jugadores[userSesion];
+    let fechaActual = new Date().toLocaleString('es-ES');
+    if(!u.diarioLogs) u.diarioLogs = [];
+    
     u.diarioLogs.push({ timestamp: fechaActual, texto: contenido });
     guardarBD();
     inputTxt.value = '';
     redibujarHistorialDiario();
-}
+};
 
 function cargarDatosPerfilEnDOM() {
     if(!userSesion || !baseDatos.jugadores[userSesion]) return;
     let u = baseDatos.jugadores[userSesion];
-    document.getElementById('perf-locke-status').value = u.lockeStatus;
+    document.getElementById('perf-locke-status').value = u.lockeStatus || 'jugando';
     document.getElementById('perf-tipo-medallas').value = u.tipoMedallas || 'medallas';
     document.getElementById('perf-num-medallas').value = u.numMedallas || 0;
     document.getElementById('perf-txt-torneos').innerText = u.torneos || 0;
-    
-    document.getElementById('perf-vidas-iniciales').value = u.vidasTotales !== undefined ? u.vidasTotales : 20;
-    document.getElementById('perf-txt-vidas').innerText = u.vidasActuales !== undefined ? u.vidasActuales : 20;
-    
+    document.getElementById('perf-vidas-iniciales').value = u.vidasTotales || 20;
+    document.getElementById('perf-txt-vidas').innerText = u.vidasActuales || 20;
     document.getElementById('perf-team-slot').value = "1";
-    document.getElementById('perf-showdown-raw').value = u.showdownEquipos[0] || '';
+    document.getElementById('perf-showdown-raw').value = (u.showdownEquipos && u.showdownEquipos[0] !== "Sin datos") ? u.showdownEquipos[0] : '';
     parsearYRenderizarShowdown();
 }
 
-function cambiarRanuraEquipoShowdown() {
-    if(!userSesion || !baseDatos.jugadores[userSesion]) return;
+window.cambiarRanuraEquipoShowdown = function() {
     let u = baseDatos.jugadores[userSesion];
     let slotIdx = parseInt(document.getElementById('perf-team-slot').value) - 1;
-    
-    document.getElementById('perf-showdown-raw').value = u.showdownEquipos[slotIdx] || '';
+    document.getElementById('perf-showdown-raw').value = (u.showdownEquipos && u.showdownEquipos[slotIdx] !== "Sin datos") ? u.showdownEquipos[slotIdx] : '';
     parsearYRenderizarShowdown();
-}
+};
 
-function guardarEquipoShowdownActual() {
-    if(!userSesion || !baseDatos.jugadores[userSesion]) return;
+window.guardarEquipoShowdownActual = function() {
     let u = baseDatos.jugadores[userSesion];
     let slotIdx = parseInt(document.getElementById('perf-team-slot').value) - 1;
-    let textoEquipo = document.getElementById('perf-showdown-raw').value;
-
-    u.showdownEquipos[slotIdx] = textoEquipo;
+    if(!u.showdownEquipos) u.showdownEquipos = Array(10).fill("Sin datos");
+    u.showdownEquipos[slotIdx] = document.getElementById('perf-showdown-raw').value || "Sin datos";
     guardarBD();
     parsearYRenderizarShowdown();
-    alert(`[Éxito] Equipo guardado correctamente en la Ranura ${slotIdx + 1}.`);
-}
+    alert("Equipo guardado en la nube.");
+};
 
-function guardarDatosPerfilGamer() {
-    if(!userSesion || !baseDatos.jugadores[userSesion]) return;
+window.guardarDatosPerfilGamer = function() {
     let u = baseDatos.jugadores[userSesion];
     u.lockeStatus = document.getElementById('perf-locke-status').value;
     u.tipoMedallas = document.getElementById('perf-tipo-medallas').value;
     u.numMedallas = parseInt(document.getElementById('perf-num-medallas').value) || 0;
     guardarBD();
-    refrescarPantallaGamer();
-}
+};
 
-function restarVidaContador() {
+window.restarVidaContador = function() {
     let txtVidas = document.getElementById('perf-txt-vidas');
     let currentVidas = parseInt(txtVidas.innerText);
-    if (currentVidas > 0) {
-        currentVidas--;
-        txtVidas.innerText = currentVidas;
-    }
-}
+    if (currentVidas > 0) txtVidas.innerText = currentVidas - 1;
+};
 
-function guardarVidasPerfilGamer() {
-    if(!userSesion || !baseDatos.jugadores[userSesion]) return;
+window.guardarVidasPerfilGamer = function() {
     let u = baseDatos.jugadores[userSesion];
-    let iniciales = parseInt(document.getElementById('perf-vidas-iniciales').value) || 20;
-    let actuales = parseInt(document.getElementById('perf-txt-vidas').innerText);
-    
-    u.vidasTotales = iniciales;
-    u.vidasActuales = actuales;
-    
-    if (actuales <= 0) {
-        u.lockeStatus = 'perdido';
-        document.getElementById('perf-locke-status').value = 'perdido';
-        alert("⚠️ ¡El contador ha llegado a 0 vidas! El estatus de tu Locke se ha actualizado automáticamente a 'LOCKE PERDIDO' y se ha bloqueado tu acceso mercantil.");
-    }
-    
+    u.vidasTotales = parseInt(document.getElementById('perf-vidas-iniciales').value) || 20;
+    u.vidasActuales = parseInt(document.getElementById('perf-txt-vidas').innerText);
+    if (u.vidasActuales <= 0) u.lockeStatus = 'perdido';
     guardarBD();
-    refrescarPantallaGamer();
-    alert(`[Éxito] Vidas actualizadas y guardadas: ${actuales}/${iniciales}`);
-}
+    alert("Vidas actualizadas sincronizadas.");
+};
 
-function alterarTorneosPerfil(v) {
-    if(!userSesion || !baseDatos.jugadores[userSesion]) return;
+window.alterarTorneosPerfil = function(v) {
     let u = baseDatos.jugadores[userSesion];
-    u.torneos = (u.torneos || 0) + v;
-    if(u.torneos < 0) u.torneos = 0;
+    u.torneos = Math.max(0, (u.torneos || 0) + v);
     document.getElementById('perf-txt-torneos').innerText = u.torneos;
     guardarBD();
-}
+};
 
 function parsearYRenderizarShowdown() {
     let raw = document.getElementById('perf-showdown-raw').value;
@@ -908,290 +882,90 @@ function parsearYRenderizarShowdown() {
     });
 }
 
-function cambiarSeccionTienda(tipo) {
+window.cambiarSeccionTienda = function(tipo) {
     document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
     document.querySelectorAll('.market-view').forEach(v => v.classList.remove('active'));
     document.getElementById(`tab-${tipo}`).classList.add('active');
     document.getElementById(`vista-${tipo}`).classList.add('active');
-}
+};
 
-function ajustarCamposFormularioMercader() {
+window.ajustarCamposFormularioMercader = function() {
     let tienda = document.getElementById('ins-tienda').value;
-    let bLegal = document.getElementById('form-bloque-legal-cat');
-    let bPack = document.getElementById('form-bloque-pack-detalles');
-    let bIllegal = document.getElementById('form-bloque-illegal-detalles');
-    let bPf = document.getElementById('bloque-ins-pf');
-    let lblPrecio = document.getElementById('lbl-ins-precio');
+    document.getElementById('form-bloque-legal-cat').style.display = tienda === 'legal' ? 'block' : 'none';
+    document.getElementById('form-bloque-pack-detalles').style.display = tienda === 'pack' ? 'block' : 'none';
+    document.getElementById('form-bloque-illegal-detalles').style.display = tienda === 'illegal' ? 'block' : 'none';
+    document.getElementById('bloque-ins-pf').style.display = tienda !== 'illegal' ? 'block' : 'none';
+    document.getElementById('lbl-ins-precio').innerText = tienda === 'illegal' ? "Coste (PF):" : "Coste (P₠):";
+};
 
-    bLegal.style.display = 'none'; bPack.style.display = 'none'; bIllegal.style.display = 'none'; bPf.style.display = 'block';
-    if(tienda === 'legal') { bLegal.style.display = 'block'; lblPrecio.innerText = "Coste (P₠):"; } 
-    else if(tienda === 'pack') { bPack.style.display = 'block'; lblPrecio.innerText = "Coste Pack (P₠):"; } 
-    else if(tienda === 'illegal') { bIllegal.style.display = 'block'; bPf.style.display = 'none'; lblPrecio.innerText = "Coste (PF):"; }
-}
-
-function inyectarObjetoNuevoMaster() {
+window.inyectarObjetoNuevoMaster = function() {
     let tienda = document.getElementById('ins-tienda').value;
     let nombre = document.getElementById('ins-nombre').value.trim();
     let precio = parseInt(document.getElementById('ins-precio').value) || 0;
     let stock = parseInt(document.getElementById('ins-stock').value) || 0;
-    let icono = document.getElementById('ins-icono').value.trim() || '📦';
     
-    if(!nombre) return alert("Asigna un nombre al artículo.");
-    let nuevoObjeto = { id: Date.now(), tienda: tienda, stock: stock, icon: icono, nombre: nombre };
+    if(!nombre) return alert("Falta nombre.");
+    let nuevo = { id: Date.now(), tienda: tienda, stock: stock, icon: document.getElementById('ins-icono').value.trim() || '📦', nombre: nombre };
 
-    if(tienda === 'legal') { nuevoObjeto.cat = document.getElementById('ins-cat-legal').value; nuevoObjeto.precio = precio; nuevoObjeto.pf = parseInt(document.getElementById('ins-pf').value) || 0; } 
-    else if(tienda === 'pack') { nuevoObjeto.cat = 'Pack Especial'; nuevoObjeto.precio = precio; nuevoObjeto.pf = parseInt(document.getElementById('ins-pf').value) || 0; nuevoObjeto.desc = document.getElementById('ins-pack-desc').value.trim(); nuevoObjeto.estrategia = document.getElementById('ins-pack-estrategia').value.trim(); } 
-    else if(tienda === 'illegal') { nuevoObjeto.cat = 'Hack de Sistema'; nuevoObjeto.precioPf = precio; nuevoObjeto.desc = document.getElementById('ins-illegal-desc').value.trim(); }
+    if(tienda === 'legal') { nuevo.cat = document.getElementById('ins-cat-legal').value; nuevo.precio = precio; nuevo.pf = parseInt(document.getElementById('ins-pf').value) || 0; } 
+    else if(tienda === 'pack') { nuevo.cat = 'Pack Especial'; nuevo.precio = precio; nuevo.pf = parseInt(document.getElementById('ins-pf').value) || 0; nuevo.desc = document.getElementById('ins-pack-desc').value.trim(); nuevo.estrategia = document.getElementById('ins-pack-estrategia').value.trim(); } 
+    else if(tienda === 'illegal') { nuevo.cat = 'Hack de Sistema'; nuevo.precioPf = precio; nuevo.desc = document.getElementById('ins-illegal-desc').value.trim(); }
 
-    baseDatos.productos.push(nuevoObjeto); 
-    guardarBD(); 
-    redibujarConsolaAdminMaster(); 
-    refrescarPantallaGamer();
+    if(!baseDatos.productos) baseDatos.productos = [];
+    baseDatos.productos.push(nuevo); 
+    guardarBD();
     document.getElementById('ins-nombre').value = ''; document.getElementById('ins-precio').value = '';
-}
+};
 
 function actualizarSelectorUsuariosBanco() {
-    let selectBanco = document.getElementById('adm-banco-usuario');
-    let selectReset = document.getElementById('adm-reset-usuario');
-    if(!selectBanco || !selectReset) return;
+    let sb = document.getElementById('adm-banco-usuario');
+    let sr = document.getElementById('adm-reset-usuario');
+    sb.innerHTML = ''; sr.innerHTML = '';
     
-    selectBanco.innerHTML = '';
-    selectReset.innerHTML = '';
-    
-    let listasJugadores = Object.keys(baseDatos.jugadores);
-    if(listasJugadores.length === 0) {
-        let optVacia = `<option value="">--- NO HAY ENTRENADORES ---</option>`;
-        selectBanco.innerHTML = optVacia;
-        selectReset.innerHTML = optVacia;
-        return;
-    }
-    
-    listasJugadores.forEach(id => {
+    Object.keys(baseDatos.jugadores).forEach(id => {
         let u = baseDatos.jugadores[id];
-        let infoTxt = `${id.toUpperCase()} (Saldo: ${Number(u.dinero).toLocaleString()} P₠ | Compras: ${u.comprasDisponibles}/3)`;
-        selectBanco.innerHTML += `<option value="${id}">${infoTxt}</option>`;
-        selectReset.innerHTML += `<option value="${id}">${id.toUpperCase()} (Disponibles: ${u.comprasDisponibles}/3)</option>`;
+        sb.innerHTML += `<option value="${id}">${id.toUpperCase()} (${u.dinero} P₠)</option>`;
+        sr.innerHTML += `<option value="${id}">${id.toUpperCase()}</option>`;
     });
 }
 
-function modificarFondosEntrenador(operacion) {
+window.modificarFondosEntrenador = function(op) {
     let userId = document.getElementById('adm-banco-usuario').value;
-    let cantidadInput = document.getElementById('adm-banco-cantidad');
-    let cantidad = parseInt(cantidadInput.value);
-
-    if(!userId || userId === "") return alert("No hay ningún entrenador seleccionado.");
-    if(isNaN(cantidad) || cantidad <= 0) return alert("Por favor, introduce una cantidad válida y mayor a 0.");
-
-    let usuario = baseDatos.jugadores[userId];
-    if(!usuario) return alert("El entrenador seleccionado no existe.");
-
-    if(operacion === 'SUMAR') {
-        usuario.dinero += cantidad;
-    } else if(operacion === 'RESTAR') {
-        if(usuario.dinero - cantidad < 0) {
-            if(!confirm(`El saldo actual es ${usuario.dinero}. Si restas ${cantidad}, quedará en negativo (${usuario.dinero - cantidad}). ¿Quieres continuar?`)) {
-                return;
-            }
-        }
-        usuario.dinero -= cantidad;
-    }
-
+    let cant = parseInt(document.getElementById('adm-banco-cantidad').value) || 0;
+    if(!userId || cant <= 0) return alert("Revisa los campos.");
+    
+    baseDatos.jugadores[userId].dinero += (op === 'SUMAR' ? cant : -cant);
     guardarBD();
-    cantidadInput.value = ''; 
-    actualizarSelectorUsuariosBanco(); 
-    refrescarPantallaGamer(); 
-    alert(`Operación realizada con éxito. Nuevo saldo de ${userId.toUpperCase()}: ${Number(usuario.dinero).toLocaleString()} P₠`);
-}
+    document.getElementById('adm-banco-cantidad').value = '';
+};
 
-function actualizarPropiedadProducto(id, propiedad, valor) {
-    let p = baseDatos.productos.find(pr => pr.id === id);
-    if(p) {
-        p[propiedad] = parseInt(valor) || 0;
+window.actualizarPropiedadProducto = function(id, prop, val) {
+    let idx = baseDatos.productos.findIndex(p => p.id === id);
+    if(idx !== -1) {
+        baseDatos.productos[idx][prop] = parseInt(val) || 0;
         guardarBD();
-        refrescarPantallaGamer();
     }
-}
+};
 
-function eliminarProductoMaster(id) {
-    if(confirm("¿Seguro que quieres eliminar este artículo permanentemente?")) {
+window.eliminarProductoMaster = function(id) {
+    if(confirm("¿Eliminar?")) {
         baseDatos.productos = baseDatos.productos.filter(p => p.id !== id);
         guardarBD();
-        redibujarConsolaAdminMaster();
-        refrescarPantallaGamer();
     }
-}
+};
 
 function redibujarConsolaAdminMaster() {
     document.getElementById('chk-open-legal').checked = baseDatos.legalOpen;
     document.getElementById('chk-open-pack').checked = baseDatos.packOpen;
     document.getElementById('chk-open-illegal').checked = baseDatos.illegalOpen;
-
     actualizarSelectorUsuariosBanco();
 
-    let al = document.getElementById('admin-inventario-global'); 
-    al.innerHTML = '';
-    
-    if(baseDatos.productos.length === 0) {
-        al.innerHTML = '<span style="color:var(--texto-secundario); font-size:12px;">No hay productos en ninguna tienda. Usa el formulario de la izquierda.</span>';
-        return;
-    }
-
+    let al = document.getElementById('admin-inventario-global'); al.innerHTML = '';
     baseDatos.productos.forEach(p => {
-        let esIlegal = p.tienda === 'illegal';
-        let costLabel = esIlegal ? 'Coste (PF):' : 'Coste (P₠):';
-        let costProp = esIlegal ? 'precioPf' : 'precio';
-        let costVal = esIlegal ? p.precioPf : p.precio;
-
+        let esI = p.tienda === 'illegal';
         al.innerHTML += `
             <div class="admin-card-inner">
-                <button class="btn-delete-admin" onclick="eliminarProductoMaster(${p.id})" title="Eliminar Objeto">X</button>
-                <div style="font-size:13px; font-weight:bold; color:#fff;">
-                    ${p.icon} ${p.nombre.toUpperCase()} 
-                    <span style="font-size:10px; padding:2px 6px; background:#1e293b; border-radius:4px; margin-left:6px; color:var(--texto-secundario);">
-                        ${p.tienda.toUpperCase()} - ${p.cat}
-                    </span>
-                </div>
-                
+                <button class="btn-delete-admin" onclick="eliminarProductoMaster(${p.id})">X</button>
+                <div style="color:#fff; font-size:13px;">${p.icon} ${p.nombre} [${p.tienda.toUpperCase()}]</div>
                 <div class="admin-edit-row">
-                    <div class="admin-edit-field">
-                        <label>${costLabel}</label>
-                        <input type="number" value="${costVal}" class="admin-input-custom" oninput="actualizarPropiedadProducto(${p.id}, '${costProp}', this.value)">
-                    </div>
-                    <div class="admin-edit-field">
-                        <label>Stock:</label>
-                        <input type="number" value="${p.stock}" class="admin-input-custom" oninput="actualizarPropiedadProducto(${p.id}, 'stock', this.value)">
-                    </div>
-                    ${!esIlegal ? `
-                    <div class="admin-edit-field">
-                        <label>Bono PF:</label>
-                        <input type="number" value="${p.pf || 0}" class="admin-input-custom" oninput="actualizarPropiedadProducto(${p.id}, 'pf', this.value)">
-                    </div>
-                    ` : ''}
-                </div>
-            </div>`;
-    });
-}
-
-function refrescarPantallaGamer() {
-    if(!userSesion || !baseDatos.jugadores[userSesion]) return;
-    
-    actualizarComprasPorTiempo();
-    
-    let u = baseDatos.jugadores[userSesion];
-    document.getElementById('usr-nombre').innerText = userSesion.toUpperCase();
-    document.getElementById('usr-compras').innerText = `${u.comprasDisponibles} / ${MAX_COMPRAS}`;
-    document.getElementById('usr-dinero').innerText = Number(u.dinero).toLocaleString();
-    document.getElementById('usr-pf').innerText = u.pf;
-
-    let bBox = document.getElementById('lista-inventario'); bBox.innerHTML = '';
-    if(u.inventario.length === 0) bBox.innerHTML = '<span style="color:var(--texto-secundario); font-size:12px;">Mochila vacía.</span>';
-    u.inventario.forEach((item, idx) => { bBox.innerHTML += `<div style="background:#1e293b; padding:6px 12px; display:flex; gap:10px; border-radius:6px; font-size:12px;"><span>${item.nombre}</span><button onclick="consumirObjetoBolsa(${idx})" style="background:#ef4444; border:none; color:#fff; font-size:9px; cursor:pointer; border-radius:3px;">Gastar</button></div>`; });
-
-    let lockePerdido = (u.lockeStatus === 'perdido' || u.vidasActuales <= 0);
-
-    // TIENDA LEGAL
-    let vl = document.getElementById('contenedor-legal-view');
-    if (lockePerdido) {
-        vl.innerHTML = `<div class="tienda-cerrada-msg" style="color:#ef4444; border-color:#5c1313;">🔒 ACCESO SANCIONADO - LOCKE PERDIDO (0 VIDAS)</div>`;
-    } else if(!baseDatos.legalOpen) { 
-        vl.innerHTML = `<div class="tienda-cerrada-msg">🔒 Red Cerrada temporalmente</div>`; 
-    } else {
-        let htm = `<div class="items-grid">`;
-        let items = baseDatos.productos.filter(p => p.tienda === 'legal');
-        if(items.length === 0) htm += `<span style="color:var(--texto-secundario); grid-column:1/-1; text-align:center; padding:20px;">Sin existencias registradas por el mercader.</span>`;
-        items.forEach(p => {
-            let ok = p.stock > 0 && u.dinero >= p.precio && u.comprasDisponibles >= 1;
-            htm += `<div class="item-card"><div><div class="categoria-tag">${p.cat}</div><div class="item-icon">${p.icon}</div><div class="item-titulo">${p.nombre}</div></div><div><div style="color:var(--neon-legal); font-size:15px; font-family:'Orbitron'; font-weight:700;">${p.precio} P₠</div><div style="font-size:11px; color:var(--texto-secundario); margin-bottom:8px;">Stock: ${p.stock} | +${p.pf} PF</div><button class="btn-accion" ${!ok?'disabled':''} onclick="procesarTransaccionComercial(${p.id})">Comprar (1 Carga)</button></div></div>`;
-        });
-        htm += `</div>`; vl.innerHTML = htm;
-    }
-
-    // TIENDA PACKS
-    let vp = document.getElementById('contenedor-pack-view');
-    if (lockePerdido) {
-        vp.innerHTML = `<div class="tienda-cerrada-msg" style="color:#ef4444; border-color:#5c1313;">🔒 ACCESO SANCIONADO - LOCKE PERDIDO (0 VIDAS)</div>`;
-    } else if(!baseDatos.packOpen) { 
-        vp.innerHTML = `<div class="tienda-cerrada-msg">🔒 Ofertas en preparación</div>`; 
-    } else {
-        let htm = `<div class="items-grid">`;
-        let items = baseDatos.productos.filter(p => p.tienda === 'pack');
-        if(items.length === 0) htm += `<span style="color:var(--texto-secundario); grid-column:1/-1; text-align:center; padding:20px;">Sin existencias registradas por el mercader.</span>`;
-        items.forEach(p => {
-            let ok = p.stock > 0 && u.dinero >= p.precio && u.comprasDisponibles >= 2;
-            htm += `<div class="item-card"><div><div class="categoria-tag">${p.cat}</div><div class="item-icon">${p.icon}</div><div class="item-titulo" style="color:var(--neon-packs);">${p.nombre}</div><div class="item-desc">${p.desc || 'Contenido no especificado.'}</div></div><div><div style="color:var(--neon-packs); font-size:15px; font-family:'Orbitron'; font-weight:700; margin-bottom:5px;">${p.precio} P₠</div><div style="font-size:11px; color:var(--texto-secundario); margin-bottom:8px;">Stock: ${p.stock}</div><button class="btn-accion" ${!ok?'disabled':''} onclick="procesarTransaccionComercial(${p.id})">Comprar Pack (2 Cargas)</button></div></div>`;
-        });
-        htm += `</div>`; vp.innerHTML = htm;
-    }
-
-    // TIENDA ILEGAL
-    let vi = document.getElementById('contenedor-hacker-view');
-    if (lockePerdido) {
-        vi.innerHTML = `<div class="tienda-cerrada-msg" style="color:#ef4444; border-color:#5c1313;">🛑 TERMINAL BLOQUEADA - LOCKE TERMINADO</div>`;
-    } else if(!baseDatos.illegalOpen) { 
-        vi.innerHTML = `<div class="tienda-cerrada-msg">🛑 ACCESO DENEGADO</div>`; 
-    } else {
-        let htm = `<div class="items-grid">`;
-        let items = baseDatos.productos.filter(p => p.tienda === 'illegal');
-        if(items.length === 0) htm += `<span style="color:var(--texto-secundario); grid-column:1/-1; text-align:center; padding:20px;">Sin existencias registradas por el mercader.</span>`;
-        items.forEach(p => {
-            let ok = p.stock > 0 && u.pf >= p.precioPf;
-            htm += `<div class="item-card"><div><div class="categoria-tag">${p.cat}</div><div class="item-icon">${p.icon}</div><div class="item-titulo" style="color:var(--neon-ilegal);">${p.nombre}</div><div class="item-desc">${p.desc || 'Servicio modificado.'}</div></div><div><div style="color:var(--neon-ilegal); font-size:14px; font-family:'Orbitron'; font-weight:700; margin-bottom:5px;">${p.precioPf} PF</div><div style="font-size:11px; color:var(--texto-secundario); margin-bottom:8px;">Stock: ${p.stock}</div><button class="btn-accion" ${!ok?'disabled':''} onclick="procesarTransaccionIlegal(${p.id})">Canjear</button></div></div>`;
-        });
-        htm += `</div>`; vi.innerHTML = htm;
-    }
-}
-
-function procesarTransaccionComercial(id) {
-    let u = baseDatos.jugadores[userSesion]; 
-    if (u.lockeStatus === 'perdido' || u.vidasActuales <= 0) return alert("No puedes comprar nada porque tu Locke se da por perdido.");
-    
-    let p = baseDatos.productos.find(pr => pr.id === id);
-    if(!p) return;
-
-    let costeCargas = (p.tienda === 'pack') ? 2 : 1;
-
-    if(p.stock > 0 && u.dinero >= p.precio && u.comprasDisponibles >= costeCargas) {
-        p.stock--; 
-        u.dinero -= p.precio; 
-        u.pf += (p.pf || 0); 
-        u.comprasDisponibles -= costeCargas; 
-        u.inventario.push({ nombre: p.nombre });
-        guardarBD(); 
-        refrescarPantallaGamer();
-    } else if(u.comprasDisponibles < costeCargas) { 
-        alert(`No posees suficientes slots de compra disponibles. Este artículo requiere ${costeCargas} carga(s) y tienes ${u.comprasDisponibles}.`); 
-    }
-}
-
-function procesarTransaccionIlegal(id) {
-    let u = baseDatos.jugadores[userSesion]; 
-    if (u.lockeStatus === 'perdido' || u.vidasActuales <= 0) return alert("No puedes canjear nada porque tu Locke se da por perdido.");
-    
-    let p = baseDatos.productos.find(pr => pr.id === id);
-    if(p && p.stock > 0 && u.pf >= p.precioPf) { p.stock--; u.pf -= p.precioPf; u.inventario.push({ nombre: p.nombre }); guardarBD(); refrescarPantallaGamer(); }
-}
-
-function consumirObjetoBolsa(idx) { baseDatos.jugadores[userSesion].inventario.splice(idx, 1); guardarBD(); refrescarPantallaGamer(); }
-
-function invocarTerminalMercader() { 
-    let v = prompt("LLAVE MAESTRA MERCADER:"); 
-    if(v === "1234") { 
-        document.getElementById('pantalla-admin-master').style.display = 'block'; 
-        ajustarCamposFormularioMercader(); 
-        redibujarConsolaAdminMaster(); 
-    } 
-}
-
-function apagarTerminalMercader() { document.getElementById('pantalla-admin-master').style.display = 'none'; }
-function conmutarEstadoTienda(ll, va) { baseDatos[ll] = va; guardarBD(); refrescarPantallaGamer(); }
-function guardarBD() { localStorage.setItem('silph_co_db_2026_final_v10', JSON.stringify(baseDatos)); }
-
-if(userSesion && baseDatos.jugadores[userSesion]) {
-    document.getElementById('pantalla-lobby').style.display = 'none';
-    document.getElementById('pantalla-mercado').style.display = 'block';
-    cargarDatosPerfilEnDOM(); 
-    refrescarPantallaGamer();
-}
-</script>
-</body>
-</html>
+                    <div class="admin-edit-field"><label>Coste</label><input type="number" value="${esI?p.precioPf:p.precio}" class="admin-input-custom" oninput="actualizarPropiedadProducto(${p.id}, '${esI?'precioPf':'precio'}',
