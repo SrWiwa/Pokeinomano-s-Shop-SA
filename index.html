@@ -63,7 +63,6 @@
         .marcador-dato { font-family: 'Orbitron', sans-serif; font-size: 14px; font-weight: 700; }
         .marcador-dato span { font-weight: 900; font-size: 16px; }
         
-        /* Enlace de perfil clickable */
         .btn-perfil-trigger {
             background: #1e293b;
             color: #fff;
@@ -117,7 +116,6 @@
         .perfil-content-view { display: none; }
         .perfil-content-view.active { display: block; }
 
-        /* AREA TEXTO Y ENTRADAS */
         .input-textarea-custom {
             width: 100%;
             background: #060914;
@@ -133,7 +131,76 @@
             border-color: var(--neon-packs);
         }
 
-        /* COMPONENTE VISUAL EQUIPO SHOWDOWN */
+        /* OVERLAY / MODAL DIARIO NATIVO */
+        .diario-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(4, 6, 14, 0.9);
+            backdrop-filter: blur(8px);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .diario-modal {
+            background: #0f1422;
+            border: 2px solid var(--borde-packs);
+            box-shadow: 0 0 30px rgba(255, 187, 0, 0.2);
+            width: 100%;
+            max-width: 650px;
+            height: 85vh;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            animation: desplegarEfecto 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        @keyframes desplegarEfecto {
+            from { transform: scale(0.95); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        .diario-header {
+            background: #141108;
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--borde-packs);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .diario-logs-area {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background: #060914;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .diario-entrada-item {
+            background: #0f1422;
+            border: 1px solid #1e293b;
+            border-left: 3px solid var(--neon-packs);
+            padding: 10px 14px;
+            border-radius: 4px;
+        }
+        .diario-entrada-fecha {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 10px;
+            color: var(--texto-secundario);
+            margin-bottom: 4px;
+        }
+        .diario-entrada-texto {
+            font-size: 13px;
+            color: #fff;
+            white-space: pre-wrap;
+        }
+        .diario-footer {
+            padding: 15px 20px;
+            background: #0f1422;
+            border-top: 1px solid #1e293b;
+        }
+
         .showdown-team-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -159,7 +226,7 @@
         }
         .bolsa-titulo { font-size: 12px; color: var(--texto-secundario); text-transform: uppercase; margin-bottom: 8px; font-weight: 600;}
 
-        /* DISEÑO DE ICONOS AVANZADO EDICIÓN POKÉMON */
+        /* ICONOS */
         .item-icon {
             width: 60px; height: 60px; margin: 0 auto 12px auto;
             display: flex; align-items: center; justify-content: center;
@@ -175,7 +242,7 @@
         .pack-zone .item-icon::after { background: linear-gradient(135deg, var(--neon-packs), transparent); }
         .illegal-zone .item-icon::after { background: linear-gradient(135deg, var(--neon-ilegal), transparent); border-radius: 35% 65% 61% 39% / 37% 34% 66% 63%; }
 
-        /* NAVEGACIÓN POR PESTAÑAS TIENDAS */
+        /* PESTAÑAS TIENDAS */
         .tabs-container { display: flex; justify-content: center; gap: 10px; margin-bottom: 25px; }
         .tab-button {
             background: #111726; color: var(--texto-secundario); border: 2px solid #1e293b;
@@ -204,9 +271,9 @@
 
         .categoria-tag { font-size: 10px; color: var(--texto-secundario); text-transform: uppercase; font-weight: bold; margin-bottom: 8px; opacity: 0.6; }
         .item-titulo { font-size: 14px; font-weight: 800; text-transform: uppercase; margin-bottom: 8px; }
-        .item-desc { font-size: 11px; color: var(--texto-secundario); line-height: 1.4; margin-bottom: 12px; }
+        .item-desc { font-size: 11px; color: var(--texto-secundario); line-height: 1.4; margin-bottom: 12px; text-align: left; background: rgba(0,0,0,0.2); padding: 6px; border-radius: 4px; }
+        .item-estrategia { font-size: 10px; color: var(--neon-packs); font-style: italic; margin-bottom: 12px; text-align: left; }
 
-        /* CARTEL DE TIENDA CERRADA */
         .tienda-cerrada-msg {
             text-align: center; padding: 60px 20px; color: var(--texto-secundario);
             font-size: 18px; font-weight: bold; font-family: 'Orbitron', sans-serif;
@@ -214,7 +281,6 @@
             letter-spacing: 2px; text-transform: uppercase;
         }
 
-        /* BOTONES DE COMPRA */
         button.btn-accion { 
             background: #1e293b; color: #fff; border: 1px solid #334155; 
             padding: 10px; cursor: pointer; width: 100%; border-radius: 6px; 
@@ -226,7 +292,6 @@
         
         button:disabled { background: #11141d !important; color: #334155 !important; border-color: #1e293b !important; cursor: not-allowed; }
 
-        /* CUADROS EXPLICATIVOS */
         .cuadro-info-original {
             background: rgba(15, 23, 42, 0.6); border: 1px solid #1e293b;
             padding: 20px; margin-top: 25px; border-radius: 10px;
@@ -236,18 +301,16 @@
         .columna-info ul, .columna-info ol { margin: 0; padding-left: 18px; font-size: 12px; color: var(--texto-secundario); line-height: 1.6; }
         .columna-info li { margin-bottom: 6px; }
 
-        /* LOGIN DIRECTO */
         .lobby-box { max-width: 380px; margin: 120px auto; text-align: center; background: #0f1422; border: 2px solid #1e293b; padding: 30px; border-radius: 16px; }
         .lobby-box input { background: #060914; color: #fff; border: 1px solid #334155; padding: 12px; width: 100%; margin-bottom: 15px; text-align: center; border-radius: 8px; font-size: 14px; }
 
-        /* TERMINAL MERCADER / DM */
         .consola-admin-screen { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #060914; z-index: 9999; padding: 25px; overflow-y: auto; }
         .grid-admin { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
         .admin-card-inner { background: #0f1422; border: 1px solid #1e293b; padding: 15px; border-radius: 8px; margin-bottom: 10px; }
         
         .admin-input-custom {
             background: #060914; color: #fff; border: 1px solid #334155;
-            padding: 6px; width: 90px; text-align: center; border-radius: 4px;
+            padding: 6px; width: 100%; border-radius: 4px;
             font-family: 'Orbitron', sans-serif; font-size: 12px;
         }
         .btn-mini-admin {
@@ -255,7 +318,6 @@
             padding: 6px 12px; cursor: pointer; border-radius: 4px; font-size: 11px; font-weight: bold;
         }
 
-        /* BOTÓN MERCADER (POKÉBALL) */
         .pokeball-mercader-btn {
             position: fixed; bottom: 15px; left: 15px;
             width: 45px; height: 45px; background: #fff;
@@ -271,7 +333,6 @@
             content: ''; position: absolute; top: calc(50% - 6px); left: calc(50% - 6px);
             width: 12px; height: 12px; background: #fff; border: 3px solid #11141d; border-radius: 50%;
         }
-        .pokeball-mercader-btn:hover { transform: scale(1.1) rotate(20deg); }
     </style>
 </head>
 <body>
@@ -309,12 +370,12 @@
             <div class="perfil-tabs">
                 <button class="subtab-btn active" id="subtab-equipo" onclick="cambiarSubPestanaPerfil('equipo')">EQUIPO POKÉMON</button>
                 <button class="subtab-btn" id="subtab-progreso" onclick="cambiarSubPestanaPerfil('progreso')">MEDALLAS Y TORNEOS</button>
-                <button class="subtab-btn" id="subtab-aventura" onclick="cambiarSubPestanaPerfil('aventura')">AVENTURA POKÉMON (DIARIO)</button>
+                <button class="subtab-btn" id="subtab-aventura" onclick="abrirOverlayDiarioNativo()" style="border-color: var(--neon-packs); color: var(--neon-packs);">📖 ABRIR DIARIO INMUTABLE</button>
             </div>
 
             <div id="perf-view-equipo" class="perfil-content-view active">
                 <p style="font-size:11px; color:var(--texto-secundario); margin:0 0 8px 0;">Pega aquí el código limpio de tu equipo exportado de Pokémon Showdown:</p>
-                <textarea id="perf-showdown-raw" class="input-textarea-custom" rows="4" placeholder="Ejemplo:&#10;Pikachu @ Light Ball&#10;Ability: Static&#10;EVs: 252 Atk / 4 SpD / 252 Spe&#10;Jolly Nature&#10;- Volt Tackle&#10;- Iron Tail" oninput="guardarDatosPerfilGamer()"></textarea>
+                <textarea id="perf-showdown-raw" class="input-textarea-custom" rows="4" placeholder="Pega el formato Showdown..." oninput="guardarDatosPerfilGamer()"></textarea>
                 <div id="visualizador-showdown-team" class="showdown-team-grid"></div>
             </div>
 
@@ -341,13 +402,26 @@
                     </div>
                 </div>
             </div>
-
-            <div id="perf-view-aventura" class="perfil-content-view">
-                <p style="font-size:11px; color:var(--texto-secundario); margin:0 0 8px 0;">Escribe tu bitácora o diario de ruta para recordar qué estabas haciendo o qué te falta por capturar:</p>
-                <textarea id="perf-diario-txt" class="input-textarea-custom" rows="5" placeholder="Diario de tu aventura... Ej: Guardé partida frente al gimnasio de tipo Fuego. Siguiente ruta sin capturar: Ruta 113." oninput="guardarDatosPerfilGamer()"></textarea>
-            </div>
         </div>
 
+        <div id="diario-overlay-sistema" class="diario-overlay">
+            <div class="diario-modal">
+                <div class="diario-header">
+                    <div>
+                        <h3 style="margin:0; font-family:'Orbitron'; font-size:15px; color:var(--neon-packs);">📖 BITÁCORA DE AVENTURA INMUTABLE</h3>
+                        <span id="diario-contador" style="font-size:11px; color:var(--texto-secundario);">Registros: 0 / 1500</span>
+                    </div>
+                    <button onclick="cerrarOverlayDiarioNativo()" style="background:#ef4444; border:none; color:#fff; padding:5px 12px; border-radius:4px; font-weight:bold; cursor:pointer;">X</button>
+                </div>
+                
+                <div id="diario-historial-logs" class="diario-logs-area"></div>
+                
+                <div class="diario-footer">
+                    <textarea id="diario-input-texto" class="input-textarea-custom" rows="3" placeholder="Escribe tu hito de ruta aquí... Al guardar, se estampará permanentemente sin opción a edición."></textarea>
+                    <button class="btn-accion" id="diario-btn-guardar" style="margin-top:10px; border-color:var(--neon-packs); color:var(--neon-packs);" onclick="guardarNuevaEntradaDiario()">ESTAMPAR EN LA BITÁCORA (GUARDAR)</button>
+                </div>
+            </div>
+        </div>
         <div class="bolsa-contenedor">
             <div class="bolsa-titulo">🎒 Tus Adquisiciones Recientes:</div>
             <div id="lista-inventario" style="display:flex; gap:10px; flex-wrap:wrap;"></div>
@@ -373,7 +447,6 @@
         <h2 style="color:var(--neon-packs); margin:0; font-family:'Orbitron'; font-size:16px;">🖥️ CONSOLA DE GESTIÓN CENTRAL (MERCADER)</h2>
         <button onclick="apagarTerminalMercader()" style="background:#1e293b; color:#fff; border:none; padding:8px 16px; cursor:pointer; border-radius:4px;">SALIR</button>
     </div>
-    
     <div class="grid-admin">
         <div style="background:#0f1422; border:1px solid #1e293b; padding:20px; border-radius:12px;">
             <h3 style="color:var(--neon-packs); margin-top:0;">🔓 Interruptores de Red Comercial</h3>
@@ -388,23 +461,56 @@
             </label>
             
             <hr style="border-color:#1e293b; margin:20px 0;">
+            
             <h4>Añadir Suministro Extra</h4>
-            <input type="text" id="ins-nombre" placeholder="Nombre Objeto" style="width:100%; margin-bottom:8px; padding:8px; background:#060914; color:#fff; border:1px solid #1e293b; border-radius:4px;">
-            <select id="ins-tienda" style="width:100%; margin-bottom:8px; padding:8px; background:#060914; color:#fff; border:1px solid #1e293b; border-radius:4px;">
-                <option value="legal">Tienda Legal</option>
-                <option value="pack">Shop PF Pack</option>
-                <option value="illegal">Ilegalidades</option>
-            </select>
-            <input type="number" id="ins-precio" placeholder="Coste (P₠ o PF)" style="width:100%; margin-bottom:8px; padding:8px; background:#060914; color:#fff; border:1px solid #1e293b; border-radius:4px;">
-            <input type="number" id="ins-stock" placeholder="Stock Inicial" style="width:100%; margin-bottom:12px; padding:8px; background:#060914; color:#fff; border:1px solid #1e293b; border-radius:4px;">
+            <div style="margin-bottom:10px;">
+                <select id="ins-tienda" onchange="ajustarCamposFormularioMercader()" style="width:100%; padding:8px; background:#060914; color:#fff; border:1px solid #1e293b; border-radius:4px;">
+                    <option value="legal">Tienda Legal</option>
+                    <option value="pack">Shop PF Pack</option>
+                    <option value="illegal">Tienda de Ilegalidades</option>
+                </select>
+            </div>
+            <div id="form-bloque-legal-cat" style="margin-bottom:10px;">
+                <select id="ins-cat-legal" style="width:100%; padding:8px; background:#060914; color:#fff; border:1px solid #1e293b; border-radius:4px;">
+                    <option value="EV/IV">EV/IV</option>
+                    <option value="Bayas">Bayas</option>
+                    <option value="Poké Balls">Poké Balls</option>
+                    <option value="Objetos de Exploración">Objetos de Exploración</option>
+                    <option value="Objetos de Combate (X)">Objetos de Combate (X)</option>
+                    <option value="Objetos Competitivos">Objetos Competitivos</option>
+                </select>
+            </div>
+            <div id="form-bloque-pack-detalles" style="margin-bottom:10px; display:none;">
+                <input type="text" id="ins-pack-desc" placeholder="Contenido del Pack" style="width:100%; margin-bottom:8px; padding:8px; background:#060914; color:#fff; border:1px solid #1e293b; border-radius:4px;">
+                <input type="text" id="ins-pack-estrategia" placeholder="Enfoque Estratégico" style="width:100%; padding:8px; background:#060914; color:#fff; border:1px solid #1e293b; border-radius:4px;">
+            </div>
+            <div id="form-bloque-illegal-detalles" style="margin-bottom:10px; display:none;">
+                <input type="text" id="ins-illegal-desc" placeholder="Efecto Ilegal" style="width:100%; padding:8px; background:#060914; color:#fff; border:1px solid #1e293b; border-radius:4px;">
+            </div>
+            <div style="margin-bottom:10px;">
+                <label id="lbl-ins-nombre" style="font-size:11px;">Nombre:</label>
+                <input type="text" id="ins-nombre" class="admin-input-custom">
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:15px;">
+                <div>
+                    <label id="lbl-ins-precio" style="font-size:11px;">Coste:</label>
+                    <input type="number" id="ins-precio" class="admin-input-custom">
+                </div>
+                <div id="bloque-ins-pf">
+                    <label style="font-size:11px;">Bono PF:</label>
+                    <input type="number" id="ins-pf" value="1" class="admin-input-custom">
+                </div>
+            </div>
+            <div style="margin-bottom:15px;">
+                <label style="font-size:11px;">Stock Inicial:</label>
+                <input type="number" id="ins-stock" class="admin-input-custom">
+            </div>
             <button class="btn-accion" style="border-color:var(--neon-legal); color:var(--neon-legal);" onclick="inyectarObjetoNuevoMaster()">PUBLICAR ARTÍCULO</button>
         </div>
-
         <div style="background:#0f1422; border:1px solid #1e293b; padding:20px; border-radius:12px;">
             <h3 style="color:var(--neon-legal); margin-top:0;">👥 Ajustes de Entrenadores</h3>
             <div id="admin-jugadores-lista" style="max-height:450px; overflow-y:auto;"></div>
         </div>
-
         <div style="background:#0f1422; border:1px solid #1e293b; padding:20px; border-radius:12px;">
             <h3 style="color:var(--neon-ilegal); margin-top:0;">📦 Inventario Global</h3>
             <div id="admin-inventario-global" style="max-height:450px; overflow-y:auto;"></div>
@@ -417,20 +523,18 @@ const baseDatosInicial = [
     { id: 1, tienda: 'legal', cat: 'EV/IV', nombre: 'Hierro', precio: 1000, pf: 2, stock: 10, icon: '💊' },
     { id: 2, tienda: 'legal', cat: 'EV/IV', nombre: 'Proteína', precio: 1000, pf: 2, stock: 10, icon: '💊' },
     { id: 3, tienda: 'legal', cat: 'Bayas', nombre: 'Baya Atania', precio: 80, pf: 1, stock: 12, icon: '🍒' },
-    { id: 4, tienda: 'legal', cat: 'Bayas', nombre: 'Baya Oran', precio: 90, pf: 1, stock: 12, icon: '🍒' },
     { id: 5, tienda: 'legal', cat: 'Poké Balls', nombre: 'Buceo Ball', precio: 200, pf: 2, stock: 8, icon: '🔵' },
-    { id: 6, tienda: 'legal', cat: 'Poké Balls', nombre: 'Nivel Ball', precio: 250, pf: 3, stock: 8, icon: '🟡' },
-    { id: 101, tienda: 'pack', cat: 'Pack Balls', nombre: 'Pack Capture Control', desc: 'Contiene: 2 Buceo Ball + 2 Nivel Ball.', precio: 750, pf: 11, stock: 3 },
-    { id: 201, tienda: 'illegal', cat: 'Modificación 01', nombre: 'Escudo Poke', precioPf: 5, stock: 1, desc: 'Evita la muerte de un Pokémon.', icon: '🛡️' }
+    { id: 11, tienda: 'legal', cat: 'Objetos Competitivos', nombre: 'Banda Focus', precio: 2500, pf: 3, stock: 4, icon: '🎗️' },
+    { id: 101, tienda: 'pack', cat: 'Pack Balls', nombre: 'Pack Capture Control', desc: 'Contiene: 2 Buceo Ball + 2 Nivel Ball.', estrategia: 'Incentiva estrategia de captura mixta', precio: 750, pf: 11, stock: 3, icon: '🔴' }
 ];
 
 let baseDatos;
 try {
-    baseDatos = JSON.parse(localStorage.getItem('silph_co_db_2026_final_v3'));
+    baseDatos = JSON.parse(localStorage.getItem('silph_co_db_2026_final_v7'));
     if (!baseDatos || !baseDatos.productos || !baseDatos.jugadores) throw new Error();
 } catch (e) {
-    baseDatos = { productos: JSON.parse(JSON.stringify(baseDatosInicial)), jugadores: {}, legalOpen: true, packOpen: true, illegalOpen: false };
-    localStorage.setItem('silph_co_db_2026_final_v3', JSON.stringify(baseDatos));
+    baseDatos = { productos: JSON.parse(JSON.stringify(baseDatosInicial)), jugadores: {}, legalOpen: true, packOpen: true, illegalOpen: true };
+    localStorage.setItem('silph_co_db_2026_final_v7', JSON.stringify(baseDatos));
 }
 
 let userSesion = sessionStorage.getItem('silph_user_sesion') || null;
@@ -443,18 +547,15 @@ function ingresarAlSistema() {
 
     if(!baseDatos.jugadores[id]) {
         baseDatos.jugadores[id] = { 
-            dinero: 3000, pf: 0, comprasHoy: 0, inventario: [],
-            lockeStatus: 'jugando', showdownRaw: '', tipoMedallas: 'medallas', numMedallas: 0, torneos: 0, diario: ''
+            dinero: 4000, pf: 0, comprasHoy: 0, inventario: [],
+            lockeStatus: 'jugando', showdownRaw: '', tipoMedallas: 'medallas', numMedallas: 0, torneos: 0,
+            diarioLogs: [] // CAMBIO CLAVE: Cambiamos String simple por Array de objetos inmutables
         };
     }
-
-    let j = baseDatos.jugadores[id];
-    if(!j.lockeStatus) j.lockeStatus = 'jugando';
-    if(j.showdownRaw === undefined) j.showdownRaw = '';
-    if(!j.tipoMedallas) j.tipoMedallas = 'medallas';
-    if(j.numMedallas === undefined) j.numMedallas = 0;
-    if(j.torneos === undefined) j.torneos = 0;
-    if(j.diario === undefined) j.diario = '';
+    // Asegurar estructura si el jugador ya existía en versiones previas
+    if(!baseDatos.jugadores[id].diarioLogs) {
+        baseDatos.jugadores[id].diarioLogs = [];
+    }
 
     userSesion = id;
     sessionStorage.setItem('silph_user_sesion', id);
@@ -476,33 +577,100 @@ function cambiarSubPestanaPerfil(sub) {
     document.querySelectorAll('.subtab-btn').forEach(b => b.classList.remove('active'));
     document.querySelectorAll('.perfil-content-view').forEach(v => v.classList.remove('active'));
     document.getElementById(`subtab-${sub}`).classList.add('active');
-    document.getElementById(`perf-view-${sub}`).classList.add('active');
+    let target = document.getElementById(`perf-view-${sub}`);
+    if(target) target.classList.add('active');
+}
+
+/* --- OVERLAY DIARIO FLOTANTE E INMUTABLE --- */
+function abrirOverlayDiarioNativo() {
+    document.getElementById('diario-overlay-sistema').style.display = 'flex';
+    redibujarHistorialDiario();
+}
+
+function cerrarOverlayDiarioNativo() {
+    document.getElementById('diario-overlay-sistema').style.display = 'none';
+}
+
+function redibujarHistorialDiario() {
+    if(!userSesion || !baseDatos.jugadores[userSesion]) return;
+    let u = baseDatos.jugadores[userSesion];
+    
+    let boxLogs = document.getElementById('diario-historial-logs');
+    let contador = document.getElementById('diario-contador');
+    let inputTxt = document.getElementById('diario-input-texto');
+    let btnGuardar = document.getElementById('diario-btn-guardar');
+
+    boxLogs.innerHTML = '';
+    let totalEntradas = u.diarioLogs.length;
+    contador.innerText = `Registros: ${totalEntradas} / 1500`;
+
+    if(totalEntradas === 0) {
+        boxLogs.innerHTML = '<span style="color:var(--texto-secundario); font-size:12px; text-align:center; padding:20px;">Tu diario está vacío. Registra tu primera acción abajo.</span>';
+    } else {
+        u.diarioLogs.forEach(log => {
+            boxLogs.innerHTML += `
+                <div class="diario-entrada-item">
+                    <div class="diario-entrada-fecha">📅 ${log.timestamp}</div>
+                    <div class="diario-entrada-texto">${log.texto}</div>
+                </div>`;
+        });
+    }
+
+    // Auto-scroll hacia el final para ver la última anotación
+    boxLogs.scrollTop = boxLogs.scrollHeight;
+
+    // Validación estricta del límite de 1.500 registros
+    if(totalEntradas >= 1500) {
+        inputTxt.disabled = true;
+        inputTxt.placeholder = "🔒 Límite de 1.500 entradas alcanzado. Registro deshabilitado.";
+        btnGuardar.disabled = true;
+    } else {
+        inputTxt.disabled = false;
+        btnGuardar.disabled = false;
+    }
+}
+
+function guardarNuevaEntradaDiario() {
+    if(!userSesion || !baseDatos.jugadores[userSesion]) return;
+    let u = baseDatos.jugadores[userSesion];
+    let inputTxt = document.getElementById('diario-input-texto');
+    let contenido = inputTxt.value.trim();
+
+    if(!contenido) return alert("No puedes estampar un registro vacío.");
+    if(u.diarioLogs.length >= 1500) return alert("Has alcanzado el límite absoluto de 1.500 entradas.");
+
+    // Estampa de tiempo exacta
+    let fechaActual = new Date().toLocaleString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+    // Inserción limpia: Solo se añade un objeto nuevo al final de la matriz
+    u.diarioLogs.push({
+        timestamp: fechaActual,
+        texto: contenido
+    });
+
+    guardarBD();
+    inputTxt.value = ''; // Limpiar el editor
+    redibujarHistorialDiario();
 }
 
 function cargarDatosPerfilEnDOM() {
     if(!userSesion || !baseDatos.jugadores[userSesion]) return;
     let u = baseDatos.jugadores[userSesion];
-    
     document.getElementById('perf-locke-status').value = u.lockeStatus;
-    document.getElementById('perf-showdown-raw').value = u.showdownRaw;
-    document.getElementById('perf-tipo-medallas').value = u.tipoMedallas;
-    document.getElementById('perf-num-medallas').value = u.numMedallas;
-    document.getElementById('perf-txt-torneos').innerText = u.torneos;
-    document.getElementById('perf-diario-txt').value = u.diario;
-    
+    document.getElementById('perf-showdown-raw').value = u.showdownRaw || '';
+    document.getElementById('perf-tipo-medallas').value = u.tipoMedallas || 'medallas';
+    document.getElementById('perf-num-medallas').value = u.numMedallas || 0;
+    document.getElementById('perf-txt-torneos').innerText = u.torneos || 0;
     parsearYRenderizarShowdown();
 }
 
 function guardarDatosPerfilGamer() {
     if(!userSesion || !baseDatos.jugadores[userSesion]) return;
     let u = baseDatos.jugadores[userSesion];
-    
     u.lockeStatus = document.getElementById('perf-locke-status').value;
     u.showdownRaw = document.getElementById('perf-showdown-raw').value;
     u.tipoMedallas = document.getElementById('perf-tipo-medallas').value;
     u.numMedallas = parseInt(document.getElementById('perf-num-medallas').value) || 0;
-    u.diario = document.getElementById('perf-diario-txt').value;
-    
     guardarBD();
     parsearYRenderizarShowdown();
 }
@@ -510,7 +678,7 @@ function guardarDatosPerfilGamer() {
 function alterarTorneosPerfil(v) {
     if(!userSesion || !baseDatos.jugadores[userSesion]) return;
     let u = baseDatos.jugadores[userSesion];
-    u.torneos += v;
+    u.torneos = (u.torneos || 0) + v;
     if(u.torneos < 0) u.torneos = 0;
     document.getElementById('perf-txt-torneos').innerText = u.torneos;
     guardarBD();
@@ -519,46 +687,16 @@ function alterarTorneosPerfil(v) {
 function parsearYRenderizarShowdown() {
     let raw = document.getElementById('perf-showdown-raw').value;
     let box = document.getElementById('visualizador-showdown-team');
-    box.innerHTML = '';
-    
-    if(!raw.trim()) {
-        box.innerHTML = '<span style="color:var(--texto-secundario); font-size:12px;">Tu equipo visual se generará aquí cuando pegues texto estructurado.</span>';
-        return;
-    }
-
+    if(!box) return; box.innerHTML = '';
+    if(!raw.trim()) { box.innerHTML = '<span style="color:var(--texto-secundario); font-size:12px;">El equipo se generará automáticamente.</span>'; return; }
     let pokesRaw = raw.split(/\n\s*\n/);
     pokesRaw.forEach(bloque => {
         let lineas = bloque.split('\n').map(l => l.trim()).filter(l => l.length > 0);
         if(lineas.length === 0) return;
-
-        let nombreCompleto = lineas[0];
-        let objeto = "Ninguno";
-        let habilidad = "Desconocida";
-        let movimientos = [];
-
-        if(nombreCompleto.includes('@')) {
-            let partes = nombreCompleto.split('@');
-            nombreCompleto = partes[0].trim();
-            objeto = partes[1].trim();
-        }
-
-        lineas.forEach(linea => {
-            if(linea.startsWith('Ability:')) {
-                habilidad = linea.replace('Ability:', '').trim();
-            } else if(linea.startsWith('-')) {
-                movimientos.push(linea.replace('-', '').trim());
-            }
-        });
-
-        box.innerHTML += `
-            <div class="poke-card-showdown">
-                <div class="poke-card-name">🧬 ${nombreCompleto}</div>
-                <div style="color:var(--texto-secundario); margin-bottom:2px;">Item: <span style="color:#fff;">${objeto}</span></div>
-                <div style="color:var(--texto-secundario); margin-bottom:5px;">Habilidad: <span style="color:#fff;">${habilidad}</span></div>
-                <div style="display:flex; flex-direction:column; gap:2px; padding-left:5px; border-left:2px solid var(--neon-packs);">
-                    ${movimientos.map(m => `<span style="font-size:11px; color:#94a3b8;">• ${m}</span>`).join('')}
-                </div>
-            </div>`;
+        let nombreCompleto = lineas[0]; let objeto = "Ninguno"; let habilidad = "Desconocida"; let movimientos = [];
+        if(nombreCompleto.includes('@')) { let partes = nombreCompleto.split('@'); nombreCompleto = partes[0].trim(); objeto = partes[1].trim(); }
+        lineas.forEach(linea => { if(linea.startsWith('Ability:')) habilidad = linea.replace('Ability:', '').trim(); else if(linea.startsWith('-')) movimientos.push(linea.replace('-', '').trim()); });
+        box.innerHTML += `<div class="poke-card-showdown"><div class="poke-card-name">🧬 ${nombreCompleto}</div><div style="color:var(--texto-secundario)">Item: <span style="color:#fff;">${objeto}</span></div><div style="color:var(--texto-secundario)">Habilidad: <span style="color:#fff;">${habilidad}</span></div></div>`;
     });
 }
 
@@ -571,252 +709,121 @@ function cambiarSeccionTienda(tipo) {
     if (vista) vista.classList.add('active');
 }
 
+function ajustarCamposFormularioMercader() {
+    let tienda = document.getElementById('ins-tienda').value;
+    let bLegal = document.getElementById('form-bloque-legal-cat');
+    let bPack = document.getElementById('form-bloque-pack-detalles');
+    let bIllegal = document.getElementById('form-bloque-illegal-detalles');
+    let bPf = document.getElementById('bloque-ins-pf');
+    let lblNombre = document.getElementById('lbl-ins-nombre');
+    let lblPrecio = document.getElementById('lbl-ins-precio');
+
+    bLegal.style.display = 'none'; bPack.style.display = 'none'; bIllegal.style.display = 'none'; bPf.style.display = 'block';
+    if(tienda === 'legal') { bLegal.style.display = 'block'; lblNombre.innerText = "Objeto Legal:"; lblPrecio.innerText = "Coste (P₠):"; } 
+    else if(tienda === 'pack') { bPack.style.display = 'block'; lblNombre.innerText = "Nombre Pack:"; lblPrecio.innerText = "Coste Pack (P₠):"; } 
+    else if(tienda === 'illegal') { bIllegal.style.display = 'block'; bPf.style.display = 'none'; lblNombre.innerText = "Modificación:"; lblPrecio.innerText = "Coste (PF):"; }
+}
+
+function inyectarObjetoNuevoMaster() {
+    let tienda = document.getElementById('ins-tienda').value;
+    let nombre = document.getElementById('ins-nombre').value.trim();
+    let precio = parseInt(document.getElementById('ins-precio').value) || 0;
+    let stock = parseInt(document.getElementById('ins-stock').value) || 0;
+    if(!nombre) return alert("Nombre requerido.");
+    let nuevoObjeto = { id: Date.now(), tienda: tienda, stock: stock, icon: '🔮' };
+
+    if(tienda === 'legal') { nuevoObjeto.cat = document.getElementById('ins-cat-legal').value; nuevoObjeto.nombre = nombre; nuevoObjeto.precio = precio; nuevoObjeto.pf = parseInt(document.getElementById('ins-pf').value) || 1; nuevoObjeto.icon = '💊'; } 
+    else if(tienda === 'pack') { nuevoObjeto.cat = 'Pack Mercader'; nuevoObjeto.nombre = nombre; nuevoObjeto.precio = precio; nuevoObjeto.pf = parseInt(document.getElementById('ins-pf').value) || 1; nuevoObjeto.desc = document.getElementById('ins-pack-desc').value.trim(); nuevoObjeto.estrategia = document.getElementById('ins-pack-estrategia').value.trim(); nuevoObjeto.icon = '📦'; } 
+    else if(tienda === 'illegal') { nuevoObjeto.cat = 'Modificación Custom'; nuevoObjeto.nombre = nombre; nuevoObjeto.precioPf = precio; nuevoObjeto.desc = document.getElementById('ins-illegal-desc').value.trim(); nuevoObjeto.icon = '🕵️‍♂️'; }
+
+    baseDatos.productos.push(nuevoObjeto); guardarBD(); redibujarConsolaAdminMaster(); refrescarPantallaGamer();
+    document.getElementById('ins-nombre').value = ''; document.getElementById('ins-precio').value = ''; document.getElementById('ins-stock').value = '';
+}
+
 function refrescarPantallaGamer() {
     if(!userSesion || !baseDatos.jugadores[userSesion]) return;
     let u = baseDatos.jugadores[userSesion];
-    
     document.getElementById('usr-nombre').innerText = userSesion.toUpperCase();
     document.getElementById('usr-dinero').innerText = Number(u.dinero).toLocaleString();
     document.getElementById('usr-pf').innerText = u.pf;
 
     let bBox = document.getElementById('lista-inventario'); bBox.innerHTML = '';
-    if(u.inventario.length === 0) bBox.innerHTML = '<span style="color:var(--texto-secundario); font-size:12px;">Ningún objeto en tu mochila.</span>';
-    u.inventario.forEach((item, index) => {
-        bBox.innerHTML += `
-            <div style="background:#1e293b; border:1px solid #334155; padding:6px 12px; display:flex; align-items:center; gap:10px; border-radius:6px;">
-                <span style="font-size:12px; font-weight:600;">${item.nombre}</span>
-                <button onclick="consumirObjetoBolsa(${index})" style="background:#ef4444; color:#fff; border:none; padding:2px 8px; font-size:10px; cursor:pointer; border-radius:4px;">Gastar</button>
-            </div>`;
-    });
+    if(u.inventario.length === 0) bBox.innerHTML = '<span style="color:var(--texto-secundario); font-size:12px;">Mochila vacía.</span>';
+    u.inventario.forEach((item, idx) => { bBox.innerHTML += `<div style="background:#1e293b; padding:6px 12px; display:flex; gap:10px; border-radius:6px; font-size:12px;"><span>${item.nombre}</span><button onclick="consumirObjetoBolsa(${idx})" style="background:#ef4444; border:none; color:#fff; font-size:9px; cursor:pointer; border-radius:3px;">Gastar</button></div>`; });
 
-    // Tienda Legal
+    // RENDERS DE ESTANTERÍAS
     let vl = document.getElementById('contenedor-legal-view');
-    if(!baseDatos.legalOpen) {
-        vl.innerHTML = `<div class="tienda-cerrada-msg" style="color:var(--neon-legal); border-color:var(--borde-legal);">🔒 Volvemos Pronto!</div>`;
-    } else {
+    if(!baseDatos.legalOpen) { vl.innerHTML = `<div class="tienda-cerrada-msg">🔒 Red Cerrada temporalmente</div>`; } 
+    else {
         let htm = `<div class="items-grid">`;
         baseDatos.productos.filter(p => p.tienda === 'legal').forEach(p => {
             let ok = p.stock > 0 && u.dinero >= p.precio && u.comprasHoy < 3;
-            htm += `
-                <div class="item-card">
-                    <div>
-                        <div class="categoria-tag">${p.cat}</div>
-                        <div class="item-icon">${p.icon || '💊'}</div>
-                        <div class="item-titulo">${p.nombre}</div>
-                    </div>
-                    <div>
-                        <div style="font-family:'Orbitron'; color:var(--neon-packs); font-size:15px; margin-bottom:4px;">${p.precio} P₠</div>
-                        <div style="color:var(--neon-legal); font-size:11px; margin-bottom:10px;">Gana: +${p.pf} PF</div>
-                        <div style="font-size:11px; color:var(--texto-secundario); margin-bottom:12px;">Disponibles: ${p.stock} uds</div>
-                        <button class="btn-accion" ${!ok?'disabled':''} onclick="procesarTransaccionComercial(${p.id})">Adquirir</button>
-                    </div>
-                </div>`;
+            htm += `<div class="item-card"><div><div class="categoria-tag">${p.cat}</div><div class="item-icon">${p.icon}</div><div class="item-titulo">${p.nombre}</div></div><div><div style="color:var(--neon-packs); font-size:15px;">${p.precio} P₠</div><div style="font-size:11px; color:var(--texto-secundario);">Stock: ${p.stock}</div><button class="btn-accion" ${!ok?'disabled':''} onclick="procesarTransaccionComercial(${p.id})">Comprar</button></div></div>`;
         });
         htm += `</div>`; vl.innerHTML = htm;
     }
 
-    // Shop Pack
     let vp = document.getElementById('contenedor-pack-view');
-    if(!baseDatos.packOpen) {
-        vp.innerHTML = `<div class="tienda-cerrada-msg" style="color:var(--neon-packs); border-color:var(--borde-packs);">🔒 Volvemos Pronto!</div>`;
-    } else {
+    if(!baseDatos.packOpen) { vp.innerHTML = `<div class="tienda-cerrada-msg">🔒 Ofertas en preparación</div>`; } 
+    else {
         let htm = `<div class="items-grid">`;
         baseDatos.productos.filter(p => p.tienda === 'pack').forEach(p => {
             let ok = p.stock > 0 && u.dinero >= p.precio && u.comprasHoy < 3;
-            htm += `
-                <div class="item-card">
-                    <div>
-                        <div class="categoria-tag">${p.cat}</div>
-                        <div class="item-icon">📦</div>
-                        <div class="item-titulo" style="font-size:12px;">${p.nombre}</div>
-                        <div class="item-desc">${p.desc || ''}</div>
-                    </div>
-                    <div>
-                        <div style="font-family:'Orbitron'; color:var(--neon-packs); font-size:15px; margin-bottom:4px;">${p.precio} P₠</div>
-                        <div style="color:var(--neon-legal); font-size:11px; margin-bottom:12px;">Gana del Pack: +${p.pf} PF</div>
-                        <div style="font-size:11px; color:var(--texto-secundario); margin-bottom:12px;">Disponibles: ${p.stock} uds</div>
-                        <button class="btn-accion" ${!ok?'disabled':''} onclick="procesarTransaccionComercial(${p.id})">Comprar Pack</button>
-                    </div>
-                </div>`;
+            htm += `<div class="item-card"><div><div class="categoria-tag">${p.cat}</div><div class="item-icon">${p.icon}</div><div class="item-titulo" style="color:var(--neon-packs);">${p.nombre}</div><div class="item-desc">${p.desc}</div></div><div><div style="color:var(--neon-packs); font-size:15px;">${p.precio} P₠</div><button class="btn-accion" ${!ok?'disabled':''} onclick="procesarTransaccionComercial(${p.id})">Comprar Pack</button></div></div>`;
         });
         htm += `</div>`; vp.innerHTML = htm;
     }
 
-    // Tienda Ilegal
     let vi = document.getElementById('contenedor-hacker-view');
-    if(!baseDatos.illegalOpen) {
-        vi.innerHTML = `<div class="tienda-cerrada-msg" style="color:var(--neon-ilegal); border-color:var(--borde-ilegal); font-size:22px;">🛑 ¡Alto Policía! 👮‍♂️🚨</div>`;
-    } else {
+    if(!baseDatos.illegalOpen) { vi.innerHTML = `<div class="tienda-cerrada-msg">🛑 ACCESO DENEGADO</div>`; } 
+    else {
         let htm = `<div class="items-grid">`;
         baseDatos.productos.filter(p => p.tienda === 'illegal').forEach(p => {
             let ok = p.stock > 0 && u.pf >= p.precioPf;
-            htm += `
-                <div class="item-card">
-                    <div>
-                        <div class="categoria-tag" style="color:var(--neon-ilegal);">${p.cat}</div>
-                        <div class="item-icon">${p.icon || '🕵️‍♂️'}</div>
-                        <div class="item-titulo" style="color:var(--neon-ilegal);">${p.nombre}</div>
-                        <div class="item-desc">${p.desc || ''}</div>
-                    </div>
-                    <div>
-                        <div style="font-family:'Orbitron'; color:var(--neon-packs); font-size:13px; margin-bottom:4px;">Requisito: ${p.precioPf} PF</div>
-                        <div style="font-size:11px; color:var(--texto-secundario); margin-bottom:12px;">Disponibles: ${p.stock} uds</div>
-                        <button class="btn-accion" ${!ok?'disabled':''} onclick="procesarTransaccionIlegal(${p.id})">Canjear Beneficio</button>
-                    </div>
-                </div>`;
+            htm += `<div class="item-card"><div><div class="categoria-tag">${p.cat}</div><div class="item-icon">${p.icon}</div><div class="item-titulo" style="color:var(--neon-ilegal);">${p.nombre}</div><div class="item-desc">${p.desc}</div></div><div><div style="color:var(--neon-packs); font-size:14px;">${p.precioPf} PF</div><button class="btn-accion" ${!ok?'disabled':''} onclick="procesarTransaccionIlegal(${p.id})">Canjear</button></div></div>`;
         });
         htm += `</div>`; vi.innerHTML = htm;
     }
 }
 
 function procesarTransaccionComercial(id) {
-    let u = baseDatos.jugadores[userSesion];
-    let p = baseDatos.productos.find(pr => pr.id === id);
+    let u = baseDatos.jugadores[userSesion]; let p = baseDatos.productos.find(pr => pr.id === id);
     if(p && p.stock > 0 && u.dinero >= p.precio && u.comprasHoy < 3) {
-        p.stock--; u.dinero -= p.precio; u.pf += p.pf; u.comprasHoy++;
-        u.inventario.push({ nombre: p.nombre });
+        p.stock--; u.dinero -= p.precio; u.pf += p.pf; u.comprasHoy++; u.inventario.push({ nombre: p.nombre });
         guardarBD(); refrescarPantallaGamer();
-    }
+    } else if(u.comprasHoy >= 3) { alert("Límite diario de 3 compras alcanzado."); }
 }
 
 function procesarTransaccionIlegal(id) {
-    let u = baseDatos.jugadores[userSesion];
-    let p = baseDatos.productos.find(pr => pr.id === id);
-    if(p && p.stock > 0 && u.pf >= p.precioPf) {
-        p.stock--; u.pf -= p.precioPf;
-        u.inventario.push({ nombre: p.nombre });
-        guardarBD(); refrescarPantallaGamer();
-    }
+    let u = baseDatos.jugadores[userSesion]; let p = baseDatos.productos.find(pr => pr.id === id);
+    if(p && p.stock > 0 && u.pf >= p.precioPf) { p.stock--; u.pf -= p.precioPf; u.inventario.push({ nombre: p.nombre }); guardarBD(); refrescarPantallaGamer(); }
 }
 
-function consumirObjetoBolsa(index) {
-    baseDatos.jugadores[userSesion].inventario.splice(index, 1);
-    guardarBD(); refrescarPantallaGamer();
-}
-
-function invocarTerminalMercader() {
-    let validacion = prompt("LLAVE MAESTRA MERCADER:");
-    if(validacion === "1234") {
-        document.getElementById('pantalla-admin-master').style.display = 'block';
-        redibujarConsolaAdminMaster();
-    }
-}
-
+function consumirObjetoBolsa(idx) { baseDatos.jugadores[userSesion].inventario.splice(idx, 1); guardarBD(); refrescarPantallaGamer(); }
+function invocarTerminalMercader() { let v = prompt("LLAVE MAESTRA MERCADER:"); if(v === "1234") { document.getElementById('pantalla-admin-master').style.display = 'block'; ajustarCamposFormularioMercader(); redibujarConsolaAdminMaster(); } }
 function apagarTerminalMercader() { document.getElementById('pantalla-admin-master').style.display = 'none'; }
-
-function conmutarEstadoTienda(llave, valor) {
-    baseDatos[llave] = valor; guardarBD(); refrescarPantallaGamer();
-}
-
-function inyectarObjetoNuevoMaster() {
-    let n = document.getElementById('ins-nombre').value.trim();
-    let t = document.getElementById('ins-tienda').value;
-    let p = parseInt(document.getElementById('ins-precio').value) || 0;
-    let s = parseInt(document.getElementById('ins-stock').value) || 0;
-    if(!n) return;
-    let obj = { id: Date.now(), tienda: t, cat: 'Mercader Custom', nombre: n, stock: s, icon: '🔮' };
-    if(t === 'illegal') { obj.precioPf = p; obj.desc = "Inyectado por el Mercader."; } else { obj.precio = p; obj.pf = 1; }
-    baseDatos.productos.push(obj); guardarBD(); redibujarConsolaAdminMaster(); refrescarPantallaGamer();
-    document.getElementById('ins-nombre').value = '';
-    document.getElementById('ins-precio').value = '';
-    document.getElementById('ins-stock').value = '';
-}
-
-function ejecutarCambioCarteraManual(jugador, tipo, operacion) {
-    let inputElem = document.getElementById(`monto-${jugador}-${tipo}`);
-    let valor = parseInt(inputElem.value) || 0;
-    if(operacion === 'restar') baseDatos.jugadores[jugador][tipo] -= valor;
-    else baseDatos.jugadores[jugador][tipo] += valor;
-    if(baseDatos.jugadores[jugador][tipo] < 0) baseDatos.jugadores[jugador][tipo] = 0;
-    inputElem.value = ''; guardarBD(); redibujarConsolaAdminMaster(); refrescarPantallaGamer();
-}
-
-function limpiarCupoTransaccionesMaster(jugador) {
-    baseDatos.jugadores[jugador].comprasHoy = 0; guardarBD(); redibujarConsolaAdminMaster(); refrescarPantallaGamer();
-}
-
-/* --- NUEVAS FUNCIONES PARA EDICIÓN DE INVENTARIO CENTRAL --- */
-function actualizarStockMaster(id, nuevoStock) {
-    let p = baseDatos.productos.find(pr => pr.id === id);
-    if(p) {
-        p.stock = parseInt(nuevoStock) || 0;
-        guardarBD(); refrescarPantallaGamer();
-    }
-}
-
-function actualizarPrecioMaster(id, nuevoPrecio) {
-    let p = baseDatos.productos.find(pr => pr.id === id);
-    if(p) {
-        if(p.tienda === 'illegal') {
-            p.precioPf = parseInt(nuevoPrecio) || 0;
-        } else {
-            p.precio = parseInt(nuevoPrecio) || 0;
-        }
-        guardarBD(); refrescarPantallaGamer();
-    }
-}
-
-function eliminarArticuloMaster(id) {
-    if(confirm("¿Estás seguro de que quieres borrar este artículo por completo de las tiendas?")) {
-        baseDatos.productos = baseDatos.productos.filter(pr => pr.id !== id);
-        guardarBD(); redibujarConsolaAdminMaster(); refrescarPantallaGamer();
-    }
-}
+function conmutarEstadoTienda(ll, va) { baseDatos[ll] = va; guardarBD(); refrescarPantallaGamer(); }
+function guardarBD() { localStorage.setItem('silph_co_db_2026_final_v7', JSON.stringify(baseDatos)); }
 
 function redibujarConsolaAdminMaster() {
     document.getElementById('chk-open-legal').checked = baseDatos.legalOpen;
     document.getElementById('chk-open-pack').checked = baseDatos.packOpen;
     document.getElementById('chk-open-illegal').checked = baseDatos.illegalOpen;
-
     let jl = document.getElementById('admin-jugadores-lista'); jl.innerHTML = '';
     for(let k in baseDatos.jugadores) {
         let ju = baseDatos.jugadores[k];
-        let tagMedalla = ju.tipoMedallas === 'medallas' ? 'Medallas' : 'Kahunas';
-        jl.innerHTML += `
-            <div class="admin-card-inner">
-                <strong style="font-size:13px; color:var(--neon-packs);">${k.toUpperCase()} [${ju.lockeStatus.toUpperCase()}]</strong><br>
-                <span style="font-size:11px; color:var(--texto-secundario);">${ju.dinero} P₠ | ${ju.pf} PF | ${tagMedalla}: ${ju.numMedallas} | Torneos: ${ju.torneos}</span>
-                <div style="margin-top:5px; display:flex; gap:5px;">
-                    <input type="number" id="monto-${k}-dinero" class="admin-input-custom" placeholder="P₠">
-                    <button class="btn-mini-admin" onclick="ejecutarCambioCarteraManual('${k}','dinero','sumar')">+</button>
-                    <button class="btn-mini-admin" onclick="ejecutarCambioCarteraManual('${k}','dinero','restar')">-</button>
-                </div>
-                <button onclick="limpiarCupoTransaccionesMaster('${k}')" style="background:#22c55e; color:#000; font-weight:bold; border:none; padding:4px; width:100%; border-radius:4px; margin-top:5px; cursor:pointer; font-size:10px;">Reiniciar Límite</button>
-            </div>`;
+        jl.innerHTML += `<div class="admin-card-inner"><strong>${k.toUpperCase()}</strong><br><span style="font-size:11px;">${ju.dinero} P₠ | ${ju.pf} PF</span></div>`;
     }
-
     let al = document.getElementById('admin-inventario-global'); al.innerHTML = '';
     baseDatos.productos.forEach(p => {
-        let precioActual = (p.tienda === 'illegal') ? p.precioPf : p.precio;
-        let tipoMoneda = (p.tienda === 'illegal') ? 'PF' : 'P₠';
-        
-        al.innerHTML += `
-            <div class="admin-card-inner" style="border-left: 3px solid #ffbb00;">
-                <div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:5px;">
-                    <span style="font-size:12px; font-weight:bold;">[${p.tienda.toUpperCase()}] ${p.nombre}</span>
-                    <button onclick="eliminarArticuloMaster(${p.id})" style="background:#ef4444; border:none; color:white; font-size:10px; cursor:pointer; padding:2px 6px; border-radius:3px;">❌</button>
-                </div>
-                <div style="display:flex; gap:10px; flex-wrap:wrap; font-size:11px;">
-                    <div>
-                        <label style="color:var(--texto-secundario)">Stock:</label>
-                        <input type="number" value="${p.stock}" class="admin-input-custom" style="width:55px; padding:2px;" onchange="actualizarStockMaster(${p.id}, this.value)">
-                    </div>
-                    <div>
-                        <label style="color:var(--texto-secundario)">Precio (${tipoMoneda}):</label>
-                        <input type="number" value="${precioActual}" class="admin-input-custom" style="width:65px; padding:2px;" onchange="actualizarPrecioMaster(${p.id}, this.value)">
-                    </div>
-                </div>
-            </div>`;
+        al.innerHTML += `<div class="admin-card-inner"><span style="font-size:11px;">${p.nombre} (Stock: ${p.stock})</span></div>`;
     });
 }
-
-function guardarBD() { localStorage.setItem('silph_co_db_2026_final_v3', JSON.stringify(baseDatos)); }
 
 if(userSesion && baseDatos.jugadores[userSesion]) {
     document.getElementById('pantalla-lobby').style.display = 'none';
     document.getElementById('pantalla-mercado').style.display = 'block';
-    cargarDatosPerfilEnDOM();
-    refrescarPantallaGamer();
+    cargarDatosPerfilEnDOM(); refrescarPantallaGamer();
 }
 </script>
 </body>
