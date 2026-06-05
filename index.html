@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema Comercial y Registro de Entrenadores - Silph Co.</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Changa:wght@400;600;800&family=Orbitron:wght@500;700;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Changa:wght=400;600;800&family=Orbitron:wght=500;700;900&display=swap');
 
         :root {
             --bg-principal: #060914;
@@ -292,30 +292,35 @@
         
         button:disabled { background: #11141d !important; color: #334155 !important; border-color: #1e293b !important; cursor: not-allowed; }
 
-        .cuadro-info-original {
-            background: rgba(15, 23, 42, 0.6); border: 1px solid #1e293b;
-            padding: 20px; margin-top: 25px; border-radius: 10px;
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px;
-        }
-        .columna-info h4 { margin: 0 0 10px 0; font-size: 13px; text-transform: uppercase; font-family: 'Orbitron', sans-serif;}
-        .columna-info ul, .columna-info ol { margin: 0; padding-left: 18px; font-size: 12px; color: var(--texto-secundario); line-height: 1.6; }
-        .columna-info li { margin-bottom: 6px; }
-
         .lobby-box { max-width: 380px; margin: 120px auto; text-align: center; background: #0f1422; border: 2px solid #1e293b; padding: 30px; border-radius: 16px; }
         .lobby-box input { background: #060914; color: #fff; border: 1px solid #334155; padding: 12px; width: 100%; margin-bottom: 15px; text-align: center; border-radius: 8px; font-size: 14px; }
 
+        /* CONSOLA ADMIN OPTIMIZADA */
         .consola-admin-screen { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #060914; z-index: 9999; padding: 25px; overflow-y: auto; }
-        .grid-admin { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
-        .admin-card-inner { background: #0f1422; border: 1px solid #1e293b; padding: 15px; border-radius: 8px; margin-bottom: 10px; }
+        .grid-admin { display: grid; grid-template-columns: 1fr 2fr; gap: 20px; }
+        @media(max-width: 900px) { .grid-admin { grid-template-columns: 1fr; } }
+        
+        .admin-card-inner { background: #0f1422; border: 1px solid #1e293b; padding: 15px; border-radius: 8px; margin-bottom: 12px; position: relative;}
         
         .admin-input-custom {
             background: #060914; color: #fff; border: 1px solid #334155;
             padding: 6px; width: 100%; border-radius: 4px;
             font-family: 'Orbitron', sans-serif; font-size: 12px;
         }
-        .btn-mini-admin {
-            background: #1e293b; color: #fff; border: 1px solid #475569;
-            padding: 6px 12px; cursor: pointer; border-radius: 4px; font-size: 11px; font-weight: bold;
+        .admin-edit-row {
+            display: flex; gap: 10px; align-items: center; margin-top: 8px; flex-wrap: wrap;
+        }
+        .admin-edit-field {
+            flex: 1; min-width: 70px;
+        }
+        .admin-edit-field label { font-size: 10px; color: var(--texto-secundario); display: block; text-transform: uppercase;}
+
+        .btn-delete-admin {
+            position: absolute; top: 10px; right: 10px;
+            background: #ef4444; color: #fff; border: none;
+            width: 22px; height: 22px; border-radius: 4px;
+            cursor: pointer; font-weight: bold; font-size: 11px;
+            display: flex; align-items: center; justify-content: center;
         }
 
         .pokeball-mercader-btn {
@@ -422,6 +427,7 @@
                 </div>
             </div>
         </div>
+
         <div class="bolsa-contenedor">
             <div class="bolsa-titulo">🎒 Tus Adquisiciones Recientes:</div>
             <div id="lista-inventario" style="display:flex; gap:10px; flex-wrap:wrap;"></div>
@@ -444,12 +450,13 @@
 
 <div class="consola-admin-screen" id="pantalla-admin-master">
     <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #1e293b; padding-bottom:15px; margin-bottom:20px;">
-        <h2 style="color:var(--neon-packs); margin:0; font-family:'Orbitron'; font-size:16px;">🖥️ CONSOLA DE GESTIÓN CENTRAL (MERCADER)</h2>
-        <button onclick="apagarTerminalMercader()" style="background:#1e293b; color:#fff; border:none; padding:8px 16px; cursor:pointer; border-radius:4px;">SALIR</button>
+        <h2 style="color:var(--neon-packs); margin:0; font-family:'Orbitron'; font-size:16px;">🖥️ TERMINAL DE CONTROL CENTRAL (MERCADER PRO)</h2>
+        <button onclick="apagarTerminalMercader()" style="background:#ef4444; color:#fff; border:none; padding:8px 16px; cursor:pointer; border-radius:4px; font-weight:bold;">CERRAR PANEL</button>
     </div>
+    
     <div class="grid-admin">
-        <div style="background:#0f1422; border:1px solid #1e293b; padding:20px; border-radius:12px;">
-            <h3 style="color:var(--neon-packs); margin-top:0;">🔓 Interruptores de Red Comercial</h3>
+        <div style="background:#0f1422; border:1px solid #1e293b; padding:20px; border-radius:12px; height:fit-content;">
+            <h3 style="color:var(--neon-packs); margin-top:0; font-size:14px; font-family:'Orbitron';">🔓 INTERRUPTORES DE RED</h3>
             <label style="display:flex; align-items:center; gap:10px; margin-bottom:12px; cursor:pointer; font-size:13px;">
                 <input type="checkbox" id="chk-open-legal" onchange="conmutarEstadoTienda('legalOpen', this.checked)"> 🟢 TIENDA LEGAL ABIERTA
             </label>
@@ -462,15 +469,18 @@
             
             <hr style="border-color:#1e293b; margin:20px 0;">
             
-            <h4>Añadir Suministro Extra</h4>
+            <h3 style="color:var(--neon-legal); margin-top:0; font-size:14px; font-family:'Orbitron';">➕ AÑADIR NUEVO PRODUCTO</h3>
             <div style="margin-bottom:10px;">
+                <label style="font-size:11px; color:var(--texto-secundario);">Seleccionar Aparador:</label>
                 <select id="ins-tienda" onchange="ajustarCamposFormularioMercader()" style="width:100%; padding:8px; background:#060914; color:#fff; border:1px solid #1e293b; border-radius:4px;">
                     <option value="legal">Tienda Legal</option>
                     <option value="pack">Shop PF Pack</option>
                     <option value="illegal">Tienda de Ilegalidades</option>
                 </select>
             </div>
+            
             <div id="form-bloque-legal-cat" style="margin-bottom:10px;">
+                <label style="font-size:11px; color:var(--texto-secundario);">Subcategoría:</label>
                 <select id="ins-cat-legal" style="width:100%; padding:8px; background:#060914; color:#fff; border:1px solid #1e293b; border-radius:4px;">
                     <option value="EV/IV">EV/IV</option>
                     <option value="Bayas">Bayas</option>
@@ -480,61 +490,96 @@
                     <option value="Objetos Competitivos">Objetos Competitivos</option>
                 </select>
             </div>
+            
             <div id="form-bloque-pack-detalles" style="margin-bottom:10px; display:none;">
-                <input type="text" id="ins-pack-desc" placeholder="Contenido del Pack" style="width:100%; margin-bottom:8px; padding:8px; background:#060914; color:#fff; border:1px solid #1e293b; border-radius:4px;">
-                <input type="text" id="ins-pack-estrategia" placeholder="Enfoque Estratégico" style="width:100%; padding:8px; background:#060914; color:#fff; border:1px solid #1e293b; border-radius:4px;">
+                <input type="text" id="ins-pack-desc" placeholder="Contenido (Ej: 2 Buceo Ball + 1 Pepita)" style="width:100%; margin-bottom:8px; padding:8px; background:#060914; color:#fff; border:1px solid #1e293b; border-radius:4px; font-size:12px;">
+                <input type="text" id="ins-pack-estrategia" placeholder="Enfoque estratégico (Opcional)" style="width:100%; padding:8px; background:#060914; color:#fff; border:1px solid #1e293b; border-radius:4px; font-size:12px;">
             </div>
+            
             <div id="form-bloque-illegal-detalles" style="margin-bottom:10px; display:none;">
-                <input type="text" id="ins-illegal-desc" placeholder="Efecto Ilegal" style="width:100%; padding:8px; background:#060914; color:#fff; border:1px solid #1e293b; border-radius:4px;">
+                <input type="text" id="ins-illegal-desc" placeholder="Descripción del servicio prohibido" style="width:100%; padding:8px; background:#060914; color:#fff; border:1px solid #1e293b; border-radius:4px; font-size:12px;">
             </div>
+
             <div style="margin-bottom:10px;">
-                <label id="lbl-ins-nombre" style="font-size:11px;">Nombre:</label>
+                <label style="font-size:11px; color:var(--texto-secundario);">Icono (Emoji):</label>
+                <input type="text" id="ins-icono" value="📦" class="admin-input-custom" style="font-size:14px;">
+            </div>
+            
+            <div style="margin-bottom:10px;">
+                <label id="lbl-ins-nombre" style="font-size:11px; color:var(--texto-secundario);">Nombre del Artículo:</label>
                 <input type="text" id="ins-nombre" class="admin-input-custom">
             </div>
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:15px;">
+            
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:10px;">
                 <div>
-                    <label id="lbl-ins-precio" style="font-size:11px;">Coste:</label>
+                    <label id="lbl-ins-precio" style="font-size:11px; color:var(--texto-secundario);">Coste:</label>
                     <input type="number" id="ins-precio" class="admin-input-custom">
                 </div>
                 <div id="bloque-ins-pf">
-                    <label style="font-size:11px;">Bono PF:</label>
+                    <label style="font-size:11px; color:var(--texto-secundario);">Bono PF:</label>
                     <input type="number" id="ins-pf" value="1" class="admin-input-custom">
                 </div>
             </div>
+            
             <div style="margin-bottom:15px;">
-                <label style="font-size:11px;">Stock Inicial:</label>
-                <input type="number" id="ins-stock" class="admin-input-custom">
+                <label style="font-size:11px; color:var(--texto-secundario);">Stock Inicial:</label>
+                <input type="number" id="ins-stock" value="10" class="admin-input-custom">
             </div>
-            <button class="btn-accion" style="border-color:var(--neon-legal); color:var(--neon-legal);" onclick="inyectarObjetoNuevoMaster()">PUBLICAR ARTÍCULO</button>
+            
+            <button class="btn-accion" style="border-color:var(--neon-legal); color:var(--neon-legal);" onclick="inyectarObjetoNuevoMaster()">PUBLICAR EN TIENDA</button>
         </div>
+
         <div style="background:#0f1422; border:1px solid #1e293b; padding:20px; border-radius:12px;">
-            <h3 style="color:var(--neon-legal); margin-top:0;">👥 Ajustes de Entrenadores</h3>
-            <div id="admin-jugadores-lista" style="max-height:450px; overflow-y:auto;"></div>
-        </div>
-        <div style="background:#0f1422; border:1px solid #1e293b; padding:20px; border-radius:12px;">
-            <h3 style="color:var(--neon-ilegal); margin-top:0;">📦 Inventario Global</h3>
-            <div id="admin-inventario-global" style="max-height:450px; overflow-y:auto;"></div>
+            <h3 style="color:var(--neon-packs); margin-top:0; font-size:14px; font-family:'Orbitron';">📦 ALMACÉN GLOBAL Y EDICIÓN DE PRECIOS / STOCKS</h3>
+            <div id="admin-inventario-global" style="max-height:600px; overflow-y:auto; padding-right:5px;"></div>
         </div>
     </div>
 </div>
 
 <script>
+// Base de datos inicial rellena con TODOS los objetos de tus tres tiendas reales
 const baseDatosInicial = [
-    { id: 1, tienda: 'legal', cat: 'EV/IV', nombre: 'Hierro', precio: 1000, pf: 2, stock: 10, icon: '💊' },
-    { id: 2, tienda: 'legal', cat: 'EV/IV', nombre: 'Proteína', precio: 1000, pf: 2, stock: 10, icon: '💊' },
-    { id: 3, tienda: 'legal', cat: 'Bayas', nombre: 'Baya Atania', precio: 80, pf: 1, stock: 12, icon: '🍒' },
-    { id: 5, tienda: 'legal', cat: 'Poké Balls', nombre: 'Buceo Ball', precio: 200, pf: 2, stock: 8, icon: '🔵' },
-    { id: 11, tienda: 'legal', cat: 'Objetos Competitivos', nombre: 'Banda Focus', precio: 2500, pf: 3, stock: 4, icon: '🎗️' },
-    { id: 101, tienda: 'pack', cat: 'Pack Balls', nombre: 'Pack Capture Control', desc: 'Contiene: 2 Buceo Ball + 2 Nivel Ball.', estrategia: 'Incentiva estrategia de captura mixta', precio: 750, pf: 11, stock: 3, icon: '🔴' }
+    // === TIENDA LEGAL ===
+    { id: 101, tienda: 'legal', cat: 'EV/IV', nombre: 'Hierro', precio: 1000, pf: 2, stock: 10, icon: '🧪' },
+    { id: 102, tienda: 'legal', cat: 'EV/IV', nombre: 'Proteína', precio: 1000, pf: 2, stock: 10, icon: '🧪' },
+    { id: 103, tienda: 'legal', cat: 'Bayas', nombre: 'Baya Atania', precio: 80, pf: 1, stock: 12, icon: '🫐' },
+    { id: 104, tienda: 'legal', cat: 'Bayas', nombre: 'Baya Oran', precio: 90, pf: 1, stock: 12, icon: '🍊' },
+    { id: 105, tienda: 'legal', cat: 'Poké Balls', nombre: 'Buceo Ball', precio: 200, pf: 2, stock: 8, icon: '🌐' },
+    { id: 106, tienda: 'legal', cat: 'Poké Balls', nombre: 'Nivel Ball', precio: 250, pf: 3, stock: 8, icon: '🟡' },
+    { id: 107, tienda: 'legal', cat: 'Objetos de Exploración', nombre: 'Cuerda Huida', precio: 120, pf: 1, stock: 8, icon: '🪢' },
+    { id: 108, tienda: 'legal', cat: 'Objetos de Exploración', nombre: 'Repelente', precio: 70, pf: 1, stock: 20, icon: '🧴' },
+    { id: 109, tienda: 'legal', cat: 'Objetos de Combate (X)', nombre: 'X Defensa', precio: 600, pf: 2, stock: 6, icon: '🔴' },
+    { id: 110, tienda: 'legal', cat: 'Objetos de Combate (X)', nombre: 'X Velocidad', precio: 700, pf: 3, stock: 6, icon: '🔵' },
+    { id: 111, tienda: 'legal', cat: 'Objetos Competitivos', nombre: 'Banda Focus', precio: 2500, pf: 3, stock: 4, icon: '🎗️' },
+    { id: 112, tienda: 'legal', cat: 'Objetos Competitivos', nombre: 'Gafas Elegidas', precio: 5000, pf: 3, stock: 4, icon: '🕶️' },
+
+    // === SHOP PF PACK ===
+    { id: 201, tienda: 'pack', cat: 'Pack Especial', nombre: 'Pack Balls', precio: 750, pf: 11, stock: 99, icon: '📦', desc: '2 Buceo Ball + 2 Nivel Ball', estrategia: 'Incentiva estrategia de captura mixta (situacional + control de niveles).' },
+    { id: 202, tienda: 'pack', cat: 'Pack Especial', nombre: 'Pack Exploración', precio: 460, pf: 7, stock: 99, icon: '📦', desc: '2 Cuerda Huida + 4 Repelente', estrategia: 'Reduce fricción de rutas largas sin regalar seguridad total.' },
+    { id: 203, tienda: 'pack', cat: 'Pack Especial', nombre: 'Pack Combate Temprano', precio: 1300, pf: 11, stock: 99, icon: '📦', desc: '2 X Defensa + 2 X Velocidad', estrategia: 'No es barato, pero premia preparación de combate.' },
+    { id: 204, tienda: 'pack', cat: 'Pack Especial', nombre: 'Pack Supervivencia', precio: 460, pf: 7, stock: 99, icon: '📦', desc: '3 Baya Oran + 3 Baya Atania', estrategia: 'Ahorro pequeño pero constante, ideal para jugadores cuidadosos.' },
+    { id: 205, tienda: 'pack', cat: 'Pack Especial', nombre: 'Pack "Segundo Intento"', precio: 2800, pf: 6, stock: 99, icon: '📦', desc: '1 Banda Focus + 1 Hierro', estrategia: 'Supervivencia + mejora permanente ligera.' },
+
+    // === TIENDA DE ILEGALIDADES ===
+    { id: 301, tienda: 'illegal', cat: 'Hack de Sistema', nombre: 'Escudo Poke', precioPf: 5, stock: 1, icon: '🛡️', desc: 'Debe asignarse antes del combate. Si el Poke iba a morir, el escudo se activa y evita la muerte.' },
+    { id: 302, tienda: 'illegal', cat: 'Hack de Sistema', nombre: 'Captura Selectiva', precioPf: 4, stock: 1, icon: '🎯', desc: 'Permite elegir el Poke capturable de una ruta. Tras su uso, no puedes capturar en las 2 siguientes rutas.' },
+    { id: 303, tienda: 'illegal', cat: 'Hack de Sistema', nombre: 'Licencia De Caza', precioPf: 3, stock: 1, icon: '📜', desc: 'Permite repetir la captura de una ruta si el Poke es derrotado o huye. No se activa si el jugador es derrotado.' },
+    { id: 304, tienda: 'illegal', cat: 'Hack de Sistema', nombre: 'Falsificación De Registro', precioPf: 5, stock: 1, icon: '🪪', desc: 'Permite sustituir 1 Poke del equipo clasificado al torneo por otro Poke válido de la caja.' },
+    { id: 305, tienda: 'illegal', cat: 'Hack de Sistema', nombre: 'Plaza Fantasma', precioPf: 6, stock: 1, icon: '🪑', desc: 'Si un Poke muere contra el líder, permite sustituir su plaza en el torneo por otro Poke de la caja.' },
+    { id: 306, tienda: 'illegal', cat: 'Hack de Sistema', nombre: 'Evolución Forzada', precioPf: 5, stock: 1, icon: '💖', desc: 'Permite evolucionar un Poke que requiera amistad para evolucionar.' },
+    { id: 307, tienda: 'illegal', cat: 'Hack de Sistema', nombre: 'Reconfiguración', precioPf: 2, stock: 1, icon: '🔄', desc: 'Permite modificar los movimientos de 1 Poke después del combate contra el líder y antes del torneo.' },
+    { id: 308, tienda: 'illegal', cat: 'Hack de Sistema', nombre: 'Modificación Genética', precioPf: 4, stock: 1, icon: '🧬', desc: 'Permite cambiar la habilidad de 1 Poke por otra de sus habilidades posibles.' },
+    { id: 309, tienda: 'illegal', cat: 'Hack de Sistema', nombre: 'Alteración De Personalidad', precioPf: 2, stock: 1, icon: '🎭', desc: 'Permite cambiar la naturaleza de 1 Poke.' },
+    { id: 310, tienda: 'illegal', cat: 'Hack de Sistema', nombre: 'Resurrección Robada', precioPf: 8, stock: 1, icon: '🔮', desc: 'Robas 1 Poke muerto de otro jugador y pasa a estar en tu caja vivo.' }
 ];
 
 let baseDatos;
 try {
-    baseDatos = JSON.parse(localStorage.getItem('silph_co_db_2026_final_v7'));
+    baseDatos = JSON.parse(localStorage.getItem('silph_co_db_2026_final_v8'));
     if (!baseDatos || !baseDatos.productos || !baseDatos.jugadores) throw new Error();
 } catch (e) {
     baseDatos = { productos: JSON.parse(JSON.stringify(baseDatosInicial)), jugadores: {}, legalOpen: true, packOpen: true, illegalOpen: true };
-    localStorage.setItem('silph_co_db_2026_final_v7', JSON.stringify(baseDatos));
+    localStorage.setItem('silph_co_db_2026_final_v8', JSON.stringify(baseDatos));
 }
 
 let userSesion = sessionStorage.getItem('silph_user_sesion') || null;
@@ -549,14 +594,9 @@ function ingresarAlSistema() {
         baseDatos.jugadores[id] = { 
             dinero: 4000, pf: 0, comprasHoy: 0, inventario: [],
             lockeStatus: 'jugando', showdownRaw: '', tipoMedallas: 'medallas', numMedallas: 0, torneos: 0,
-            diarioLogs: [] // CAMBIO CLAVE: Cambiamos String simple por Array de objetos inmutables
+            diarioLogs: []
         };
     }
-    // Asegurar estructura si el jugador ya existía en versiones previas
-    if(!baseDatos.jugadores[id].diarioLogs) {
-        baseDatos.jugadores[id].diarioLogs = [];
-    }
-
     userSesion = id;
     sessionStorage.setItem('silph_user_sesion', id);
     guardarBD();
@@ -581,7 +621,7 @@ function cambiarSubPestanaPerfil(sub) {
     if(target) target.classList.add('active');
 }
 
-/* --- OVERLAY DIARIO FLOTANTE E INMUTABLE --- */
+/* --- OVERLAY DIARIO FLOTANTE --- */
 function abrirOverlayDiarioNativo() {
     document.getElementById('diario-overlay-sistema').style.display = 'flex';
     redibujarHistorialDiario();
@@ -594,7 +634,6 @@ function cerrarOverlayDiarioNativo() {
 function redibujarHistorialDiario() {
     if(!userSesion || !baseDatos.jugadores[userSesion]) return;
     let u = baseDatos.jugadores[userSesion];
-    
     let boxLogs = document.getElementById('diario-historial-logs');
     let contador = document.getElementById('diario-contador');
     let inputTxt = document.getElementById('diario-input-texto');
@@ -605,7 +644,7 @@ function redibujarHistorialDiario() {
     contador.innerText = `Registros: ${totalEntradas} / 1500`;
 
     if(totalEntradas === 0) {
-        boxLogs.innerHTML = '<span style="color:var(--texto-secundario); font-size:12px; text-align:center; padding:20px;">Tu diario está vacío. Registra tu primera acción abajo.</span>';
+        boxLogs.innerHTML = '<span style="color:var(--texto-secundario); font-size:12px; text-align:center; padding:20px;">Bitácora vacía. Escribe un hito abajo.</span>';
     } else {
         u.diarioLogs.forEach(log => {
             boxLogs.innerHTML += `
@@ -616,13 +655,11 @@ function redibujarHistorialDiario() {
         });
     }
 
-    // Auto-scroll hacia el final para ver la última anotación
     boxLogs.scrollTop = boxLogs.scrollHeight;
 
-    // Validación estricta del límite de 1.500 registros
     if(totalEntradas >= 1500) {
         inputTxt.disabled = true;
-        inputTxt.placeholder = "🔒 Límite de 1.500 entradas alcanzado. Registro deshabilitado.";
+        inputTxt.placeholder = "🔒 Capacidad máxima de bitácora alcanzada.";
         btnGuardar.disabled = true;
     } else {
         inputTxt.disabled = false;
@@ -636,20 +673,14 @@ function guardarNuevaEntradaDiario() {
     let inputTxt = document.getElementById('diario-input-texto');
     let contenido = inputTxt.value.trim();
 
-    if(!contenido) return alert("No puedes estampar un registro vacío.");
-    if(u.diarioLogs.length >= 1500) return alert("Has alcanzado el límite absoluto de 1.500 entradas.");
+    if(!contenido) return alert("El registro no puede estar vacío.");
+    if(u.diarioLogs.length >= 1500) return alert("Límite absoluto alcanzado.");
 
-    // Estampa de tiempo exacta
     let fechaActual = new Date().toLocaleString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' });
 
-    // Inserción limpia: Solo se añade un objeto nuevo al final de la matriz
-    u.diarioLogs.push({
-        timestamp: fechaActual,
-        texto: contenido
-    });
-
+    u.diarioLogs.push({ timestamp: fechaActual, texto: contenido });
     guardarBD();
-    inputTxt.value = ''; // Limpiar el editor
+    inputTxt.value = '';
     redibujarHistorialDiario();
 }
 
@@ -688,25 +719,23 @@ function parsearYRenderizarShowdown() {
     let raw = document.getElementById('perf-showdown-raw').value;
     let box = document.getElementById('visualizador-showdown-team');
     if(!box) return; box.innerHTML = '';
-    if(!raw.trim()) { box.innerHTML = '<span style="color:var(--texto-secundario); font-size:12px;">El equipo se generará automáticamente.</span>'; return; }
+    if(!raw.trim()) return;
     let pokesRaw = raw.split(/\n\s*\n/);
     pokesRaw.forEach(bloque => {
         let lineas = bloque.split('\n').map(l => l.trim()).filter(l => l.length > 0);
         if(lineas.length === 0) return;
-        let nombreCompleto = lineas[0]; let objeto = "Ninguno"; let habilidad = "Desconocida"; let movimientos = [];
+        let nombreCompleto = lineas[0]; let objeto = "Ninguno"; let habilidad = "Desconocida";
         if(nombreCompleto.includes('@')) { let partes = nombreCompleto.split('@'); nombreCompleto = partes[0].trim(); objeto = partes[1].trim(); }
-        lineas.forEach(linea => { if(linea.startsWith('Ability:')) habilidad = linea.replace('Ability:', '').trim(); else if(linea.startsWith('-')) movimientos.push(linea.replace('-', '').trim()); });
-        box.innerHTML += `<div class="poke-card-showdown"><div class="poke-card-name">🧬 ${nombreCompleto}</div><div style="color:var(--texto-secundario)">Item: <span style="color:#fff;">${objeto}</span></div><div style="color:var(--texto-secundario)">Habilidad: <span style="color:#fff;">${habilidad}</span></div></div>`;
+        lineas.forEach(linea => { if(linea.startsWith('Ability:')) habilidad = linea.replace('Ability:', '').trim(); });
+        box.innerHTML += `<div class="poke-card-showdown"><div class="poke-card-name">🧬 ${nombreCompleto}</div><div style="color:var(--texto-secundario)">Objeto: <span style="color:#fff;">${objeto}</span></div><div style="color:var(--texto-secundario)">Habilidad: <span style="color:#fff;">${habilidad}</span></div></div>`;
     });
 }
 
 function cambiarSeccionTienda(tipo) {
     document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
     document.querySelectorAll('.market-view').forEach(v => v.classList.remove('active'));
-    let boton = document.getElementById(`tab-${tipo}`);
-    let vista = document.getElementById(`vista-${tipo}`);
-    if (boton) boton.classList.add('active');
-    if (vista) vista.classList.add('active');
+    document.getElementById(`tab-${tipo}`).classList.add('active');
+    document.getElementById(`vista-${tipo}`).classList.add('active');
 }
 
 function ajustarCamposFormularioMercader() {
@@ -715,13 +744,12 @@ function ajustarCamposFormularioMercader() {
     let bPack = document.getElementById('form-bloque-pack-detalles');
     let bIllegal = document.getElementById('form-bloque-illegal-detalles');
     let bPf = document.getElementById('bloque-ins-pf');
-    let lblNombre = document.getElementById('lbl-ins-nombre');
     let lblPrecio = document.getElementById('lbl-ins-precio');
 
     bLegal.style.display = 'none'; bPack.style.display = 'none'; bIllegal.style.display = 'none'; bPf.style.display = 'block';
-    if(tienda === 'legal') { bLegal.style.display = 'block'; lblNombre.innerText = "Objeto Legal:"; lblPrecio.innerText = "Coste (P₠):"; } 
-    else if(tienda === 'pack') { bPack.style.display = 'block'; lblNombre.innerText = "Nombre Pack:"; lblPrecio.innerText = "Coste Pack (P₠):"; } 
-    else if(tienda === 'illegal') { bIllegal.style.display = 'block'; bPf.style.display = 'none'; lblNombre.innerText = "Modificación:"; lblPrecio.innerText = "Coste (PF):"; }
+    if(tienda === 'legal') { bLegal.style.display = 'block'; lblPrecio.innerText = "Coste (P₠):"; } 
+    else if(tienda === 'pack') { bPack.style.display = 'block'; lblPrecio.innerText = "Coste Pack (P₠):"; } 
+    else if(tienda === 'illegal') { bIllegal.style.display = 'block'; bPf.style.display = 'none'; lblPrecio.innerText = "Coste (PF):"; }
 }
 
 function inyectarObjetoNuevoMaster() {
@@ -729,15 +757,88 @@ function inyectarObjetoNuevoMaster() {
     let nombre = document.getElementById('ins-nombre').value.trim();
     let precio = parseInt(document.getElementById('ins-precio').value) || 0;
     let stock = parseInt(document.getElementById('ins-stock').value) || 0;
-    if(!nombre) return alert("Nombre requerido.");
-    let nuevoObjeto = { id: Date.now(), tienda: tienda, stock: stock, icon: '🔮' };
+    let icono = document.getElementById('ins-icono').value.trim() || '📦';
+    
+    if(!nombre) return alert("Asigna un nombre al artículo.");
+    let nuevoObjeto = { id: Date.now(), tienda: tienda, stock: stock, icon: icono, nombre: nombre };
 
-    if(tienda === 'legal') { nuevoObjeto.cat = document.getElementById('ins-cat-legal').value; nuevoObjeto.nombre = nombre; nuevoObjeto.precio = precio; nuevoObjeto.pf = parseInt(document.getElementById('ins-pf').value) || 1; nuevoObjeto.icon = '💊'; } 
-    else if(tienda === 'pack') { nuevoObjeto.cat = 'Pack Mercader'; nuevoObjeto.nombre = nombre; nuevoObjeto.precio = precio; nuevoObjeto.pf = parseInt(document.getElementById('ins-pf').value) || 1; nuevoObjeto.desc = document.getElementById('ins-pack-desc').value.trim(); nuevoObjeto.estrategia = document.getElementById('ins-pack-estrategia').value.trim(); nuevoObjeto.icon = '📦'; } 
-    else if(tienda === 'illegal') { nuevoObjeto.cat = 'Modificación Custom'; nuevoObjeto.nombre = nombre; nuevoObjeto.precioPf = precio; nuevoObjeto.desc = document.getElementById('ins-illegal-desc').value.trim(); nuevoObjeto.icon = '🕵️‍♂️'; }
+    if(tienda === 'legal') { nuevoObjeto.cat = document.getElementById('ins-cat-legal').value; nuevoObjeto.precio = precio; nuevoObjeto.pf = parseInt(document.getElementById('ins-pf').value) || 0; } 
+    else if(tienda === 'pack') { nuevoObjeto.cat = 'Pack Especial'; nuevoObjeto.precio = precio; nuevoObjeto.pf = parseInt(document.getElementById('ins-pf').value) || 0; nuevoObjeto.desc = document.getElementById('ins-pack-desc').value.trim(); nuevoObjeto.estrategia = document.getElementById('ins-pack-estrategia').value.trim(); } 
+    else if(tienda === 'illegal') { nuevoObjeto.cat = 'Hack de Sistema'; nuevoObjeto.precioPf = precio; nuevoObjeto.desc = document.getElementById('ins-illegal-desc').value.trim(); }
 
-    baseDatos.productos.push(nuevoObjeto); guardarBD(); redibujarConsolaAdminMaster(); refrescarPantallaGamer();
-    document.getElementById('ins-nombre').value = ''; document.getElementById('ins-precio').value = ''; document.getElementById('ins-stock').value = '';
+    baseDatos.productos.push(nuevoObjeto); 
+    guardarBD(); 
+    redibujarConsolaAdminMaster(); 
+    refrescarPantallaGamer();
+    document.getElementById('ins-nombre').value = ''; document.getElementById('ins-precio').value = '';
+}
+
+/* --- ACTUALIZACIÓN EN TIEMPO REAL DESDE LA CONSOLA --- */
+function actualizarPropiedadProducto(id, propiedad, valor) {
+    let p = baseDatos.productos.find(pr => pr.id === id);
+    if(p) {
+        p[propiedad] = parseInt(valor) || 0;
+        guardarBD();
+        refrescarPantallaGamer();
+    }
+}
+
+function eliminarProductoMaster(id) {
+    if(confirm("¿Seguro que quieres eliminar este artículo permanentemente?")) {
+        baseDatos.productos = baseDatos.productos.filter(p => p.id !== id);
+        guardarBD();
+        redibujarConsolaAdminMaster();
+        refrescarPantallaGamer();
+    }
+}
+
+function redibujarConsolaAdminMaster() {
+    document.getElementById('chk-open-legal').checked = baseDatos.legalOpen;
+    document.getElementById('chk-open-pack').checked = baseDatos.packOpen;
+    document.getElementById('chk-open-illegal').checked = baseDatos.illegalOpen;
+
+    let al = document.getElementById('admin-inventario-global'); 
+    al.innerHTML = '';
+    
+    if(baseDatos.productos.length === 0) {
+        al.innerHTML = '<span style="color:var(--texto-secundario); font-size:12px;">No hay productos en ninguna tienda. Usa el formulario de la izquierda.</span>';
+        return;
+    }
+
+    baseDatos.productos.forEach(p => {
+        let esIlegal = p.tienda === 'illegal';
+        let costLabel = esIlegal ? 'Coste (PF):' : 'Coste (P₠):';
+        let costProp = esIlegal ? 'precioPf' : 'precio';
+        let costVal = esIlegal ? p.precioPf : p.precio;
+
+        al.innerHTML += `
+            <div class="admin-card-inner">
+                <button class="btn-delete-admin" onclick="eliminarProductoMaster(${p.id})" title="Eliminar Objeto">X</button>
+                <div style="font-size:13px; font-weight:bold; color:#fff;">
+                    ${p.icon} ${p.nombre.toUpperCase()} 
+                    <span style="font-size:10px; padding:2px 6px; background:#1e293b; border-radius:4px; margin-left:6px; color:var(--texto-secundario);">
+                        ${p.tienda.toUpperCase()} - ${p.cat}
+                    </span>
+                </div>
+                
+                <div class="admin-edit-row">
+                    <div class="admin-edit-field">
+                        <label>${costLabel}</label>
+                        <input type="number" value="${costVal}" class="admin-input-custom" oninput="actualizarPropiedadProducto(${p.id}, '${costProp}', this.value)">
+                    </div>
+                    <div class="admin-edit-field">
+                        <label>Stock:</label>
+                        <input type="number" value="${p.stock}" class="admin-input-custom" oninput="actualizarPropiedadProducto(${p.id}, 'stock', this.value)">
+                    </div>
+                    ${!esIlegal ? `
+                    <div class="admin-edit-field">
+                        <label>Bono PF:</label>
+                        <input type="number" value="${p.pf || 0}" class="admin-input-custom" oninput="actualizarPropiedadProducto(${p.id}, 'pf', this.value)">
+                    </div>
+                    ` : ''}
+                </div>
+            </div>`;
+    });
 }
 
 function refrescarPantallaGamer() {
@@ -751,36 +852,44 @@ function refrescarPantallaGamer() {
     if(u.inventario.length === 0) bBox.innerHTML = '<span style="color:var(--texto-secundario); font-size:12px;">Mochila vacía.</span>';
     u.inventario.forEach((item, idx) => { bBox.innerHTML += `<div style="background:#1e293b; padding:6px 12px; display:flex; gap:10px; border-radius:6px; font-size:12px;"><span>${item.nombre}</span><button onclick="consumirObjetoBolsa(${idx})" style="background:#ef4444; border:none; color:#fff; font-size:9px; cursor:pointer; border-radius:3px;">Gastar</button></div>`; });
 
-    // RENDERS DE ESTANTERÍAS
+    // TIENDA LEGAL
     let vl = document.getElementById('contenedor-legal-view');
     if(!baseDatos.legalOpen) { vl.innerHTML = `<div class="tienda-cerrada-msg">🔒 Red Cerrada temporalmente</div>`; } 
     else {
         let htm = `<div class="items-grid">`;
-        baseDatos.productos.filter(p => p.tienda === 'legal').forEach(p => {
+        let items = baseDatos.productos.filter(p => p.tienda === 'legal');
+        if(items.length === 0) htm += `<span style="color:var(--texto-secundario); grid-column:1/-1; text-align:center; padding:20px;">Sin existencias registradas por el mercader.</span>`;
+        items.forEach(p => {
             let ok = p.stock > 0 && u.dinero >= p.precio && u.comprasHoy < 3;
-            htm += `<div class="item-card"><div><div class="categoria-tag">${p.cat}</div><div class="item-icon">${p.icon}</div><div class="item-titulo">${p.nombre}</div></div><div><div style="color:var(--neon-packs); font-size:15px;">${p.precio} P₠</div><div style="font-size:11px; color:var(--texto-secundario);">Stock: ${p.stock}</div><button class="btn-accion" ${!ok?'disabled':''} onclick="procesarTransaccionComercial(${p.id})">Comprar</button></div></div>`;
+            htm += `<div class="item-card"><div><div class="categoria-tag">${p.cat}</div><div class="item-icon">${p.icon}</div><div class="item-titulo">${p.nombre}</div></div><div><div style="color:var(--neon-legal); font-size:15px; font-family:'Orbitron'; font-weight:700;">${p.precio} P₠</div><div style="font-size:11px; color:var(--texto-secundario); margin-bottom:8px;">Stock: ${p.stock} | +${p.pf} PF</div><button class="btn-accion" ${!ok?'disabled':''} onclick="procesarTransaccionComercial(${p.id})">Comprar</button></div></div>`;
         });
         htm += `</div>`; vl.innerHTML = htm;
     }
 
+    // TIENDA PACKS
     let vp = document.getElementById('contenedor-pack-view');
     if(!baseDatos.packOpen) { vp.innerHTML = `<div class="tienda-cerrada-msg">🔒 Ofertas en preparación</div>`; } 
     else {
         let htm = `<div class="items-grid">`;
-        baseDatos.productos.filter(p => p.tienda === 'pack').forEach(p => {
+        let items = baseDatos.productos.filter(p => p.tienda === 'pack');
+        if(items.length === 0) htm += `<span style="color:var(--texto-secundario); grid-column:1/-1; text-align:center; padding:20px;">Sin existencias registradas por el mercader.</span>`;
+        items.forEach(p => {
             let ok = p.stock > 0 && u.dinero >= p.precio && u.comprasHoy < 3;
-            htm += `<div class="item-card"><div><div class="categoria-tag">${p.cat}</div><div class="item-icon">${p.icon}</div><div class="item-titulo" style="color:var(--neon-packs);">${p.nombre}</div><div class="item-desc">${p.desc}</div></div><div><div style="color:var(--neon-packs); font-size:15px;">${p.precio} P₠</div><button class="btn-accion" ${!ok?'disabled':''} onclick="procesarTransaccionComercial(${p.id})">Comprar Pack</button></div></div>`;
+            htm += `<div class="item-card"><div><div class="categoria-tag">${p.cat}</div><div class="item-icon">${p.icon}</div><div class="item-titulo" style="color:var(--neon-packs);">${p.nombre}</div><div class="item-desc">${p.desc || 'Contenido no especificado.'}</div></div><div><div style="color:var(--neon-packs); font-size:15px; font-family:'Orbitron'; font-weight:700; margin-bottom:5px;">${p.precio} P₠</div><div style="font-size:11px; color:var(--texto-secundario); margin-bottom:8px;">Stock: ${p.stock}</div><button class="btn-accion" ${!ok?'disabled':''} onclick="procesarTransaccionComercial(${p.id})">Comprar Pack</button></div></div>`;
         });
         htm += `</div>`; vp.innerHTML = htm;
     }
 
+    // TIENDA ILEGAL
     let vi = document.getElementById('contenedor-hacker-view');
     if(!baseDatos.illegalOpen) { vi.innerHTML = `<div class="tienda-cerrada-msg">🛑 ACCESO DENEGADO</div>`; } 
     else {
         let htm = `<div class="items-grid">`;
-        baseDatos.productos.filter(p => p.tienda === 'illegal').forEach(p => {
+        let items = baseDatos.productos.filter(p => p.tienda === 'illegal');
+        if(items.length === 0) htm += `<span style="color:var(--texto-secundario); grid-column:1/-1; text-align:center; padding:20px;">Sin existencias registradas por el mercader.</span>`;
+        items.forEach(p => {
             let ok = p.stock > 0 && u.pf >= p.precioPf;
-            htm += `<div class="item-card"><div><div class="categoria-tag">${p.cat}</div><div class="item-icon">${p.icon}</div><div class="item-titulo" style="color:var(--neon-ilegal);">${p.nombre}</div><div class="item-desc">${p.desc}</div></div><div><div style="color:var(--neon-packs); font-size:14px;">${p.precioPf} PF</div><button class="btn-accion" ${!ok?'disabled':''} onclick="procesarTransaccionIlegal(${p.id})">Canjear</button></div></div>`;
+            htm += `<div class="item-card"><div><div class="categoria-tag">${p.cat}</div><div class="item-icon">${p.icon}</div><div class="item-titulo" style="color:var(--neon-ilegal);">${p.nombre}</div><div class="item-desc">${p.desc || 'Servicio modificado.'}</div></div><div><div style="color:var(--neon-ilegal); font-size:14px; font-family:'Orbitron'; font-weight:700; margin-bottom:5px;">${p.precioPf} PF</div><div style="font-size:11px; color:var(--texto-secundario); margin-bottom:8px;">Stock: ${p.stock}</div><button class="btn-accion" ${!ok?'disabled':''} onclick="procesarTransaccionIlegal(${p.id})">Canjear</button></div></div>`;
         });
         htm += `</div>`; vi.innerHTML = htm;
     }
@@ -789,7 +898,7 @@ function refrescarPantallaGamer() {
 function procesarTransaccionComercial(id) {
     let u = baseDatos.jugadores[userSesion]; let p = baseDatos.productos.find(pr => pr.id === id);
     if(p && p.stock > 0 && u.dinero >= p.precio && u.comprasHoy < 3) {
-        p.stock--; u.dinero -= p.precio; u.pf += p.pf; u.comprasHoy++; u.inventario.push({ nombre: p.nombre });
+        p.stock--; u.dinero -= p.precio; u.pf += (p.pf || 0); u.comprasHoy++; u.inventario.push({ nombre: p.nombre });
         guardarBD(); refrescarPantallaGamer();
     } else if(u.comprasHoy >= 3) { alert("Límite diario de 3 compras alcanzado."); }
 }
@@ -803,22 +912,7 @@ function consumirObjetoBolsa(idx) { baseDatos.jugadores[userSesion].inventario.s
 function invocarTerminalMercader() { let v = prompt("LLAVE MAESTRA MERCADER:"); if(v === "1234") { document.getElementById('pantalla-admin-master').style.display = 'block'; ajustarCamposFormularioMercader(); redibujarConsolaAdminMaster(); } }
 function apagarTerminalMercader() { document.getElementById('pantalla-admin-master').style.display = 'none'; }
 function conmutarEstadoTienda(ll, va) { baseDatos[ll] = va; guardarBD(); refrescarPantallaGamer(); }
-function guardarBD() { localStorage.setItem('silph_co_db_2026_final_v7', JSON.stringify(baseDatos)); }
-
-function redibujarConsolaAdminMaster() {
-    document.getElementById('chk-open-legal').checked = baseDatos.legalOpen;
-    document.getElementById('chk-open-pack').checked = baseDatos.packOpen;
-    document.getElementById('chk-open-illegal').checked = baseDatos.illegalOpen;
-    let jl = document.getElementById('admin-jugadores-lista'); jl.innerHTML = '';
-    for(let k in baseDatos.jugadores) {
-        let ju = baseDatos.jugadores[k];
-        jl.innerHTML += `<div class="admin-card-inner"><strong>${k.toUpperCase()}</strong><br><span style="font-size:11px;">${ju.dinero} P₠ | ${ju.pf} PF</span></div>`;
-    }
-    let al = document.getElementById('admin-inventario-global'); al.innerHTML = '';
-    baseDatos.productos.forEach(p => {
-        al.innerHTML += `<div class="admin-card-inner"><span style="font-size:11px;">${p.nombre} (Stock: ${p.stock})</span></div>`;
-    });
-}
+function guardarBD() { localStorage.setItem('silph_co_db_2026_final_v8', JSON.stringify(baseDatos)); }
 
 if(userSesion && baseDatos.jugadores[userSesion]) {
     document.getElementById('pantalla-lobby').style.display = 'none';
