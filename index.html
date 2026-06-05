@@ -647,6 +647,10 @@ let userSesion = sessionStorage.getItem('silph_user_sesion') || null;
 const MAX_COMPRAS = 3;
 const MS_EN_6_HORAS = 6 * 60 * 60 * 1000;
 
+function guardarBD() {
+    localStorage.setItem('silph_co_db_2026_final_v11', JSON.stringify(baseDatos));
+}
+
 function ingresarAlSistema() {
     let idInput = document.getElementById('login-nombre');
     if (!idInput) return;
@@ -972,6 +976,77 @@ function eliminarProductoMaster(id) {
     }
 }
 
+function conmutarEstadoTienda(tiendaProp, checked) {
+    baseDatos[tiendaProp] = checked;
+    guardarBD();
+    refrescarPantallaGamer();
+}
+
+function invocarTerminalMercader() {
+    document.getElementById('pantalla-admin-master').style.display = 'block';
+    redibujarConsolaAdminMaster();
+}
+
+function apagarTerminalMercader() {
+    document.getElementById('pantalla-admin-master').style.display = 'none';
+}
+
+function consumirObjetoBolsa(idx) {
+    if(!userSesion || !baseDatos.jugadores[userSesion]) return;
+    let u = baseDatos.jugadores[userSesion];
+    if(u.inventario[idx]) {
+        if(confirm(`¿Quieres gastar/usar ${u.inventario[idx].nombre}?`)) {
+            u.inventario.splice(idx, 1);
+            guardarBD();
+            refrescarPantallaGamer();
+        }
+    }
+}
+
+function procesarTransaccionComercial(id) {
+    if(!userSesion || !baseDatos.jugadores[userSesion]) return;
+    let u = baseDatos.jugadores[userSesion];
+    let p = baseDatos.productos.find(prod => prod.id === id);
+    if(!p || p.stock <= 0) return alert("Artículo sin existencias.");
+
+    let desc = p.descuento || 0;
+    
+    if(p.tienda === 'legal') {
+        let precioFinal = Math.floor(p.precio * (1 - desc / 100));
+        if(u.dinero < precioFinal) return alert("Efectivo insuficiente.");
+        if(u.comprasDisponibles < 1) return alert("No dispones de cargas comerciales (1 requerida).");
+        
+        u.dinero -= precioFinal;
+        u.comprasDisponibles -= 1;
+        u.pf += (p.pf || 0);
+        p.stock -= 1;
+        u.inventario.push({ nombre: p.nombre, tienda: p.tienda });
+    } 
+    else if(p.tienda === 'pack') {
+        let precioFinal = Math.floor(p.precio * (1 - desc / 100));
+        if(u.dinero < precioFinal) return alert("Efectivo insuficiente.");
+        if(u.comprasDisponibles < 2) return alert("No dispones de suficientes cargas comerciales (2 requeridas).");
+        
+        u.dinero -= precioFinal;
+        u.comprasDisponibles -= 2;
+        u.pf += (p.pf || 0);
+        p.stock -= 1;
+        u.inventario.push({ nombre: p.nombre, tienda: p.tienda });
+    } 
+    else if(p.tienda === 'illegal') {
+        let precioFinal = Math.floor(p.precioPf * (1 - desc / 100));
+        if(u.pf < precioFinal) return alert("Puntos de Favor (PF) insuficientes.");
+        
+        u.pf -= precioFinal;
+        p.stock -= 1;
+        u.inventario.push({ nombre: p.nombre, tienda: p.tienda });
+    }
+
+    guardarBD();
+    refrescarPantallaGamer();
+    alert(`Adquisición completada: ${p.nombre}. Se ha guardado en tu mochila.`);
+}
+
 function redibujarConsolaAdminMaster() {
     document.getElementById('chk-open-legal').checked = baseDatos.legalOpen;
     document.getElementById('chk-open-pack').checked = baseDatos.packOpen;
@@ -1085,8 +1160,8 @@ function refrescarPantallaGamer() {
             let ok = p.stock > 0 && u.dinero >= precioFinal && u.comprasDisponibles >= 2;
 
             let labelPrecio = desc > 0 
-                ? `<div class="precio-original-tachado">${p.precio} P₠</div><div style="color:var(--neon-packs); font-size:15px; font-family:'Orbitron'; font-weight:700; margin-bottom:5px;">${precioFinal} P₠</div>`
-                : `<div style="color:var(--neon-packs); font-size:15px; font-family:'Orbitron'; font-weight:700; margin-bottom:5px;">${p.precio} P₠</div>`;
+                ? `<div class="precio-original-tachado">${p.precio} P₠</div><div style="color:var(--neon-packs); font-size:15px; font-family:'Orbitron'; font-weight:700; margin-bottom:5px;">${precioFinal} P</div>`
+                : `<div style="color:var(--neon-packs); font-size:15px; font-family:'Orbitron'; font-weight:700; margin-bottom:5px;">${p.precio} P</div>`;
                 
             let tagDesc = desc > 0 ? `<div class="tag-descuento">-${desc}%</div>` : '';
 
@@ -1113,4 +1188,12 @@ function refrescarPantallaGamer() {
                 
             let tagDesc = desc > 0 ? `<div class="tag-descuento">-${desc}%</div>` : '';
 
-            htm += `<div class="item-card">${tagDesc}<div><div class="categoria-tag">${p.cat}</div><div class="
+            htm += `<div class="item-card">${tagDesc}<div><div class="categoria-tag">${p.cat}</div><div class="item-icon">${p.icon}</div><div class="item-titulo" style="color:var(--neon-ilegal);">${p.nombre}</div><div class="item-desc">${p.desc || 'Servicio modificado.'}</div></div><div>${labelPrecio}<div style="font-size:11px; color:var(--texto-secundario); margin-bottom:8px;">Stock: ${p.stock}</div><button class="btn-accion" ${!ok?'disabled':''} onclick="procesarTransaccionComercial(${p.id})">Adquirir Hack</button></div></div>`;
+        });
+        htm += `</div>`; vi.innerHTML = htm;
+    }
+}
+
+// Inicialización automática por si ya había sesión previa activa en la pestaña
+window.onload = function() {
+    if(userSesion)
