@@ -608,7 +608,7 @@
 </div>
 
 <script>
-// Base de datos inicial rellena con TODOS los objetos de tus tres tiendas reales
+// Base de datos inicial corregida y limpia
 const baseDatosInicial = [
     // === TIENDA LEGAL ===
     { id: 101, tienda: 'legal', cat: 'EV/IV', nombre: 'Hierro', precio: 1000, pf: 2, stock: 10, icon: '🧪' },
@@ -622,13 +622,13 @@ const baseDatosInicial = [
     { id: 109, tienda: 'legal', cat: 'Objetos de Combate (X)', nombre: 'X Defensa', precio: 600, pf: 2, stock: 6, icon: '🔴' },
     { id: 110, tienda: 'legal', cat: 'Objetos de Combate (X)', nombre: 'X Velocidad', precio: 700, pf: 3, stock: 6, icon: '🔵' },
     { id: 111, tienda: 'legal', cat: 'Objetos Competitivos', nombre: 'Banda Focus', precio: 2500, pf: 3, stock: 4, icon: '🎗️' },
-    { id: 112, tienda: 'legal', cat: 'Objetos Competitivos', font: 'Gafas Elegidas', nombre: 'Gafas Elegidas', precio: 5000, pf: 3, stock: 4, icon: '🕶️' },
+    { id: 112, tienda: 'legal', cat: 'Objetos Competitivos', nombre: 'Gafas Elegidas', precio: 5000, pf: 3, stock: 4, icon: '🕶️' },
 
     // === SHOP PF PACK ===
     { id: 201, tienda: 'pack', cat: 'Pack Especial', nombre: 'Pack Balls', precio: 750, pf: 11, stock: 99, icon: '📦', desc: '2 Buceo Ball + 2 Nivel Ball', estrategia: 'Incentiva estrategia de captura mixta (situacional + control de niveles).' },
     { id: 202, tienda: 'pack', cat: 'Pack Especial', nombre: 'Pack Exploración', precio: 460, pf: 7, stock: 99, icon: '📦', desc: '2 Cuerda Huida + 4 Repelente', estrategia: 'Reduce fricción de rutas largas sin regalar seguridad total.' },
     { id: 203, tienda: 'pack', cat: 'Pack Especial', nombre: 'Pack Combate Temprano', precio: 1300, pf: 11, stock: 99, icon: '📦', desc: '2 X Defensa + 2 X Velocidad', estrategia: 'No es barato, pero premia preparación de combate.' },
-    { id: 204, tienda: 'pack', cat: 'Pack Especial', font: 'Pack Supervivencia', nombre: 'Pack Supervivencia', precio: 460, pf: 7, stock: 99, icon: '📦', desc: '3 Baya Oran + 3 Baya Atania', estrategia: 'Ahorro pequeño pero constante, ideal para jugadores cuidadosos.' },
+    { id: 204, tienda: 'pack', cat: 'Pack Especial', nombre: 'Pack Supervivencia', precio: 460, pf: 7, stock: 99, icon: '📦', desc: '3 Baya Oran + 3 Baya Atania', estrategia: 'Ahorro pequeño pero constante, ideal para jugadores cuidadosos.' },
     { id: 205, tienda: 'pack', cat: 'Pack Especial', nombre: 'Pack "Segundo Intento"', precio: 2800, pf: 6, stock: 99, icon: '📦', desc: '1 Banda Focus + 1 Hierro', estrategia: 'Supervivencia + mejora permanente ligera.' },
 
     // === TIENDA DE ILEGALIDADES ===
@@ -638,7 +638,7 @@ const baseDatosInicial = [
     { id: 304, tienda: 'illegal', cat: 'Hack de Sistema', nombre: 'Falsificación De Registro', precioPf: 5, stock: 1, icon: '🪪', desc: 'Permite sustituir 1 Poke del equipo clasificado al torneo por otro Poke válido de la caja.' },
     { id: 305, tienda: 'illegal', cat: 'Hack de Sistema', nombre: 'Plaza Fantasma', precioPf: 6, stock: 1, icon: '🪑', desc: 'Si un Poke muere contra el líder, permite sustituir su plaza en el torneo por otro Poke de la caja.' },
     { id: 306, tienda: 'illegal', cat: 'Hack de Sistema', nombre: 'Evolución Forzada', precioPf: 5, stock: 1, icon: '💖', desc: 'Permite evolucionar un Poke que requiera amistad para evolucionar.' },
-    { id: 307, tienda: 'illegal', cat: 'Hack de Sistema', nombre: 'Reconfiguración', precioPf: 2, stock: 1, icon: '🔄', desc: 'Permite modificar los movimientos de 1 Poke después del combate contra el líder y antes del torneo.' },
+    { id: 307, tienda: 'illegal', cat: 'Hack de Sistema', font: 'Reconfiguración', nombre: 'Reconfiguración', precioPf: 2, stock: 1, icon: '🔄', desc: 'Permite modificar los movimientos de 1 Poke después del combate contra el líder y antes del torneo.' },
     { id: 308, tienda: 'illegal', cat: 'Hack de Sistema', nombre: 'Modificación Genética', precioPf: 4, stock: 1, icon: '🧬', desc: 'Permite cambiar la habilidad de 1 Poke por otra de sus habilidades posibles.' },
     { id: 309, tienda: 'illegal', cat: 'Hack de Sistema', nombre: 'Alteración De Personalidad', precioPf: 2, stock: 1, icon: '🎭', desc: 'Permite cambiar la naturaleza de 1 Poke.' },
     { id: 310, tienda: 'illegal', cat: 'Hack de Sistema', nombre: 'Resurrección Robada', precioPf: 8, stock: 1, icon: '🔮', desc: 'Robas 1 Poke muerto de otro jugador y pasa a estar en tu caja vivo.' }
@@ -854,7 +854,6 @@ function guardarDatosPerfilGamer() {
     refrescarPantallaGamer();
 }
 
-/* --- NUEVAS FUNCIONES PARA EL MANEJO DE VIDAS --- */
 function restarVidaContador() {
     let txtVidas = document.getElementById('perf-txt-vidas');
     let currentVidas = parseInt(txtVidas.innerText);
@@ -900,7 +899,7 @@ function parsearYRenderizarShowdown() {
     if(!raw.trim()) return;
     let pokesRaw = raw.split(/\n\s*\n/);
     pokesRaw.forEach(bloque => {
-        let lineas = block = bloque.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+        let lineas = bloque.split('\n').map(l => l.trim()).filter(l => l.length > 0);
         if(lineas.length === 0) return;
         let nombreCompleto = lineas[0]; let objeto = "Ninguno"; let habilidad = "Desconocida";
         if(nombreCompleto.includes('@')) { let partes = nombreCompleto.split('@'); nombreCompleto = partes[0].trim(); objeto = partes[1].trim(); }
@@ -1088,7 +1087,6 @@ function refrescarPantallaGamer() {
     if(u.inventario.length === 0) bBox.innerHTML = '<span style="color:var(--texto-secundario); font-size:12px;">Mochila vacía.</span>';
     u.inventario.forEach((item, idx) => { bBox.innerHTML += `<div style="background:#1e293b; padding:6px 12px; display:flex; gap:10px; border-radius:6px; font-size:12px;"><span>${item.nombre}</span><button onclick="consumirObjetoBolsa(${idx})" style="background:#ef4444; border:none; color:#fff; font-size:9px; cursor:pointer; border-radius:3px;">Gastar</button></div>`; });
 
-    // COMPROBACIÓN DE BLOQUEO DE LOCKE PERDIDO / 0 VIDAS
     let lockePerdido = (u.lockeStatus === 'perdido' || u.vidasActuales <= 0);
 
     // TIENDA LEGAL
@@ -1120,4 +1118,80 @@ function refrescarPantallaGamer() {
         if(items.length === 0) htm += `<span style="color:var(--texto-secundario); grid-column:1/-1; text-align:center; padding:20px;">Sin existencias registradas por el mercader.</span>`;
         items.forEach(p => {
             let ok = p.stock > 0 && u.dinero >= p.precio && u.comprasDisponibles >= 2;
-            htm += `<div class="item-card"><div><div class="categoria-tag">${p.cat}</div><div class="item-icon">${p.icon}</div><div class="item-titulo" style="color:var(--neon-packs);">${p.nombre}</div><div class="item-desc">${p.desc || 'Contenido no especificado.'}</div></div><div><div style="color:var(--neon-packs); font-size:15px; font-family:'Orbitron'; font-weight:700; margin-bottom:5px;">${p.precio} P₠</div><div style="font-size:11px; color:var(--texto-secundario); margin-bottom:8px;">Stock: ${p.stock}</div><button class="btn-accion" ${!ok?'disabled':''} onclick="procesarTransaccionComercial(${p.id})">Comprar Pack (2 Cargas)</button>
+            htm += `<div class="item-card"><div><div class="categoria-tag">${p.cat}</div><div class="item-icon">${p.icon}</div><div class="item-titulo" style="color:var(--neon-packs);">${p.nombre}</div><div class="item-desc">${p.desc || 'Contenido no especificado.'}</div></div><div><div style="color:var(--neon-packs); font-size:15px; font-family:'Orbitron'; font-weight:700; margin-bottom:5px;">${p.precio} P₠</div><div style="font-size:11px; color:var(--texto-secundario); margin-bottom:8px;">Stock: ${p.stock}</div><button class="btn-accion" ${!ok?'disabled':''} onclick="procesarTransaccionComercial(${p.id})">Comprar Pack (2 Cargas)</button></div></div>`;
+        });
+        htm += `</div>`; vp.innerHTML = htm;
+    }
+
+    // TIENDA ILEGAL
+    let vi = document.getElementById('contenedor-hacker-view');
+    if (lockePerdido) {
+        vi.innerHTML = `<div class="tienda-cerrada-msg" style="color:#ef4444; border-color:#5c1313;">🛑 TERMINAL BLOQUEADA - LOCKE TERMINADO</div>`;
+    } else if(!baseDatos.illegalOpen) { 
+        vi.innerHTML = `<div class="tienda-cerrada-msg">🛑 ACCESO DENEGADO</div>`; 
+    } else {
+        let htm = `<div class="items-grid">`;
+        let items = baseDatos.productos.filter(p => p.tienda === 'illegal');
+        if(items.length === 0) htm += `<span style="color:var(--texto-secundario); grid-column:1/-1; text-align:center; padding:20px;">Sin existencias registradas por el mercader.</span>`;
+        items.forEach(p => {
+            let ok = p.stock > 0 && u.pf >= p.precioPf;
+            htm += `<div class="item-card"><div><div class="categoria-tag">${p.cat}</div><div class="item-icon">${p.icon}</div><div class="item-titulo" style="color:var(--neon-ilegal);">${p.nombre}</div><div class="item-desc">${p.desc || 'Servicio modificado.'}</div></div><div><div style="color:var(--neon-ilegal); font-size:14px; font-family:'Orbitron'; font-weight:700; margin-bottom:5px;">${p.precioPf} PF</div><div style="font-size:11px; color:var(--texto-secundario); margin-bottom:8px;">Stock: ${p.stock}</div><button class="btn-accion" ${!ok?'disabled':''} onclick="procesarTransaccionIlegal(${p.id})">Canjear</button></div></div>`;
+        });
+        htm += `</div>`; vi.innerHTML = htm;
+    }
+}
+
+function procesarTransaccionComercial(id) {
+    let u = baseDatos.jugadores[userSesion]; 
+    if (u.lockeStatus === 'perdido' || u.vidasActuales <= 0) return alert("No puedes comprar nada porque tu Locke se da por perdido.");
+    
+    let p = baseDatos.productos.find(pr => pr.id === id);
+    if(!p) return;
+
+    let costeCargas = (p.tienda === 'pack') ? 2 : 1;
+
+    if(p.stock > 0 && u.dinero >= p.precio && u.comprasDisponibles >= costeCargas) {
+        p.stock--; 
+        u.dinero -= p.precio; 
+        u.pf += (p.pf || 0); 
+        u.comprasDisponibles -= costeCargas; 
+        u.inventario.push({ nombre: p.nombre });
+        guardarBD(); 
+        refrescarPantallaGamer();
+    } else if(u.comprasDisponibles < costeCargas) { 
+        alert(`No posees suficientes slots de compra disponibles. Este artículo requiere ${costeCargas} carga(s) y tienes ${u.comprasDisponibles}.`); 
+    }
+}
+
+function procesarTransaccionIlegal(id) {
+    let u = baseDatos.jugadores[userSesion]; 
+    if (u.lockeStatus === 'perdido' || u.vidasActuales <= 0) return alert("No puedes canjear nada porque tu Locke se da por perdido.");
+    
+    let p = baseDatos.productos.find(pr => pr.id === id);
+    if(p && p.stock > 0 && u.pf >= p.precioPf) { p.stock--; u.pf -= p.precioPf; u.inventario.push({ nombre: p.nombre }); guardarBD(); refrescarPantallaGamer(); }
+}
+
+function consumirObjetoBolsa(idx) { baseDatos.jugadores[userSesion].inventario.splice(idx, 1); guardarBD(); refrescarPantallaGamer(); }
+
+function invocarTerminalMercader() { 
+    let v = prompt("LLAVE MAESTRA MERCADER:"); 
+    if(v === "1234") { 
+        document.getElementById('pantalla-admin-master').style.display = 'block'; 
+        ajustarCamposFormularioMercader(); 
+        redibujarConsolaAdminMaster(); 
+    } 
+}
+
+function apagarTerminalMercader() { document.getElementById('pantalla-admin-master').style.display = 'none'; }
+function conmutarEstadoTienda(ll, va) { baseDatos[ll] = va; guardarBD(); refrescarPantallaGamer(); }
+function guardarBD() { localStorage.setItem('silph_co_db_2026_final_v10', JSON.stringify(baseDatos)); }
+
+if(userSesion && baseDatos.jugadores[userSesion]) {
+    document.getElementById('pantalla-lobby').style.display = 'none';
+    document.getElementById('pantalla-mercado').style.display = 'block';
+    cargarDatosPerfilEnDOM(); 
+    refrescarPantallaGamer();
+}
+</script>
+</body>
+</html>
