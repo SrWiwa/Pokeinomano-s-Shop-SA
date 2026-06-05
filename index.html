@@ -686,12 +686,8 @@ onValue(ref(db, 'silph_co_market'), (snapshot) => {
     }
 });
 
-// Forzar guardado inmediato en Firebase incluyendo el token de validación dinámica de ID
+// Forzar guardado inmediato en Firebase
 function guardarBD() {
-    // Si hay una sesión activa, adjuntamos quién intenta hacer la escritura para que pase las reglas de Firebase
-    if(userSesion) {
-        baseDatos.modificadoPor = userSesion;
-    }
     set(ref(db, 'silph_co_market'), baseDatos);
 }
 
@@ -996,18 +992,13 @@ function redibujarConsolaAdminMaster() {
     });
 }
 
-// YA NO EXISTEN CONTRASENAS EXPUESTAS EN EL FRONTEND
 window.invocarTerminalMercader = function() {
-    if (!userSesion) {
-        return alert("Debes estar conectado con tu ID de operador primero.");
-    }
-    
-    // Verificamos de forma dinámica e invisible si el ID guardado en tu navegador es "srwiwa"
-    if (userSesion === "srwiwa") {
+    let pass = prompt("INTRODUCE LA CLAVE DE ACCESO ALPHA-MERCADER:");
+    if(pass === "silph123") { // Puedes cambiar tu clave aquí
         document.getElementById('pantalla-admin-master').style.display = 'block';
         redibujarConsolaAdminMaster();
     } else {
-        alert("SISTEMA DE SEGURIDAD SILPH CO: Tu Operador ID no cuenta con credenciales de Administrador Mercader Alpha.");
+        alert("ACCESO DENEGADO. CÓDIGO INCORRECTO.");
     }
 };
 
@@ -1027,7 +1018,7 @@ window.comprarObjetoGamer = function(id) {
         if(u.pf < p.precioPf) return alert("No tienes suficientes Puntos de Favor (PF).");
         u.pf -= p.precioPf;
     } else {
-        if(u.dinero < p.precio) return alert("No tienes suficiente efectivo.");
+        if(u.dinero < p.precio) return alert("No tienes suficiente dinero (P₠).");
         u.dinero -= p.precio;
         u.pf += (p.pf || 0);
     }
@@ -1036,10 +1027,10 @@ window.comprarObjetoGamer = function(id) {
     u.comprasDisponibles--;
     
     if(!u.inventario) u.inventario = [];
-    u.inventario.push({ id: Date.now(), nombre: p.nombre, icon: p.icon });
+    u.inventario.push({ nombre: p.nombre, icon: p.icon, fecha: new Date().toLocaleDateString() });
     
     guardarBD();
-    alert(`¡Has adquirido ${p.nombre}!`);
+    alert(`¡Has comprado ${p.nombre} con éxito!`);
 };
 
 function refrescarPantallaGamer() {
@@ -1049,100 +1040,67 @@ function refrescarPantallaGamer() {
     document.getElementById('usr-nombre').innerText = userSesion.toUpperCase();
     document.getElementById('usr-dinero').innerText = u.dinero;
     document.getElementById('usr-pf').innerText = u.pf;
-    document.getElementById('usr-compras').innerText = `${u.comprasDisponibles} / ${MAX_COMPRAS}`;
+    document.getElementById('usr-compras').innerText = `${u.comprasDisponibles}/${MAX_COMPRAS}`;
 
-    let divInv = document.getElementById('lista-inventario');
-    divInv.innerHTML = '';
-    let invFiltrado = u.inventario ? u.inventario.filter(i => i.nombre !== "Mochila Inicial") : [];
-    
-    if(invFiltrado.length === 0) {
-        divInv.innerHTML = '<span style="font-size:11px; color:var(--texto-secundario);">Ninguna adquisición en esta sesión.</span>';
+    let invBox = document.getElementById('lista-inventario');
+    invBox.innerHTML = '';
+    let itemsFiltrados = u.inventario ? u.inventario.filter(i => i.nombre !== "Mochila Inicial") : [];
+    if(itemsFiltrados.length === 0) {
+        invBox.innerHTML = '<span style="color:var(--texto-secundario); font-size:12px;">Mochila vacía.</span>';
     } else {
-        invFiltrado.forEach(item => {
-            divInv.innerHTML += `<span style="background:#1e293b; padding:4px 10px; border-radius:4px; font-size:12px; border:1px solid #334155;">${item.icon || '📦'} ${item.nombre}</span>`;
+        itemsFiltrados.forEach(i => {
+            invBox.innerHTML += `<span style="background:#1e293b; padding:4px 8px; border-radius:4px; font-size:12px; border:1px solid #334155;" title="${i.fecha}">${i.icon || '📦'} ${i.nombre}</span>`;
         });
     }
 
-    let cLegal = document.getElementById('contenedor-legal-view');
-    let cPack = document.getElementById('contenedor-pack-view');
-    let cHacker = document.getElementById('contenedor-hacker-view');
+    renderizarAparadorPublico('legal', 'contenedor-legal-view', baseDatos.legalOpen);
+    renderizarAparadorPublico('pack', 'contenedor-pack-view', baseDatos.packOpen);
+    renderizarAparadorPublico('illegal', 'contenedor-hacker-view', baseDatos.illegalOpen);
+}
 
-    cLegal.innerHTML = ''; cPack.innerHTML = ''; cHacker.innerHTML = '';
+function renderizarAparadorPublico(tiendaTipo, contenedorId, estaAbierta) {
+    let box = document.getElementById(contenedorId);
+    if(!box) return;
+    box.innerHTML = '';
 
-    if (baseDatos.legalOpen === false) {
-        cLegal.innerHTML = '<div class="tienda-cerrada-msg">⚠️ Conexión encriptada suspendida por el Mercader</div>';
-    } else {
-        cLegal.innerHTML = '<div class="items-grid" id="grid-legal-p"></div>';
+    if(estaAbierta === false) {
+        box.innerHTML = `<div class="tienda-cerrada-msg">🔒 Red Cerrada temporalmente por el Administrador</div>`;
+        return;
     }
 
-    if (baseDatos.packOpen === false) {
-        cPack.innerHTML = '<div class="tienda-cerrada-msg">⚠️ Distribución de Suministros Desactivada Temporalmente</div>';
-    } else {
-        cPack.innerHTML = '<div class="items-grid" id="grid-pack-p"></div>';
+    let prods = baseDatos.productos.filter(p => p.tienda === tiendaTipo);
+    if(prods.length === 0) {
+        box.innerHTML = `<div style="text-align:center; color:var(--texto-secundario); padding:30px;">No hay artículos disponibles en este aparador.</div>`;
+        return;
     }
 
-    if (baseDatos.illegalOpen === false) {
-        cHacker.innerHTML = '<div class="tienda-cerrada-msg">❌ RED CAÍDA: Servidor Proxy en revisión por la Policía Internacional</div>';
-    } else {
-        cHacker.innerHTML = '<div class="items-grid" id="grid-illegal-p"></div>';
-    }
+    let htmlGrid = '<div class="items-grid">';
+    prods.forEach(p => {
+        let esI = tiendaTipo === 'illegal';
+        let txtCoste = esI ? `${p.precioPf} PF` : `${p.precio} P₠`;
+        let txtDetalle = p.desc ? `<div class="item-desc">${p.desc}</div>` : '';
+        let txtEstrat = p.estrategia ? `<div class="item-estrategia">💡 ${p.estrategia}</div>` : '';
+        let txtCat = p.cat ? `<div class="categoria-tag">${p.cat}</div>` : '';
+        let deshabilitado = p.stock <= 0 ? 'disabled' : '';
+        let txtBoton = p.stock <= 0 ? 'AGOTADO' : `ADQUIRIR MÓDULO (${txtCoste})`;
 
-    baseDatos.productos.forEach(p => {
-        let disabledAttr = p.stock <= 0 || u.comprasDisponibles <= 0 ? 'disabled' : '';
-        let btnTexto = p.stock <= 0 ? 'SIN STOCK' : u.comprasDisponibles <= 0 ? 'SIN TRANSACCIONES' : 'ADQUIRIR';
-
-        if(p.tienda === 'legal' && baseDatos.legalOpen !== false) {
-            let target = document.getElementById('grid-legal-p');
-            if(target) {
-                target.innerHTML += `
-                    <div class="item-card">
-                        <div>
-                            <div class="categoria-tag">${p.cat}</div>
-                            <div class="item-icon">${p.icon}</div>
-                            <div class="item-titulo">${p.nombre}</div>
-                            <div style="font-family:'Orbitron'; font-size:14px; color:var(--neon-legal); margin-bottom:4px;">${p.precio} P₠</div>
-                            <div style="font-size:10px; color:var(--texto-secundario); margin-bottom:12px;">Bono: +${p.pf} PF | Stock: ${p.stock}</div>
-                        </div>
-                        <button class="btn-accion" ${disabledAttr} onclick="comprarObjetoGamer(${p.id})">${btnTexto}</button>
-                    </div>`;
-            }
-        } else if(p.tienda === 'pack' && baseDatos.packOpen !== false) {
-            let target = document.getElementById('grid-pack-p');
-            if(target) {
-                target.innerHTML += `
-                    <div class="item-card">
-                        <div>
-                            <div class="categoria-tag">${p.cat}</div>
-                            <div class="item-icon">${p.icon}</div>
-                            <div class="item-titulo">${p.nombre}</div>
-                            <div style="font-family:'Orbitron'; font-size:14px; color:var(--neon-packs); margin-bottom:4px;">${p.precio} P₠</div>
-                            <div style="font-size:10px; color:var(--texto-secundario); margin-bottom:8px;">Bono: +${p.pf} PF | Stock: ${p.stock}</div>
-                            <div class="item-desc">📦 ${p.desc || 'Sin descripción'}</div>
-                            <div class="item-estrategia">${p.estrategia || ''}</div>
-                        </div>
-                        <button class="btn-accion" ${disabledAttr} onclick="comprarObjetoGamer(${p.id})">${btnTexto}</button>
-                    </div>`;
-            }
-        } else if(p.tienda === 'illegal' && baseDatos.illegalOpen !== false) {
-            let target = document.getElementById('grid-illegal-p');
-            if(target) {
-                let dispHacker = p.stock <= 0 || u.comprasDisponibles <= 0 || u.pf < p.precioPf ? 'disabled' : '';
-                let btnTxtHacker = p.stock <= 0 ? 'AGOTADO' : u.comprasDisponibles <= 0 ? 'SIN TRANSACCIONES' : u.pf < p.precioPf ? 'INSUFICIENTE PF' : 'COMPRAR SOFTWARE';
-                target.innerHTML += `
-                    <div class="item-card">
-                        <div>
-                            <div class="categoria-tag">${p.cat}</div>
-                            <div class="item-icon">${p.icon}</div>
-                            <div class="item-titulo">${p.nombre}</div>
-                            <div style="font-family:'Orbitron'; font-size:14px; color:var(--neon-ilegal); margin-bottom:4px;">${p.precioPf} PF</div>
-                            <div style="font-size:10px; color:var(--texto-secundario); margin-bottom:8px;">Stock: ${p.stock}</div>
-                            <div class="item-desc" style="border-color:var(--borde-ilegal); min-height:45px;">${p.desc || ''}</div>
-                        </div>
-                        <button class="btn-accion" ${dispHacker} onclick="comprarObjetoGamer(${p.id})">${btnTxtHacker}</button>
-                    </div>`;
-            }
-        }
+        htmlGrid += `
+            <div class="item-card">
+                <div>
+                    ${txtCat}
+                    <div class="item-icon">${p.icon}</div>
+                    <div class="item-titulo">${p.nombre}</div>
+                    ${txtDetalle}
+                    ${txtEstrat}
+                </div>
+                <div>
+                    <div style="font-size:11px; color:var(--texto-secundario); margin-bottom:8px; font-family:'Orbitron'">STOCK DISPONIBLE: ${p.stock}</div>
+                    <button class="btn-accion" ${deshabilitado} onclick="comprarObjetoGamer(${p.id})">${txtBoton}</button>
+                </div>
+            </div>`;
     });
+    htmlGrid += '</div>';
+    box.innerHTML = htmlGrid;
 }
 </script>
 </body>
