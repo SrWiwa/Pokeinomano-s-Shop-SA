@@ -767,6 +767,9 @@ window.ingresarAlSistema = function() {
     let id = idInput.value.trim().toLowerCase().replace(/[.#$\[\]\s]/g, "");
     if(!id) return alert("Identificador Requerido.");
 
+    userSesion = id;
+    sessionStorage.setItem('silph_user_sesion', id);
+
     if(!baseDatos.jugadores[id]) {
         baseDatos.jugadores[id] = { 
             dinero: 4000, pf: 10, 
@@ -787,13 +790,12 @@ window.ingresarAlSistema = function() {
         if (!baseDatos.jugadores[id].diarioLogs) baseDatos.jugadores[id].diarioLogs = [ {timestamp: "Inicio", texto: "Sistema iniciado."} ];
     }
     
-    userSesion = id;
-    sessionStorage.setItem('silph_user_sesion', id);
     guardarBD();
 
     document.getElementById('pantalla-lobby').style.display = 'none';
     document.getElementById('pantalla-mercado').style.display = 'block';
 
+    actualizarComprasPorTiempo();
     cargarDatosPerfilEnDOM();
     refrescarPantallaGamer();
     actualizarListaIntercambiosDOM();
@@ -868,15 +870,26 @@ window.guardarNuevaEntradaDiario = function() {
     if(!contenido) return alert("Texto vacío.");
     
     inyectarEntradaDiarioAutomatica(contenido);
+    guardarBD();
     inputTxt.value = '';
     redibujarHistorialDiario();
 };
 
-// FUNCIÓN AUXILIAR DE AUTOMATIZACIÓN DE DIARIO
+// FUNCIÓN DE AUTOMATIZACIÓN REESCRITA (INMUNE A DISPOSITIVOS)
 function inyectarEntradaDiarioAutomatica(textoMsg) {
     if(!userSesion || !baseDatos.jugadores[userSesion]) return;
     let u = baseDatos.jugadores[userSesion];
-    let fechaActual = new Date().toLocaleString('es-ES');
+    
+    let d = new Date();
+    let dia = String(d.getDate()).padStart(2, '0');
+    let mes = String(d.getMonth() + 1).padStart(2, '0');
+    let anio = d.getFullYear();
+    let horas = String(d.getHours()).padStart(2, '0');
+    let minutos = String(d.getMinutes()).padStart(2, '0');
+    let segundos = String(d.getSeconds()).padStart(2, '0');
+    
+    let fechaActual = `${dia}/${mes}/${anio} ${horas}:${minutos}:${segundos}`;
+    
     if(!u.diarioLogs) u.diarioLogs = [];
     u.diarioLogs.push({ timestamp: fechaActual, texto: textoMsg });
 }
@@ -1105,7 +1118,6 @@ window.comprarObjetoGamer = function(id) {
     u.comprasDisponibles--;
     
     if(!u.inventario) u.inventario = [];
-    // Añadimos un UID único basado en tiempo al objeto en la mochila para poder eliminar el específico si hay repetidos
     u.inventario.push({ uid: "item_" + Date.now() + Math.floor(Math.random()*100), nombre: p.nombre, icon: p.icon, fecha: new Date().toLocaleDateString() });
     
     // REGISTRO DE DIARIO AUTOMÁTICO AL COMPRAR
@@ -1123,7 +1135,6 @@ window.consumirObjetoMochilaGamer = function(itemUid, itemNombre, itemIcon) {
 
     let index = u.inventario.findIndex(i => i.uid === itemUid);
     if(index !== -1) {
-        // Eliminar objeto de la mochila
         u.inventario.splice(index, 1);
 
         // REGISTRO DE DIARIO AUTOMÁTICO AL CONSUMIR
@@ -1153,7 +1164,6 @@ function refrescarPantallaGamer() {
         invBox.innerHTML = '<span style="color:var(--texto-secundario); font-size:12px;">Mochila vacía.</span>';
     } else {
         itemsFiltrados.forEach(i => {
-            // Se genera dinámicamente cada objeto con su botón nativo de Uso Automático
             invBox.innerHTML += `
                 <div class="mochila-item-tag" title="Adquirido el: ${i.fecha}">
                     <span>${i.icon || '📦'} ${i.nombre}</span>
@@ -1162,7 +1172,6 @@ function refrescarPantallaGamer() {
         });
     }
 
-    // Mantener actualizado el selector de trades
     let receptorSelect = document.getElementById('int-select-receptor');
     if(receptorSelect) {
         let currentFav = receptorSelect.value;
