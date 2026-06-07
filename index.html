@@ -93,33 +93,6 @@
             display: none;
             box-shadow: 0 10px 25px rgba(0,0,0,0.5);
         }
-
-        /* DASHBOARD ESTADÍSTICAS */
-        .stats-dashboard {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 12px;
-            margin-bottom: 20px;
-            background: rgba(6, 9, 20, 0.6);
-            padding: 12px;
-            border-radius: 8px;
-            border: 1px dashed #334155;
-        }
-        .stat-card {
-            background: #111726;
-            border: 1px solid #1e293b;
-            padding: 10px;
-            border-radius: 6px;
-            text-align: center;
-        }
-        .stat-val {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 16px;
-            font-weight: 900;
-            color: var(--neon-legal);
-            margin-top: 4px;
-        }
-
         .perfil-tabs {
             display: flex;
             gap: 8px;
@@ -443,21 +416,6 @@
                         <option value="ganado">🏆 LOCKE GANADO</option>
                         <option value="perdido">💀 LOCKE PERDIDO</option>
                     </select>
-                </div>
-            </div>
-
-            <div class="stats-dashboard">
-                <div class="stat-card">
-                    <div style="font-size:11px; color:var(--texto-secundario); text-transform:uppercase; font-weight:600;">Total P₠ gastados</div>
-                    <div class="stat-val" id="stat-total-gastado" style="color:var(--neon-packs);">0 P₠</div>
-                </div>
-                <div class="stat-card">
-                    <div style="font-size:11px; color:var(--texto-secundario); text-transform:uppercase; font-weight:600;">Días de aventura</div>
-                    <div class="stat-val" id="stat-dias-aventura" style="color:#fff;">0 días</div>
-                </div>
-                <div class="stat-card">
-                    <div style="font-size:11px; color:var(--texto-secundario); text-transform:uppercase; font-weight:600;">Objetos consumidos</div>
-                    <div class="stat-val" id="stat-total-consumidos" style="color:var(--neon-legal);">0 u.</div>
                 </div>
             </div>
 
@@ -820,21 +778,13 @@ window.ingresarAlSistema = function() {
             diarioLogs: [ {timestamp: "Inicio", texto: "Sistema iniciado."} ],
             showdownEquipos: Array(10).fill("Sin datos"),
             vidasTotales: 20,
-            vidasActuales: 20,
-            // Inicialización de nuevas métricas del Dashboard
-            totalGastado: 0,
-            objetosConsumidos: 0,
-            fechaCreacion: Date.now()
+            vidasActuales: 20
         };
     } else {
         if (baseDatos.jugadores[id].comprasDisponibles === undefined) baseDatos.jugadores[id].comprasDisponibles = MAX_COMPRAS;
         if (!baseDatos.jugadores[id].showdownEquipos) baseDatos.jugadores[id].showdownEquipos = Array(10).fill("Sin datos");
         if (!baseDatos.jugadores[id].inventario) baseDatos.jugadores[id].inventario = [ {uid: "init", nombre: "Mochila Inicial"} ];
         if (!baseDatos.jugadores[id].diarioLogs) baseDatos.jugadores[id].diarioLogs = [ {timestamp: "Inicio", texto: "Sistema iniciado."} ];
-        // Retrocompatibilidad de variables del dashboard
-        if (baseDatos.jugadores[id].totalGastado === undefined) baseDatos.jugadores[id].totalGastado = 0;
-        if (baseDatos.jugadores[id].objetosConsumidos === undefined) baseDatos.jugadores[id].objetosConsumidos = 0;
-        if (!baseDatos.jugadores[id].fechaCreacion) baseDatos.jugadores[id].fechaCreacion = baseDatos.jugadores[id].ultimaRecarga || Date.now();
     }
     
     userSesion = id;
@@ -943,19 +893,6 @@ function cargarDatosPerfilEnDOM() {
     document.getElementById('perf-team-slot').value = "1";
     document.getElementById('perf-showdown-raw').value = (u.showdownEquipos && u.showdownEquipos[0] !== "Sin datos") ? u.showdownEquipos[0] : '';
     parsearYRenderizarShowdown();
-    
-    // Renderizado del Dashboard de Estadísticas
-    let totalG = u.totalGastado || 0;
-    let totalC = u.objetosConsumidos || 0;
-    
-    // Cálculo matemático de los días de aventura activos
-    let msCreado = u.fechaCreacion || Date.now();
-    let diferenciaDias = Math.floor((Date.now() - msCreado) / (1000 * 60 * 60 * 24));
-    if(diferenciaDias < 1) diferenciaDias = 1; // Mínimo 1 día de aventura activo
-
-    document.getElementById('stat-total-gastado').innerText = `${totalG} P₠`;
-    document.getElementById('stat-dias-aventura').innerText = `${diferenciaDias} ${diferenciaDias === 1 ? 'día' : 'días'}`;
-    document.getElementById('stat-total-consumidos').innerText = `${totalC} u.`;
 }
 
 window.cambiarRanuraEquipoShowdown = function() {
@@ -1161,10 +1098,6 @@ window.comprarObjetoGamer = function(id) {
         if(u.dinero < p.precio) return alert("No tienes suficiente dinero (P₠).");
         u.dinero -= p.precio;
         u.pf += (p.pf || 0);
-        
-        // Sumar al total gastado en el Dashboard
-        u.totalGastado = (u.totalGastado || 0) + p.precio;
-        
         txtBitacora = `Adquirió artículo: ${p.icon} '${p.nombre}' en el mercado por un coste de ${p.precio} P₠.`;
     }
 
@@ -1172,9 +1105,11 @@ window.comprarObjetoGamer = function(id) {
     u.comprasDisponibles--;
     
     if(!u.inventario) u.inventario = [];
+    // Añadimos un UID único basado en tiempo al objeto en la mochila para poder eliminar el específico si hay repetidos
     u.inventario.push({ uid: "item_" + Date.now() + Math.floor(Math.random()*100), nombre: p.nombre, icon: p.icon, fecha: new Date().toLocaleDateString() });
     
-    inyectarEntrarDiarioAutomatica(txtBitacora);
+    // REGISTRO DE DIARIO AUTOMÁTICO AL COMPRAR
+    inyectarEntradaDiarioAutomatica(txtBitacora);
 
     guardarBD();
     alert(`¡Has comprado ${p.nombre} con éxito!\nRegistrado en la Bitácora de Aventura.`);
@@ -1188,11 +1123,10 @@ window.consumirObjetoMochilaGamer = function(itemUid, itemNombre, itemIcon) {
 
     let index = u.inventario.findIndex(i => i.uid === itemUid);
     if(index !== -1) {
+        // Eliminar objeto de la mochila
         u.inventario.splice(index, 1);
 
-        // Sumar al contador de objetos consumidos del Dashboard
-        u.objetosConsumidos = (u.objetosConsumidos || 0) + 1;
-
+        // REGISTRO DE DIARIO AUTOMÁTICO AL CONSUMIR
         let txtConsumo = `Utilizó el objeto ${itemIcon} '${itemNombre}' desde su mochila de suministros. El objeto ha sido consumido.`;
         inyectarEntradaDiarioAutomatica(txtConsumo);
 
@@ -1212,17 +1146,6 @@ function refrescarPantallaGamer() {
     document.getElementById('usr-pf').innerText = u.pf;
     document.getElementById('usr-compras').innerText = `${u.comprasDisponibles}/${MAX_COMPRAS}`;
 
-    // Refrescar Datos Visuales del Dashboard al cambiar la base de datos
-    let totalG = u.totalGastado || 0;
-    let totalC = u.objetosConsumidos || 0;
-    let msCreado = u.fechaCreacion || Date.now();
-    let diferenciaDias = Math.floor((Date.now() - msCreado) / (1000 * 60 * 60 * 24));
-    if(diferenciaDias < 1) diferenciaDias = 1;
-
-    document.getElementById('stat-total-gastado').innerText = `${totalG} P₠`;
-    document.getElementById('stat-dias-aventura').innerText = `${diferenciaDias} ${diferenciaDias === 1 ? 'día' : 'días'}`;
-    document.getElementById('stat-total-consumidos').innerText = `${totalC} u.`;
-
     let invBox = document.getElementById('lista-inventario');
     invBox.innerHTML = '';
     let itemsFiltrados = u.inventario ? u.inventario.filter(i => i.uid !== "init") : [];
@@ -1230,6 +1153,7 @@ function refrescarPantallaGamer() {
         invBox.innerHTML = '<span style="color:var(--texto-secundario); font-size:12px;">Mochila vacía.</span>';
     } else {
         itemsFiltrados.forEach(i => {
+            // Se genera dinámicamente cada objeto con su botón nativo de Uso Automático
             invBox.innerHTML += `
                 <div class="mochila-item-tag" title="Adquirido el: ${i.fecha}">
                     <span>${i.icon || '📦'} ${i.nombre}</span>
@@ -1238,6 +1162,7 @@ function refrescarPantallaGamer() {
         });
     }
 
+    // Mantener actualizado el selector de trades
     let receptorSelect = document.getElementById('int-select-receptor');
     if(receptorSelect) {
         let currentFav = receptorSelect.value;
@@ -1360,4 +1285,64 @@ window.resolverIntercambio = function(tradeId, resultado) {
     let p = baseDatos.jugadores[t.proponente];
     let r = baseDatos.jugadores[t.receptor];
 
-    if(resultado === 'EXIT
+    if(resultado === 'EXITOSO') {
+        if(r) r.pf = (r.pf || 0) + t.depositoEscrow;
+        t.estado = "completado";
+        alert("Intercambio cerrado con éxito. Los PF en garantía se han transferido al receptor.");
+    } else {
+        if(p) p.pf = (p.pf || 0) + t.depositoEscrow;
+        t.estado = "fallido";
+        alert("Intercambio declarado Fallido/Cancelado. Se han devuelto los PF al proponente.");
+    }
+
+    guardarBD();
+};
+
+function actualizarListaIntercambiosDOM() {
+    let box = document.getElementById('contenedor-intercambios-activos');
+    if(!box) return;
+    box.innerHTML = '';
+
+    if(!baseDatos.intercambios || Object.keys(baseDatos.intercambios).length === 0) {
+        box.innerHTML = `<div style="color:var(--texto-secundario); font-size:13px; padding:15px; text-align:center;">No hay operaciones comerciales en curso en la Cámara.</div>`;
+        return;
+    }
+
+    Object.keys(baseDatos.intercambios).forEach(id => {
+        let t = baseDatos.intercambios[id];
+        if(t.estado !== "evaluacion") return; 
+
+        let yaVoto = t.registroVotos && t.registroVotos[userSesion] ? true : false;
+        let esCreador = t.proponente === userSesion;
+
+        box.innerHTML += `
+            <div class="intercambio-card">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                    <span style="font-family:'Orbitron'; font-size:12px; color:var(--neon-intercambio)">DE: ${t.proponente.toUpperCase()} ➡️ PARA: ${t.receptor.toUpperCase()}</span>
+                    <div>
+                        <span class="votos-escrow font-family:'Orbitron'">🛡️ Garantía: ${t.depositoEscrow} PF</span>
+                        <span class="votos-si">👍 A favor: ${t.votosSi || 0}</span>
+                        <span class="votos-no">👎 En contra: ${t.votosNo || 0}</span>
+                    </div>
+                </div>
+                <div style="font-size:14px; color:#fff; margin-bottom:12px; background:rgba(0,0,0,0.3); padding:8px; border-radius:4px;">
+                    ${t.detalles}
+                </div>
+                <div style="display:flex; gap:10px;">
+                    <button class="btn-accion" style="padding:6px; background:#064e3b; border-color:#10b981; color:#10b981; width:auto;" ${yaVoto ? 'disabled' : ''} onclick="votarIntercambio('${t.id}', 'SI')">👍 Votar A Favor</button>
+                    <button class="btn-accion" style="padding:6px; background:#7f1d1d; border-color:#f87171; color:#f87171; width:auto;" ${yaVoto ? 'disabled' : ''} onclick="votarIntercambio('${t.id}', 'NO')">👎 Votar En Contra</button>
+                    
+                    ${esCreador ? `
+                        <div style="margin-left:auto; display:flex; gap:5px;">
+                            <button class="btn-accion" style="padding:6px; background:#1e3a8a; border-color:#60a5fa; color:#60a5fa; width:auto; font-size:11px;" onclick="resolverIntercambio('${t.id}', 'EXITOSO')">✔️ EJECUTAR INTERCAMBIO</button>
+                            <button class="btn-accion" style="padding:6px; background:#4c1d1d; border-color:#ef4444; color:#ef4444; width:auto; font-size:11px;" onclick="resolverIntercambio('${t.id}', 'FALLIDO')">❌ DECLARAR FALLIDO</button>
+                        </div>
+                    ` : ''}
+                </div>
+            </div>
+        `;
+    });
+}
+</script>
+</body>
+</html>
