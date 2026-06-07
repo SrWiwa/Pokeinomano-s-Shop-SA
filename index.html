@@ -83,6 +83,24 @@
             color: #000;
         }
 
+        .btn-logout-trigger {
+            background: #4c1d1d;
+            color: #ef4444;
+            padding: 4px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 11px;
+            margin-left: 5px;
+            border: 1px solid #ef4444;
+            text-transform: uppercase;
+            transition: all 0.2s;
+            font-weight: bold;
+        }
+        .btn-logout-trigger:hover {
+            background: #ef4444;
+            color: #fff;
+        }
+
         /* BLOQUE SECCIÓN PERFIL DESPLEGABLE */
         .perfil-desplegable-box {
             background: #0f1422;
@@ -400,7 +418,10 @@
     <div id="pantalla-mercado" style="display:none;">
         
         <div class="marcador-recursos">
-            <div class="marcador-dato">OPERADOR: <span id="usr-nombre" style="color: #fff;">---</span> <button class="btn-perfil-trigger" onclick="conmutarCajaPerfil()">👤 Ver Perfil</button></div>
+            <div class="marcador-dato">OPERADOR: <span id="usr-nombre" style="color: #fff;">---</span> 
+                <button class="btn-perfil-trigger" onclick="conmutarCajaPerfil()">👤 Ver Perfil</button>
+                <button class="btn-logout-trigger" onclick="cerrarSesionOperador()">🔓 Salir</button>
+            </div>
             <div class="marcador-dato">COMPRAS: <span id="usr-compras" style="color: var(--neon-packs);">3/3</span></div>
             <div class="marcador-dato">EFECTIVO: <span id="usr-dinero" style="color: var(--neon-legal);">0</span> P₠</div>
             <div class="marcador-dato">PUNTOS FAVOR: <span id="usr-pf" style="color: var(--neon-ilegal);">0</span> PF</div>
@@ -754,6 +775,9 @@ onValue(ref(db, 'silph_co_market'), (snapshot) => {
         if(document.getElementById('pantalla-admin-master').style.display === 'block') {
             redibujarConsolaAdminMaster();
         }
+    } else {
+        document.getElementById('pantalla-lobby').style.display = 'block';
+        document.getElementById('pantalla-mercado').style.display = 'none';
     }
 });
 
@@ -799,6 +823,22 @@ window.ingresarAlSistema = function() {
     cargarDatosPerfilEnDOM();
     refrescarPantallaGamer();
     actualizarListaIntercambiosDOM();
+};
+
+window.cerrarSesionOperador = function() {
+    userSesion = null;
+    sessionStorage.removeItem('silph_user_sesion');
+    
+    // Ocultar perfil desplegable si estaba abierto
+    document.getElementById('perfil-desplegable').style.display = 'none';
+    
+    // Limpiar el campo del login para comodidad
+    let loginInput = document.getElementById('login-nombre');
+    if(loginInput) loginInput.value = '';
+
+    // Intercambiar pantallas de interfaz
+    document.getElementById('pantalla-mercado').style.display = 'none';
+    document.getElementById('pantalla-lobby').style.display = 'block';
 };
 
 function actualizarComprasPorTiempo() {
@@ -875,7 +915,6 @@ window.guardarNuevaEntradaDiario = function() {
     redibujarHistorialDiario();
 };
 
-// FUNCIÓN DE AUTOMATIZACIÓN REESCRITA (INMUNE A DISPOSITIVOS)
 function inyectarEntradaDiarioAutomatica(textoMsg) {
     if(!userSesion || !baseDatos.jugadores[userSesion]) return;
     let u = baseDatos.jugadores[userSesion];
@@ -945,7 +984,7 @@ window.guardarVidasPerfilGamer = function() {
     u.vidasActuales = parseInt(document.getElementById('perf-txt-vidas').innerText);
     if (u.vidasActuales <= 0) u.lockeStatus = 'perdido';
     guardarBD();
-    alert("Vidas actualizadas sincronizadas.");
+    alert("Vidas actualizadas synchronized.");
 };
 
 window.alterarTorneosPerfil = function(v) {
@@ -1093,7 +1132,6 @@ window.apagarTerminalMercader = function() {
     document.getElementById('pantalla-admin-master').style.display = 'none';
 };
 
-// COMPRA AUTOMATIZADA CON BITÁCORA DIRECTA
 window.comprarObjetoGamer = function(id) {
     if(!userSesion) return;
     let u = baseDatos.jugadores[userSesion];
@@ -1120,14 +1158,12 @@ window.comprarObjetoGamer = function(id) {
     if(!u.inventario) u.inventario = [];
     u.inventario.push({ uid: "item_" + Date.now() + Math.floor(Math.random()*100), nombre: p.nombre, icon: p.icon, fecha: new Date().toLocaleDateString() });
     
-    // REGISTRO DE DIARIO AUTOMÁTICO AL COMPRAR
     inyectarEntradaDiarioAutomatica(txtBitacora);
 
     guardarBD();
     alert(`¡Has comprado ${p.nombre} con éxito!\nRegistrado en la Bitácora de Aventura.`);
 };
 
-// CONSUMIR E ELIMINAR OBJETO AUTOMÁTICAMENTE
 window.consumirObjetoMochilaGamer = function(itemUid, itemNombre, itemIcon) {
     if(!userSesion || !baseDatos.jugadores[userSesion]) return;
     let u = baseDatos.jugadores[userSesion];
@@ -1137,7 +1173,6 @@ window.consumirObjetoMochilaGamer = function(itemUid, itemNombre, itemIcon) {
     if(index !== -1) {
         u.inventario.splice(index, 1);
 
-        // REGISTRO DE DIARIO AUTOMÁTICO AL CONSUMIR
         let txtConsumo = `Utilizó el objeto ${itemIcon} '${itemNombre}' desde su mochila de suministros. El objeto ha sido consumido.`;
         inyectarEntradaDiarioAutomatica(txtConsumo);
 
@@ -1234,10 +1269,6 @@ function renderizarAparadorPublico(tiendaTipo, contenedorId, estaAbierta) {
     box.innerHTML = htmlGrid;
 }
 
-/* ==========================================================================
-   SISTEMA DE INTERCAMBIO, ESCROW Y VOTACIONES
-   ========================================================================== */
-
 window.publicarPropuestaIntercambio = function() {
     if(!userSesion) return;
     let u = baseDatos.jugadores[userSesion];
@@ -1299,7 +1330,7 @@ window.resolverIntercambio = function(tradeId, resultado) {
         t.estado = "completado";
         alert("Intercambio cerrado con éxito. Los PF en garantía se han transferido al receptor.");
     } else {
-        if(p) p.pf = (p.pf || 0) + t.depositoEscrow;
+        if(p) p.pf = (p.pf || 0) + t.deposimtoEscrow;
         t.estado = "fallido";
         alert("Intercambio declarado Fallido/Cancelado. Se han devuelto los PF al proponente.");
     }
