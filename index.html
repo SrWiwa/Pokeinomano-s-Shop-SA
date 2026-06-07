@@ -224,10 +224,37 @@
             background: rgba(15, 23, 42, 0.4);
             border: 1px dashed #334155;
             border-radius: 10px;
-            padding: 12px 20px;
+            padding: 15px 20px;
             margin-bottom: 25px;
         }
         .bolsa-titulo { font-size: 12px; color: var(--texto-secundario); text-transform: uppercase; margin-bottom: 8px; font-weight: 600;}
+        
+        .mochila-item-tag {
+            background: #161d30; 
+            padding: 6px 10px; 
+            border-radius: 6px; 
+            font-size: 12px; 
+            border: 1px solid #2d3d5a;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-usar-item {
+            background: #1b4d3e;
+            color: var(--neon-legal);
+            border: 1px solid var(--neon-legal);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: all 0.2s;
+        }
+        .btn-usar-item:hover {
+            background: var(--neon-legal);
+            color: #000;
+        }
 
         /* ICONOS */
         .item-icon {
@@ -742,10 +769,10 @@ window.ingresarAlSistema = function() {
 
     if(!baseDatos.jugadores[id]) {
         baseDatos.jugadores[id] = { 
-            dinero: 4000, pf: 10, // Iniciamos con 10 PF para pruebas del Escrow
+            dinero: 4000, pf: 10, 
             comprasDisponibles: MAX_COMPRAS, 
             ultimaRecarga: Date.now(),
-            inventario: [ {nombre: "Mochila Inicial"} ],
+            inventario: [ {uid: "init", nombre: "Mochila Inicial"} ],
             lockeStatus: 'jugando', 
             tipoMedallas: 'medallas', numMedallas: 0, torneos: 0,
             diarioLogs: [ {timestamp: "Inicio", texto: "Sistema iniciado."} ],
@@ -756,7 +783,7 @@ window.ingresarAlSistema = function() {
     } else {
         if (baseDatos.jugadores[id].comprasDisponibles === undefined) baseDatos.jugadores[id].comprasDisponibles = MAX_COMPRAS;
         if (!baseDatos.jugadores[id].showdownEquipos) baseDatos.jugadores[id].showdownEquipos = Array(10).fill("Sin datos");
-        if (!baseDatos.jugadores[id].inventario) baseDatos.jugadores[id].inventario = [ {nombre: "Mochila Inicial"} ];
+        if (!baseDatos.jugadores[id].inventario) baseDatos.jugadores[id].inventario = [ {uid: "init", nombre: "Mochila Inicial"} ];
         if (!baseDatos.jugadores[id].diarioLogs) baseDatos.jugadores[id].diarioLogs = [ {timestamp: "Inicio", texto: "Sistema iniciado."} ];
     }
     
@@ -840,15 +867,19 @@ window.guardarNuevaEntradaDiario = function() {
     let contenido = inputTxt.value.trim();
     if(!contenido) return alert("Texto vacío.");
     
-    let u = baseDatos.jugadores[userSesion];
-    let fechaActual = new Date().toLocaleString('es-ES');
-    if(!u.diarioLogs) u.diarioLogs = [];
-    
-    u.diarioLogs.push({ timestamp: fechaActual, texto: contenido });
-    guardarBD();
+    inyectarEntradaDiarioAutomatica(contenido);
     inputTxt.value = '';
     redibujarHistorialDiario();
 };
+
+// FUNCIÓN AUXILIAR DE AUTOMATIZACIÓN DE DIARIO
+function inyectarEntradaDiarioAutomatica(textoMsg) {
+    if(!userSesion || !baseDatos.jugadores[userSesion]) return;
+    let u = baseDatos.jugadores[userSesion];
+    let fechaActual = new Date().toLocaleString('es-ES');
+    if(!u.diarioLogs) u.diarioLogs = [];
+    u.diarioLogs.push({ timestamp: fechaActual, texto: textoMsg });
+}
 
 function cargarDatosPerfilEnDOM() {
     if(!userSesion || !baseDatos.jugadores[userSesion]) return;
@@ -1049,6 +1080,7 @@ window.apagarTerminalMercader = function() {
     document.getElementById('pantalla-admin-master').style.display = 'none';
 };
 
+// COMPRA AUTOMATIZADA CON BITÁCORA DIRECTA
 window.comprarObjetoGamer = function(id) {
     if(!userSesion) return;
     let u = baseDatos.jugadores[userSesion];
@@ -1057,23 +1089,52 @@ window.comprarObjetoGamer = function(id) {
 
     if(u.comprasDisponibles <= 0) return alert("No te quedan compras disponibles en este periodo de 6 horas.");
 
+    let txtBitacora = "";
     if(p.tienda === 'illegal') {
         if(u.pf < p.precioPf) return alert("No tienes suficientes Puntos de Favor (PF).");
         u.pf -= p.precioPf;
+        txtBitacora = `Adquirió modulo prohibido: ${p.icon} '${p.nombre}' utilizando un coste de ${p.precioPf} PF.`;
     } else {
         if(u.dinero < p.precio) return alert("No tienes suficiente dinero (P₠).");
         u.dinero -= p.precio;
         u.pf += (p.pf || 0);
+        txtBitacora = `Adquirió artículo: ${p.icon} '${p.nombre}' en el mercado por un coste de ${p.precio} P₠.`;
     }
 
     p.stock--;
     u.comprasDisponibles--;
     
     if(!u.inventario) u.inventario = [];
-    u.inventario.push({ nombre: p.nombre, icon: p.icon, fecha: new Date().toLocaleDateString() });
+    // Añadimos un UID único basado en tiempo al objeto en la mochila para poder eliminar el específico si hay repetidos
+    u.inventario.push({ uid: "item_" + Date.now() + Math.floor(Math.random()*100), nombre: p.nombre, icon: p.icon, fecha: new Date().toLocaleDateString() });
     
+    // REGISTRO DE DIARIO AUTOMÁTICO AL COMPRAR
+    inyectarEntradaDiarioAutomatica(txtBitacora);
+
     guardarBD();
-    alert(`¡Has comprado ${p.nombre} con éxito!`);
+    alert(`¡Has comprado ${p.nombre} con éxito!\nRegistrado en la Bitácora de Aventura.`);
+};
+
+// CONSUMIR E ELIMINAR OBJETO AUTOMÁTICAMENTE
+window.consumirObjetoMochilaGamer = function(itemUid, itemNombre, itemIcon) {
+    if(!userSesion || !baseDatos.jugadores[userSesion]) return;
+    let u = baseDatos.jugadores[userSesion];
+    if(!u.inventario) return;
+
+    let index = u.inventario.findIndex(i => i.uid === itemUid);
+    if(index !== -1) {
+        // Eliminar objeto de la mochila
+        u.inventario.splice(index, 1);
+
+        // REGISTRO DE DIARIO AUTOMÁTICO AL CONSUMIR
+        let txtConsumo = `Utilizó el objeto ${itemIcon} '${itemNombre}' desde su mochila de suministros. El objeto ha sido consumido.`;
+        inyectarEntradaDiarioAutomatica(txtConsumo);
+
+        guardarBD();
+        alert(`Has usado '${itemNombre}'. El objeto ha sido removido automáticamente de tu inventario.`);
+    } else {
+        alert("Error al intentar procesar el objeto.");
+    }
 };
 
 function refrescarPantallaGamer() {
@@ -1087,12 +1148,17 @@ function refrescarPantallaGamer() {
 
     let invBox = document.getElementById('lista-inventario');
     invBox.innerHTML = '';
-    let itemsFiltrados = u.inventario ? u.inventario.filter(i => i.nombre !== "Mochila Inicial") : [];
+    let itemsFiltrados = u.inventario ? u.inventario.filter(i => i.uid !== "init") : [];
     if(itemsFiltrados.length === 0) {
         invBox.innerHTML = '<span style="color:var(--texto-secundario); font-size:12px;">Mochila vacía.</span>';
     } else {
         itemsFiltrados.forEach(i => {
-            invBox.innerHTML += `<span style="background:#1e293b; padding:4px 8px; border-radius:4px; font-size:12px; border:1px solid #334155;" title="${i.fecha}">${i.icon || '📦'} ${i.nombre}</span>`;
+            // Se genera dinámicamente cada objeto con su botón nativo de Uso Automático
+            invBox.innerHTML += `
+                <div class="mochila-item-tag" title="Adquirido el: ${i.fecha}">
+                    <span>${i.icon || '📦'} ${i.nombre}</span>
+                    <button class="btn-usar-item" onclick="consumirObjetoMochilaGamer('${i.uid}', '${i.nombre}', '${i.icon || '📦'}')">Usar</button>
+                </div>`;
         });
     }
 
@@ -1160,7 +1226,7 @@ function renderizarAparadorPublico(tiendaTipo, contenedorId, estaAbierta) {
 }
 
 /* ==========================================================================
-   NUEVAS FUNCIONES: SISTEMA DE INTERCAMBIO, ESCROW Y VOTACIONES
+   SISTEMA DE INTERCAMBIO, ESCROW Y VOTACIONES
    ========================================================================== */
 
 window.publicarPropuestaIntercambio = function() {
@@ -1174,8 +1240,6 @@ window.publicarPropuestaIntercambio = function() {
     if(!receptorId) return alert("Debes seleccionar un destinatario válido.");
     if(u.pf < escrowPf) return alert(`Fondos insuficientes. Necesitas ${escrowPf} PF para el depósito en garantía.`);
 
-    // --- DEPÓSITO EN GARANTÍA (ESCROW) ---
-    // Se restan inmediatamente los PF al creador y se guardan en el contrato/propuesta
     u.pf -= escrowPf;
 
     let tradeId = "trade_" + Date.now();
@@ -1185,10 +1249,10 @@ window.publicarPropuestaIntercambio = function() {
         receptor: receptorId,
         detalles: ofertaTxt,
         depositoEscrow: escrowPf,
-        estado: "evaluacion", // evaluacion | completado | fallido
+        estado: "evaluacion", 
         votosSi: 0,
         votosNo: 0,
-        registroVotos: { init: true } // Evitar problemas de borrado estructural en Firebase
+        registroVotos: { init: true } 
     };
 
     if(!baseDatos.intercambios) baseDatos.intercambios = {};
@@ -1222,12 +1286,10 @@ window.resolverIntercambio = function(tradeId, resultado) {
     let r = baseDatos.jugadores[t.receptor];
 
     if(resultado === 'EXITOSO') {
-        // Intercambio validado: El depósito en garantía pasa al receptor de forma segura
         if(r) r.pf = (r.pf || 0) + t.depositoEscrow;
         t.estado = "completado";
         alert("Intercambio cerrado con éxito. Los PF en garantía se han transferido al receptor.");
     } else {
-        // Intercambio fallido: Devolución íntegra de los PF depositados en el Escrow al proponente original
         if(p) p.pf = (p.pf || 0) + t.depositoEscrow;
         t.estado = "fallido";
         alert("Intercambio declarado Fallido/Cancelado. Se han devuelto los PF al proponente.");
@@ -1248,7 +1310,7 @@ function actualizarListaIntercambiosDOM() {
 
     Object.keys(baseDatos.intercambios).forEach(id => {
         let t = baseDatos.intercambios[id];
-        if(t.estado !== "evaluacion") return; // No mostrar completados o fallidos antiguos
+        if(t.estado !== "evaluacion") return; 
 
         let yaVoto = t.registroVotos && t.registroVotos[userSesion] ? true : false;
         let esCreador = t.proponente === userSesion;
