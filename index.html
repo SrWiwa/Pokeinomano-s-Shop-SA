@@ -492,7 +492,7 @@
                     </div>
                 </div>
                 <p style="font-size:11px; color:var(--texto-secundario); margin:0 0 8px 0;">Pega aquí el código limpio de tu equipo exportado de Pokémon Showdown para la ranura seleccionada:</p>
-                <textarea id="perf-showdown-raw" class="input-textarea-custom" rows="4" placeholder="Pega el formato Showdown aquí..."></textarea>
+                <textarea id="perf-showdown-raw" class="input-textarea-custom" rows="4" placeholder="Pega el formato Showdown aquí..." oninput="parsearYRenderizarShowdown()"></textarea>
                 <div id="visualizador-showdown-team" class="showdown-team-grid"></div>
             </div>
 
@@ -821,7 +821,6 @@ onValue(ref(db, 'silph_co_market'), (snapshot) => {
         actualizarListaIntercambiosDOM();
         actualizarBannerAlertasVisuales();
         
-        // Manejador visual seguro de la Pokéball en el refresco en tiempo real
         const bBall = document.getElementById('btn-master-pokeball');
         if (bBall) {
             bBall.style.display = (userSesion.toLowerCase() === "srwiwa") ? "block" : "none";
@@ -876,7 +875,6 @@ window.ingresarAlSistema = function() {
     document.getElementById('pantalla-lobby').style.display = 'none';
     document.getElementById('pantalla-mercado').style.display = 'block';
 
-    // Mostrar el botón de administración única y estrictamente si eres srwiwa
     const bBall = document.getElementById('btn-master-pokeball');
     if (bBall) {
         bBall.style.display = (id === "srwiwa") ? "block" : "none";
@@ -1224,7 +1222,6 @@ function redibujarConsolaAdminMaster() {
     });
 }
 
-// NUEVA FUNCIÓN BLINDADA: Valida directamente por tu ID de sesión
 window.invocarTerminalMercader = function() {
     if (!userSesion || userSesion.toLowerCase() !== "srwiwa") {
         alert("ERROR CRÍTICO: Credenciales de Administrador corporativo no detectadas.");
