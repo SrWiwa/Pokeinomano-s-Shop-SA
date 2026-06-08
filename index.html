@@ -321,6 +321,7 @@
         .tab-button.tab-pack.active { background: var(--panel-packs); color: var(--neon-packs); border-color: var(--borde-packs); box-shadow: 0 0 10px rgba(255, 187, 0, 0.15); }
         .tab-button.tab-illegal.active { background: var(--panel-ilegal); color: var(--neon-ilegal); border-color: var(--borde-ilegal); box-shadow: 0 0 10px rgba(255, 0, 187, 0.15); }
         .tab-button.tab-intercambio.active { background: var(--panel-intercambio); color: var(--neon-intercambio); border-color: var(--borde-intercambio); box-shadow: 0 0 10px rgba(59, 130, 246, 0.15); }
+        .tab-button.tab-red-entrenadores.active { background: #0f172a; color: #fff; border-color: #475569; box-shadow: 0 0 10px rgba(255, 255, 255, 0.15); }
 
         .market-view { display: none; }
         .market-view.active { display: block; }
@@ -331,11 +332,19 @@
             border-radius: 12px; padding: 16px; display: flex; flex-direction: column; 
             justify-content: space-between; text-align: center; position: relative;
             background-color: #0f1422; border: 2px solid #1e293b;
+            transition: all 0.2s ease;
         }
         
         .legal-zone .item-card { background: var(--panel-legal); border-color: var(--borde-legal); }
         .pack-zone .item-card { background: var(--panel-packs); border-color: var(--borde-packs); }
         .illegal-zone .item-card { background: var(--panel-ilegal); border-color: var(--borde-ilegal); }
+
+        /* ESTILO QoL: STOCK AGOTADO */
+        .item-card.agotado {
+            opacity: 0.4;
+            filter: grayscale(90%);
+            border-color: #334155 !important;
+        }
 
         .categoria-tag { font-size: 10px; color: var(--texto-secundario); text-transform: uppercase; font-weight: bold; margin-bottom: 8px; opacity: 0.6; }
         .item-titulo { font-size: 14px; font-weight: 800; text-transform: uppercase; margin-bottom: 8px; }
@@ -423,6 +432,18 @@
         .votos-si { background: #064e3b; color: #34d399; }
         .votos-no { background: #7f1d1d; color: #f87171; }
         .votos-escrow { background: #1e3a8a; color: #93c5fd; }
+
+        /* NUEVOS ESTILOS TEMÁTICOS */
+        .graveyard-item {
+            background: #14161d; border: 1px dashed #475569; padding: 12px; border-radius: 6px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;
+        }
+        .red-entrenadores-grid {
+            display: grid; grid-template-columns: 1fr 2fr; gap: 20px;
+        }
+        @media(max-width:768px){ .red-entrenadores-grid { grid-template-columns: 1fr; } }
+        .selector-cat-tienda {
+            background: #0f1422; color: #fff; border: 1px solid #1b4d3e; padding: 8px 12px; border-radius: 6px; margin-bottom: 15px; font-family: 'Orbitron'; font-size: 12px; cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -448,6 +469,7 @@
             <div class="marcador-dato">COMPRAS: <span id="usr-compras" style="color: var(--neon-packs);">3/3</span></div>
             <div class="marcador-dato">EFECTIVO: <span id="usr-dinero" style="color: var(--neon-legal);">0</span> P₠</div>
             <div class="marcador-dato">PUNTOS FAVOR: <span id="usr-pf" style="color: var(--neon-ilegal);">0</span> PF</div>
+            <button class="subtab-btn" style="border-color: var(--neon-packs); color: #fff; font-family:'Orbitron';" onclick="reclamarHackeoDiario()">⚡ RECLAMAR GACHA DIARIO</button>
         </div>
 
         <div id="perfil-desplegable" class="perfil-desplegable-box">
@@ -467,6 +489,7 @@
                 <button class="subtab-btn active" id="subtab-equipo" onclick="cambiarSubPestanaPerfil('equipo')">EQUIPO POKÉMON</button>
                 <button class="subtab-btn" id="subtab-progreso" onclick="cambiarSubPestanaPerfil('progreso')">MEDALLAS Y TORNEOS</button>
                 <button class="subtab-btn" id="subtab-vidas" onclick="cambiarSubPestanaPerfil('vidas')" style="border-color: var(--neon-ilegal); color: var(--neon-ilegal);">❤️ CONTADOR DE VIDAS</button>
+                <button class="subtab-btn" id="subtab-cementerio" onclick="cambiarSubPestanaPerfil('cementerio')" style="border-color: #64748b; color: #cbd5e1;">💀 CEMENTERIO DE PIXELES</button>
                 <button class="subtab-btn" id="subtab-aventura" onclick="abrirOverlayDiarioNativo()" style="border-color: var(--neon-packs); color: var(--neon-packs);">📖 ABRIR DIARIO INMUTABLE</button>
             </div>
 
@@ -539,8 +562,21 @@
                         </div>
                     </div>
                     
-                    <button class="btn-accion" style="border-color:var(--neon-legal); color:var(--neon-legal); max-width:250px; margin:10px auto 0 auto;" onclick="guardarVidasPerfilGamer()">💾 GUARDAR VIDAS</button>
+                    <button class="btn-accion" style="border-color:var(--neon-legal); color:var(--neon-legal); max-width:250px; margin:10px auto 0 auto;" onclick="guardarVidasPerfilGamer()">💾 GESTIONAR Y SINCRONIZAR VIDAS</button>
                 </div>
+            </div>
+
+            <div id="perf-view-cementerio" class="perfil-content-view">
+                <div style="background:#0d1117; padding:15px; border-radius:8px; border:1px solid #334155; margin-bottom:15px;">
+                    <h4 style="margin:0 0 10px 0; font-family:'Orbitron'; color:#ef4444; font-size:13px;">REGISTRAR BAJA CONFIRMADA</h4>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:10px;">
+                        <input type="text" id="cem-input-nombre" placeholder="Nombre del Pokémon" class="admin-input-custom" style="padding:8px;">
+                        <input type="text" id="cem-input-ruta" placeholder="Ruta / Líder de la caída" class="admin-input-custom" style="padding:8px;">
+                    </div>
+                    <input type="text" id="cem-input-epitafio" placeholder="Epitafio / Últimas palabras" class="admin-input-custom" style="padding:8px; margin-bottom:10px;">
+                    <button class="btn-accion" style="background:#4c1d1d; border-color:#ef4444; color:#fff;" onclick="registrarBajaPokemon()">💀 ENVIAR AL CEMENTERIO (INMUTABLE)</button>
+                </div>
+                <div id="cementerio-lista-local"></div>
             </div>
         </div>
 
@@ -573,9 +609,21 @@
             <button class="tab-button tab-pack" id="tab-pack" onclick="cambiarSeccionTienda('pack')">SHOP PF PACK</button>
             <button class="tab-button tab-illegal" id="tab-illegal" onclick="cambiarSeccionTienda('illegal')">TIENDA DE ILEGALIDADES</button>
             <button class="tab-button tab-intercambio" id="tab-intercambio" onclick="cambiarSeccionTienda('intercambio')" style="border-color:var(--neon-intercambio); color:var(--neon-intercambio);">🏛️ CAMARA DE COMERCIO</button>
+            <button class="tab-button tab-red-entrenadores" id="tab-red-entrenadores" onclick="cambiarSeccionTienda('red-entrenadores')">📡 RED DE ENTRENADORES</button>
         </div>
 
-        <div id="vista-legal" class="market-view active legal-zone"><div id="contenedor-legal-view"></div></div>
+        <div id="vista-legal" class="market-view active legal-zone">
+            <select id="filtro-categoria-legal" class="selector-cat-tienda" onchange="aplicarFiltroCategoriaLegal()">
+                <option value="">✨ Mostrar Todas las Categorías</option>
+                <option value="EV/IV">EV/IV</option>
+                <option value="Bayas">Bayas</option>
+                <option value="Poké Balls">Poké Balls</option>
+                <option value="Objetos de Exploración">Objetos de Exploración</option>
+                <option value="Objetos de Combate (X)">Objetos de Combate (X)</option>
+                <option value="Objetos Competitivos">Objetos Competitivos</option>
+            </select>
+            <div id="contenedor-legal-view"></div>
+        </div>
         <div id="vista-pack" class="market-view pack-zone"><div id="contenedor-pack-view"></div></div>
         <div id="vista-illegal" class="market-view illegal-zone"><div id="contenedor-hacker-view"></div></div>
         
@@ -613,6 +661,15 @@
 
             <h3 style="font-family:'Orbitron'; color:#fff; border-bottom:1px solid #1e293b; padding-bottom:8px;">⚖️ REGISTRO DE TRUEQUES Y VOTACIONES</h3>
             <div id="contenedor-intercambios-activos"></div>
+        </div>
+
+        <div id="vista-red-entrenadores" class="market-view">
+            <div class="intercambio-box" style="border-color:#475569;">
+                <h3 style="font-family:'Orbitron'; color:#fff; margin-top:0;">📡 PANEL MONITOR DE LA RED DE ENTRENADORES</h3>
+                <label style="font-size:12px; color:var(--texto-secundario); display:block; margin-bottom:5px;">SELECCIONA UN RIVAL PARA PASARLE ESCÁNER:</label>
+                <select id="red-select-jugador" onchange="renderizarVisorRivalPublico()" style="width:100%; padding:10px; background:#060914; color:var(--neon-legal); font-weight:bold; border:1px solid #334155; border-radius:6px; font-size:14px;"></select>
+            </div>
+            <div id="red-visor-dinamico" class="red-entrenadores-grid"></div>
         </div>
 
     </div>
@@ -797,8 +854,17 @@ const baseDatosInicial = [
 
 let baseDatos = { productos: [], jugadores: {}, intercambios: {}, legalOpen: true, packOpen: true, illegalOpen: true, eventoSistema: "normal" };
 let userSesion = sessionStorage.getItem('silph_user_sesion') || null;
+let filtroCategoriaGlobal = ""; 
 const MAX_COMPRAS = 3;
 const MS_EN_6_HORAS = 6 * 60 * 60 * 1000;
+
+// MEJORA TÉCNICA 2: SANITIZACIÓN ANTI-XSS NATIVA
+function escaparHTML(str) {
+    if (!str) return '';
+    return str.replace(/[&<>'"]/g, 
+        tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
+    );
+}
 
 onValue(ref(db, 'silph_co_market'), (snapshot) => {
     const data = snapshot.val();
@@ -861,13 +927,17 @@ window.ingresarAlSistema = function() {
             diarioLogs: [ {timestamp: "Inicio", texto: "Sistema iniciado."} ],
             showdownEquipos: Array(10).fill("Sin datos"),
             vidasTotales: 20,
-            vidasActuales: 20
+            vidasActuales: 20,
+            cementerio: [], 
+            ultimoHackeo: 0 
         };
     } else {
         if (baseDatos.jugadores[id].comprasDisponibles === undefined) baseDatos.jugadores[id].comprasDisponibles = MAX_COMPRAS;
         if (!baseDatos.jugadores[id].showdownEquipos) baseDatos.jugadores[id].showdownEquipos = Array(10).fill("Sin datos");
         if (!baseDatos.jugadores[id].inventario) baseDatos.jugadores[id].inventario = [ {uid: "init", nombre: "Mochila Inicial"} ];
         if (!baseDatos.jugadores[id].diarioLogs) baseDatos.jugadores[id].diarioLogs = [ {timestamp: "Inicio", texto: "Sistema iniciado."} ];
+        if (!baseDatos.jugadores[id].cementerio) baseDatos.jugadores[id].cementerio = [];
+        if (!baseDatos.jugadores[id].ultimoHackeo) baseDatos.jugadores[id].ultimoHackeo = 0;
     }
     
     guardarBD();
@@ -935,6 +1005,7 @@ window.cambiarSubPestanaPerfil = function(sub) {
     document.querySelectorAll('.perfil-content-view').forEach(v => v.classList.remove('active'));
     document.getElementById(`subtab-${sub}`).classList.add('active');
     document.getElementById(`perf-view-${sub}`).classList.add('active');
+    if (sub === 'cementerio') renderizarCementerioDOM();
 };
 
 window.abrirOverlayDiarioNativo = function() {
@@ -959,7 +1030,8 @@ function redibujarHistorialDiario() {
         boxLogs.innerHTML = '<span style="color:var(--texto-secundario); font-size:12px; text-align:center; padding:20px;">Bitácora vacía.</span>';
     } else {
         logsFiltrados.forEach(log => {
-            boxLogs.innerHTML += `<div class="diario-entrada-item"><div class="diario-entrada-fecha">📅 ${log.timestamp}</div><div class="diario-entrada-texto">${log.texto}</div></div>`;
+            // MEJORA TÉCNICA 2: Inyección sanitizada con escaparHTML
+            boxLogs.innerHTML += `<div class="diario-entrada-item"><div class="diario-entrada-fecha">📅 ${escaparHTML(log.timestamp)}</div><div class="diario-entrada-texto">${escaparHTML(log.texto)}</div></div>`;
         });
     }
     boxLogs.scrollTop = boxLogs.scrollHeight;
@@ -1006,6 +1078,7 @@ function cargarDatosPerfilEnDOM() {
     document.getElementById('perf-team-slot').value = "1";
     document.getElementById('perf-showdown-raw').value = (u.showdownEquipos && u.showdownEquipos[0] !== "Sin datos") ? u.showdownEquipos[0] : '';
     parsearYRenderizarShowdown();
+    renderizarCementerioDOM();
 }
 
 window.cambiarRanuraEquipoShowdown = function() {
@@ -1045,7 +1118,7 @@ window.guardarVidasPerfilGamer = function() {
     u.vidasActuales = parseInt(document.getElementById('perf-txt-vidas').innerText);
     if (u.vidasActuales <= 0) u.lockeStatus = 'perdido';
     guardarBD();
-    alert("Vidas actualizadas synchronized.");
+    alert("Contador de vidas sincronizado con el servidor de la corporación.");
 };
 
 window.alterarTorneosPerfil = function(v) {
@@ -1067,15 +1140,113 @@ function parsearYRenderizarShowdown() {
         let nombreCompleto = lineas[0]; let objeto = "Ninguno"; let habilidad = "Desconocida";
         if(nombreCompleto.includes('@')) { let partes = nombreCompleto.split('@'); nombreCompleto = partes[0].trim(); objeto = partes[1].trim(); }
         lineas.forEach(linea => { if(linea.startsWith('Ability:')) habilidad = linea.replace('Ability:', '').trim(); });
-        box.innerHTML += `<div class="poke-card-showdown"><div class="poke-card-name">🧬 ${nombreCompleto}</div><div style="color:var(--texto-secundario)">Objeto: <span style="color:#fff;">${objeto}</span></div><div style="color:var(--texto-secundario)">Habilidad: <span style="color:#fff;">${habilidad}</span></div></div>`;
+        box.innerHTML += `<div class="poke-card-showdown"><div class="poke-card-name">🧬 ${escaparHTML(nombreCompleto)}</div><div style="color:var(--texto-secundario)">Objeto: <span style="color:#fff;">${escaparHTML(objeto)}</span></div><div style="color:var(--texto-secundario)">Habilidad: <span style="color:#fff;">${escaparHTML(habilidad)}</span></div></div>`;
     });
 }
+
+// NUEVA FUNCIÓN SUGERIDA: CEMENTERIO DE PIXELES
+window.registrarBajaPokemon = function() {
+    let u = baseDatos.jugadores[userSesion];
+    let nom = document.getElementById('cem-input-nombre').value.trim();
+    let ruta = document.getElementById('cem-input-ruta').value.trim();
+    let epitafio = document.getElementById('cem-input-epitafio').value.trim();
+
+    if(!nom || !ruta) return alert("El nombre y la ruta/líder de la baja son requeridos.");
+    if(!u.cementerio) u.cementerio = [];
+
+    let baja = { nombre: nom, ruta: ruta, epitafio: epitafio || "Sin epitafio.", fecha: new Date().toLocaleDateString() };
+    u.cementerio.push(baja);
+
+    let logBaja = `💀 RIP: '${nom}' cayó en combate contra/en [${ruta}]. Epitafio: "${epitafio || '...'}"`;
+    inyectarEntradaDiarioAutomatica(logBaja);
+
+    guardarBD();
+    document.getElementById('cem-input-nombre').value = '';
+    document.getElementById('cem-input-ruta').value = '';
+    document.getElementById('cem-input-epitafio').value = '';
+    renderInitializeLoaders();
+    alert("Pérdida registrada en el Cementerio y sellada permanentemente en la Bitácora.");
+};
+
+function renderizamientoInternoShowdownPlano(rawShowdown) {
+    if(!rawShowdown || rawShowdown === "Sin datos" || !rawShowdown.trim()) return '<span style="color:var(--texto-secundario);">No hay datos de Showdown.</span>';
+    let pokesRaw = rawShowdown.split(/\n\s*\n/);
+    let html = '<div style="display:grid; grid-template-columns:1fr 1fr; gap:5px; font-size:11px;">';
+    pokesRaw.forEach(bloque => {
+        let lineas = bloque.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+        if(lineas.length === 0) return;
+        let nom = lineas[0].split('@')[0].trim();
+        html += `<div style="background:#090d16; padding:5px; border-radius:4px; border:1px solid #24324f; color:#fff;">👾 ${escaparHTML(nom)}</div>`;
+    });
+    html += '</div>';
+    return html;
+}
+
+function renderizarCementerioDOM() {
+    let u = baseDatos.jugadores[userSesion];
+    let box = document.getElementById('cementerio-lista-local');
+    if(!box) return; box.innerHTML = '';
+    if(!u.cementerio || u.cementerio.length === 0) {
+        box.innerHTML = '<div style="color:var(--texto-secundario); text-align:center; font-size:12px; padding:10px;">No hay bajas registradas en este Locke... Aún.</div>';
+        return;
+    }
+    u.cementerio.forEach(b => {
+        box.innerHTML += `
+            <div class="graveyard-item">
+                <div>
+                    <span style="color:#ef4444; font-weight:bold; font-size:13px;">💀 ${escaparHTML(b.nombre)}</span>
+                    <span style="color:var(--texto-secundario); font-size:11px;"> en ${escaparHTML(b.ruta)} (${escaparHTML(b.fecha)})</span>
+                    <div style="font-style:italic; font-size:12px; color:#cbd5e1; margin-top:2px;">"${escaparHTML(b.epitafio)}"</div>
+                </div>
+            </div>`;
+    });
+}
+
+// NUEVA FUNCIÓN SUGERIDA: GACHA DIARIO POR TIMESTAMP
+window.reclamarHackeoDiario = function() {
+    let u = baseDatos.jugadores[userSesion];
+    let ahora = Date.now();
+    let unDiaMs = 24 * 60 * 60 * 1000;
+
+    if(ahora - (u.ultimoHackeo || 0) < unDiaMs) {
+        let rem = unDiaMs - (ahora - u.ultimoHackeo);
+        let horasFaltan = Math.ceil(rem / (1000 * 60 * 60));
+        return alert(`Sistemas protegidos. El firewall de Silph Co. se reiniciará en ${horasFaltan} horas.`);
+    }
+
+    u.ultimoHackeo = ahora;
+    let numRand = Math.random();
+    let premioMsg = "";
+
+    if(numRand < 0.4) {
+        u.dinero += 250;
+        premioMsg = "Hackeo Exitoso: Se han inyectado +250 P₠ en tus balances de red.";
+    } else if(numRand < 0.8) {
+        u.pf += 1;
+        premioMsg = "Acceso Concedido: Se ha transferido +1 Punto de Favor (PF) corporativo.";
+    } else {
+        if(!u.inventario) u.inventario = [];
+        u.inventario.push({ uid: "item_" + Date.now(), nombre: "Buceo Ball (Gacha)", icon: "🌐", fecha: new Date().toLocaleDateString() });
+        premioMsg = "Robo de Suministros: Has interceptado 1 Buceo Ball directamente en tu mochila.";
+    }
+
+    inyectarEntradaDiarioAutomatica(`[RECOMPENSA DIARIA] ${premioMsg}`);
+    guardarBD();
+    alert(`¡HACKEO EJECUTADO!\n${premioMsg}`);
+};
+
+// NUEVA FUNCIÓN SUGERIDA: FILTRO DE CATEGORÍAS
+window.aplicarFiltroCategoriaLegal = function() {
+    filtroCategoriaGlobal = document.getElementById('filtro-categoria-legal').value;
+    renderInitializeLoaders();
+};
 
 window.cambiarSeccionTienda = function(tipo) {
     document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
     document.querySelectorAll('.market-view').forEach(v => v.classList.remove('active'));
     document.getElementById(`tab-${tipo}`).classList.add('active');
     document.getElementById(`vista-${tipo}`).classList.add('active');
+    if(tipo === 'red-entrenadores') renderizarVisorRivalPublico();
 };
 
 window.ajustarCamposFormularioMercader = function() {
@@ -1222,6 +1393,7 @@ function redibujarConsolaAdminMaster() {
     });
 }
 
+// MEJORA TÉCNICA 1: Blindaje real y blindaje contra ejecuciones directas desde F12
 window.invocarTerminalMercader = function() {
     if (!userSesion || userSesion.toLowerCase() !== "srwiwa") {
         alert("ERROR CRÍTICO: Credenciales de Administrador corporativo no detectadas.");
@@ -1248,15 +1420,15 @@ window.comprarObjetoGamer = function(id) {
     let bonoPfCalculado = p.pf || 0;
 
     if(p.tienda !== 'illegal') {
-        if(ev === 'rebajas') {
-            precioFinalCalculado = Math.round(p.precio * 0.75);
-        } else if(ev === 'inflacion') {
-            precioFinalCalculado = Math.round(p.precio * 1.50);
-        }
-        if(ev === 'bonus_pf') {
-            bonoPfCalculado = (p.pf || 0) * 2;
-        }
+        if(ev === 'rebajas') precioFinalCalculado = Math.round(p.precio * 0.75);
+        else if(ev === 'inflacion') precioFinalCalculado = Math.round(p.precio * 1.50);
+        if(ev === 'bonus_pf') bonoPfCalculado = (p.pf || 0) * 2;
     }
+
+    let txtCoste = p.tienda === 'illegal' ? `${p.precioPf} PF` : `${precioFinalCalculado} P₠`;
+
+    // MEJORA ESTILOS QoL: Confirmación de compra nativa segura
+    if(!confirm(`¿Deseas autorizar el desembolso por la adquisición de ${p.nombre} con un costo de ${txtCoste}?`)) return;
 
     let txtBitacora = "";
     if(p.tienda === 'illegal') {
@@ -1279,7 +1451,7 @@ window.comprarObjetoGamer = function(id) {
     inyectarEntradaDiarioAutomatica(txtBitacora);
 
     guardarBD();
-    alert(`¡Has comprado ${p.nombre} con éxito!\nRegistrado en la Bitácora de Aventura.`);
+    alert(`¡Has adquirido ${p.nombre} con éxito!\nRegistrado en la Bitácora de Aventura.`);
 };
 
 window.consumirObjetoMochilaGamer = function(itemUid, itemNombre, itemIcon) {
@@ -1301,6 +1473,66 @@ window.consumirObjetoMochilaGamer = function(itemUid, itemNombre, itemIcon) {
     }
 };
 
+// NUEVA FUNCIÓN SUGERIDA: VISOR PÚBLICO RIVAL EN TIEMPO REAL
+window.renderizarVisorRivalPublico = function() {
+    let selector = document.getElementById('red-select-jugador');
+    let target = selector.value;
+    let box = document.getElementById('red-visor-dinamico');
+    if(!box) return; box.innerHTML = '';
+    if(!target || !baseDatos.jugadores[target]) {
+        box.innerHTML = '<div style="color:var(--texto-secundario); padding:20px; grid-column:span 2; text-align:center;">Selecciona un terminal activo para ver sus datos.</div>';
+        return;
+    }
+
+    let r = baseDatos.jugadores[target];
+    let statusTexto = r.lockeStatus === 'ganado' ? '🏆 GANADO' : (r.lockeStatus === 'perdido' ? '💀 PERDIDO' : '⏳ EN CURSO');
+    
+    let htmlPerfil = `
+        <div style="background:#0f1422; border:1px solid #1e293b; padding:15px; border-radius:8px; height:fit-content;">
+            <h4 style="margin:0 0 10px 0; font-family:'Orbitron'; color:var(--neon-intercambio); font-size:14px;">ESTADO OPERATIVO: ${escaparHTML(target.toUpperCase())}</h4>
+            <div style="font-size:12px; margin-bottom:6px;">REPUTACIÓN: <span style="color:var(--neon-packs); font-weight:bold;">${r.pf || 0} PF</span></div>
+            <div style="font-size:12px; margin-bottom:6px;">VIDAS: <span style="color:#ef4444; font-weight:bold;">❤️ ${r.vidasActuales || 0}/${r.vidasTotales || 20}</span></div>
+            <div style="font-size:12px; margin-bottom:6px;">DESAFÍO: <span style="color:#fff; font-weight:bold;">${statusTexto}</span></div>
+            <div style="font-size:12px; margin-bottom:6px;">LOGROS MEDALLAS: <span style="color:var(--neon-legal); font-weight:bold;">${r.numMedallas || 0}/8</span></div>
+            <div style="font-size:12px;">TORNEOS GANADOS: <span style="color:#fff; font-weight:bold;">${r.torneos || 0}</span></div>
+        </div>
+    `;
+
+    let slotSelectHTML = `<select id="red-visor-slot-team" onchange="renderizarSubRanuraRivalShowdown('${target}')" style="background:#060914; color:#fff; padding:4px; border-radius:4px; font-size:11px; margin-bottom:8px; width:100%;">`;
+    for(let i=1; i<=10; i++) {
+        slotSelectHTML += `<option value="${i}">Ver Equipo Ranura ${i}</option>`;
+    }
+    slotSelectHTML += `</select>`;
+
+    let htmlEquipos = `
+        <div style="background:#0f1422; border:1px solid #1e293b; padding:15px; border-radius:8px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                <h4 style="margin:0; font-family:'Orbitron'; color:#fff; font-size:13px;">DESPLIEGUE SHOWDOWN</h4>
+                <div style="width:140px;">${slotSelectHTML}</div>
+            </div>
+            <div id="red-visor-pokes-area"></div>
+        </div>
+    `;
+
+    box.innerHTML = htmlPerfil + htmlEquipos;
+    renderizarSubRanuraRivalShowdown(target);
+};
+
+window.renderizarSubRanuraRivalShowdown = function(targetUser) {
+    let slotIdx = parseInt(document.getElementById('red-visor-slot-team').value) - 1;
+    let r = baseDatos.jugadores[targetUser];
+    let area = document.getElementById('red-visor-pokes-area');
+    if(!area) return;
+    let rawTeam = (r.showdownEquipos && r.showdownEquipos[slotIdx]) ? r.showdownEquipos[slotIdx] : "Sin datos";
+    area.innerHTML = renderizamientoInternoShowdownPlano(rawTeam);
+};
+
+function renderInitializeLoaders() {
+    renderAparadorPublico('legal', 'contenedor-legal-view', baseDatos.legalOpen);
+    renderAparadorPublico('pack', 'contenedor-pack-view', baseDatos.packOpen);
+    renderAparadorPublico('illegal', 'contenedor-hacker-view', baseDatos.illegalOpen);
+}
+
 function refrescarPantallaGamer() {
     if(!userSesion || !baseDatos.jugadores[userSesion]) return;
     let u = baseDatos.jugadores[userSesion];
@@ -1318,31 +1550,37 @@ function refrescarPantallaGamer() {
     } else {
         itemsFiltrados.forEach(i => {
             invBox.innerHTML += `
-                <div class="mochila-item-tag" title="Adquirido el: ${i.fecha}">
-                    <span>${i.icon || '📦'} ${i.nombre}</span>
-                    <button class="btn-usar-item" onclick="consumirObjetoMochilaGamer('${i.uid}', '${i.nombre}', '${i.icon || '📦'}')">Usar</button>
+                <div class="mochila-item-tag" title="Adquirido el: ${escaparHTML(i.fecha)}">
+                    <span>${escaparHTML(i.icon) || '📦'} ${escaparHTML(i.nombre)}</span>
+                    <button class="btn-usar-item" onclick="consumirObjetoMochilaGamer('${i.uid}', '${escaparHTML(i.nombre)}', '${escaparHTML(i.icon) || '📦'}')">Usar</button>
                 </div>`;
         });
     }
 
     let receptorSelect = document.getElementById('int-select-receptor');
-    if(receptorSelect) {
+    let redSelectRival = document.getElementById('red-select-jugador');
+    
+    if(receptorSelect && redSelectRival) {
         let currentFav = receptorSelect.value;
+        let currentRival = redSelectRival.value;
+        
         receptorSelect.innerHTML = '';
+        redSelectRival.innerHTML = '<option value="">-- SELECCIONAR ENTRENADOR RIVAL --</option>';
+        
         Object.keys(baseDatos.jugadores).forEach(id => {
+            redSelectRival.innerHTML += `<option value="${id}">${id.toUpperCase()}</option>`;
             if(id !== userSesion) {
                 receptorSelect.innerHTML += `<option value="${id}">${id.toUpperCase()}</option>`;
             }
         });
         if(currentFav) receptorSelect.value = currentFav;
+        if(currentRival) redSelectRival.value = currentRival;
     }
 
-    renderizarAparadorPublico('legal', 'contenedor-legal-view', baseDatos.legalOpen);
-    renderizarAparadorPublico('pack', 'contenedor-pack-view', baseDatos.packOpen);
-    renderizarAparadorPublico('illegal', 'contenedor-hacker-view', baseDatos.illegalOpen);
+    renderInitializeLoaders();
 }
 
-function renderizarAparadorPublico(tiendaTipo, contenedorId, estaAbierta) {
+function renderAparadorPublico(tiendaTipo, contenedorId, estaAbierta) {
     let box = document.getElementById(contenedorId);
     if(!box) return;
     box.innerHTML = '';
@@ -1352,9 +1590,17 @@ function renderizarAparadorPublico(tiendaTipo, contenedorId, estaAbierta) {
         return;
     }
 
-    let prods = baseDatos.productos.filter(p => p.tienda === tiendaTipo);
+    // NUEVO MÓDULO FILTRADO: Integración condicional p.cat === filtroCategoriaGlobal
+    let prods = baseDatos.productos.filter(p => {
+        let matchTienda = p.tienda === tiendaTipo;
+        if(tiendaTipo === 'legal' && filtroCategoriaGlobal !== "") {
+            return matchTienda && p.cat === filtroCategoriaGlobal;
+        }
+        return matchTienda;
+    });
+
     if(prods.length === 0) {
-        box.innerHTML = `<div style="text-align:center; color:var(--texto-secundario); padding:30px;">No hay artículos disponibles en este aparador.</div>`;
+        box.innerHTML = `<div style="text-align:center; color:var(--texto-secundario); padding:30px;">No hay artículos disponibles en este aparador bajo el filtro seleccionado.</div>`;
         return;
     }
 
@@ -1383,18 +1629,21 @@ function renderizarAparadorPublico(tiendaTipo, contenedorId, estaAbierta) {
         let txtCoste = esI ? `${p.precioPf} PF` : `${precioFinal} P₠`;
         let txtBonoDisplay = (!esI && bonoPf > 0) ? `<div style="font-size:10px; color:var(--neon-ilegal); margin-top:2px;">+${bonoPf} PF (Bono)</div>` : '';
         
-        let txtDetalle = p.desc ? `<div class="item-desc">${p.desc}</div>` : '';
-        let txtEstrat = p.estrategia ? `<div class="item-estrategia">💡 ${p.estrategia}</div>` : '';
-        let txtCat = p.cat ? `<div class="categoria-tag">${p.cat}</div>` : '';
+        let txtDetalle = p.desc ? `<div class="item-desc">${escaparHTML(p.desc)}</div>` : '';
+        let txtEstrat = p.estrategia ? `<div class="item-estrategia">💡 ${escaparHTML(p.estrategia)}</div>` : '';
+        let txtCat = p.cat ? `<div class="categoria-tag">${escaparHTML(p.cat)}</div>` : '';
         let deshabilitado = p.stock <= 0 ? 'disabled' : '';
         let txtBoton = p.stock <= 0 ? 'AGOTADO' : `ADQUIRIR MÓDULO (${txtCoste})`;
+        
+        // ESTILO QoL: Inyección condicional de clase de stock agotado
+        let claseAgotado = p.stock <= 0 ? 'agotado' : '';
 
         htmlGrid += `
-            <div class="item-card">
+            <div class="item-card ${claseAgotado}">
                 <div>
                     ${txtCat}
-                    <div class="item-icon">${p.icon}</div>
-                    <div class="item-titulo">${p.nombre}</div>
+                    <div class="item-icon">${escaparHTML(p.icon)}</div>
+                    <div class="item-titulo">${escaparHTML(p.nombre)}</div>
                     ${txtDetalle}
                     ${txtEstrat}
                 </div>
@@ -1511,7 +1760,7 @@ function actualizarListaIntercambiosDOM() {
         box.innerHTML += `
             <div class="intercambio-card">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                    <span style="font-family:'Orbitron'; font-size:12px; color:var(--neon-intercambio)">PROPUESTA: ${t.proponente.toUpperCase()} ➡️ ${t.receptor.toUpperCase()}</span>
+                    <span style="font-family:'Orbitron'; font-size:12px; color:var(--neon-intercambio)">PROPUESTA: ${escaparHTML(t.proponente.toUpperCase())} ➡️ ${escaparHTML(t.receptor.toUpperCase())}</span>
                     <div>
                         <span class="votos-escrow" style="font-family:'Orbitron'; font-size:11px;">🛡️ Aval: ${t.depositoEscrow} PF</span>
                         <span class="votos-si">👍 SÍ: ${t.votosSi || 0}</span>
@@ -1520,8 +1769,8 @@ function actualizarListaIntercambiosDOM() {
                 </div>
                 
                 <div style="font-size:13px; color:#fff; margin-bottom:12px; background:rgba(0,0,0,0.4); padding:10px; border-radius:6px; border:1px solid #1e293b; display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-                    <div><span style="color:var(--neon-legal); font-weight:bold; display:block; font-size:10px; text-transform:uppercase;">🎁 Ofrece:</span> ${textoOfrece}</div>
-                    <div style="border-left:1px dashed #2d3d5a; padding-left:10px;"><span style="color:var(--neon-packs); font-weight:bold; display:block; font-size:10px; text-transform:uppercase;">➡️ A cambio de:</span> ${textoPide}</div>
+                    <div><span style="color:var(--neon-legal); font-weight:bold; display:block; font-size:10px; text-transform:uppercase;">🎁 Ofrece:</span> ${escaparHTML(textoOfrece)}</div>
+                    <div style="border-left:1px dashed #2d3d5a; padding-left:10px;"><span style="color:var(--neon-packs); font-weight:bold; display:block; font-size:10px; text-transform:uppercase;">➡️ A cambio de:</span> ${escaparHTML(textoPide)}</div>
                 </div>
 
                 <div style="display:flex; gap:10px;">
