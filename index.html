@@ -171,6 +171,80 @@
             border-color: var(--neon-packs);
         }
 
+        /* SHOWDOWN TEAM CONFIG CON SOPORTE DE IMAGEN */
+        .showdown-team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 12px;
+            margin-top: 12px;
+        }
+        .poke-card-showdown {
+            background: #161d30;
+            border: 1px solid #24324f;
+            border-radius: 6px;
+            padding: 12px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .poke-card-info {
+            flex: 1;
+        }
+        .poke-card-gif-box {
+            width: 65px;
+            height: 65px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(6, 9, 20, 0.6);
+            border-radius: 6px;
+            border: 1px dashed #24324f;
+        }
+        .poke-card-gif-box img {
+            max-width: 60px;
+            max-height: 60px;
+            object-fit: contain;
+        }
+        .poke-card-name { font-weight: 800; color: var(--neon-legal); font-size: 13px; margin-bottom: 4px; text-transform: uppercase;}
+
+        /* BOLSA DE OBJETOS */
+        .bolsa-contenedor {
+            background: rgba(15, 23, 42, 0.4);
+            border: 1px dashed #334155;
+            border-radius: 10px;
+            padding: 15px 20px;
+            margin-bottom: 25px;
+        }
+        .bolsa-titulo { font-size: 12px; color: var(--texto-secundario); text-transform: uppercase; margin-bottom: 8px; font-weight: 600;}
+        
+        .mochila-item-tag {
+            background: #161d30; 
+            padding: 6px 10px; 
+            border-radius: 6px; 
+            font-size: 12px; 
+            border: 1px solid #2d3d5a;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-usar-item {
+            background: #1b4d3e;
+            color: var(--neon-legal);
+            border: 1px solid var(--neon-legal);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: all 0.2s;
+        }
+        .btn-usar-item:hover {
+            background: var(--neon-legal);
+            color: #000;
+        }
+
         /* OVERLAY / MODAL DIARIO NATIVO */
         .diario-overlay {
             display: none;
@@ -239,58 +313,6 @@
             padding: 15px 20px;
             background: #0f1422;
             border-top: 1px solid #1e293b;
-        }
-
-        .showdown-team-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 12px;
-            margin-top: 12px;
-        }
-        .poke-card-showdown {
-            background: #161d30;
-            border: 1px solid #24324f;
-            border-radius: 6px;
-            padding: 10px;
-            font-size: 12px;
-        }
-        .poke-card-name { font-weight: 800; color: var(--neon-legal); font-size: 13px; margin-bottom: 4px; text-transform: uppercase;}
-
-        /* BOLSA DE OBJETOS */
-        .bolsa-contenedor {
-            background: rgba(15, 23, 42, 0.4);
-            border: 1px dashed #334155;
-            border-radius: 10px;
-            padding: 15px 20px;
-            margin-bottom: 25px;
-        }
-        .bolsa-titulo { font-size: 12px; color: var(--texto-secundario); text-transform: uppercase; margin-bottom: 8px; font-weight: 600;}
-        
-        .mochila-item-tag {
-            background: #161d30; 
-            padding: 6px 10px; 
-            border-radius: 6px; 
-            font-size: 12px; 
-            border: 1px solid #2d3d5a;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .btn-usar-item {
-            background: #1b4d3e;
-            color: var(--neon-legal);
-            border: 1px solid var(--neon-legal);
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-size: 10px;
-            font-weight: bold;
-            cursor: pointer;
-            text-transform: uppercase;
-            transition: all 0.2s;
-        }
-        .btn-usar-item:hover {
-            background: var(--neon-legal);
-            color: #000;
         }
 
         /* ICONOS */
@@ -443,6 +465,40 @@
         @media(max-width:768px){ .red-entrenadores-grid { grid-template-columns: 1fr; } }
         .selector-cat-tienda {
             background: #0f1422; color: #fff; border: 1px solid #1b4d3e; padding: 8px 12px; border-radius: 6px; margin-bottom: 15px; font-family: 'Orbitron'; font-size: 12px; cursor: pointer;
+        }
+
+        /* PANEL RIVAL DE SHOWDOWN ADAPTADO PARA GIFS */
+        .red-visor-pokes-grid-custom {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 8px;
+        }
+        .rival-poke-mini-card {
+            background: #090d16;
+            padding: 8px;
+            border-radius: 6px;
+            border: 1px solid #24324f;
+            color: #fff;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+        }
+        .rival-poke-mini-card img {
+            max-width: 45px;
+            max-height: 45px;
+            object-fit: contain;
+        }
+        .rival-poke-mini-name {
+            font-size: 10px;
+            font-weight: bold;
+            text-transform: uppercase;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            width: 100%;
         }
     </style>
 </head>
@@ -866,6 +922,16 @@ function escaparHTML(str) {
     );
 }
 
+// NUEVA FUNCIÓN EXTRACTORA DE ID DE POKÉMON PARA LA URL DE ANIMACIÓN DE POKEAPI
+function limpiarNombrePokemonParaUrl(nombreCompleto) {
+    let base = nombreCompleto.split('(')[0].trim().split('-')[0].trim().toLowerCase();
+    base = base.replace(/[.:'’ ]/g, '');
+    if (base === 'meowstic') return 'meowstic-male';
+    if (base === 'pumpkaboo') return 'pumpkaboo-average';
+    if (base === 'gourgeist') return 'gourgeist-average';
+    return base;
+}
+
 onValue(ref(db, 'silph_co_market'), (snapshot) => {
     const data = snapshot.val();
     if (data) {
@@ -1030,7 +1096,6 @@ function redibujarHistorialDiario() {
         boxLogs.innerHTML = '<span style="color:var(--texto-secundario); font-size:12px; text-align:center; padding:20px;">Bitácora vacía.</span>';
     } else {
         logsFiltrados.forEach(log => {
-            // MEJORA TÉCNICA 2: Inyección sanitizada con escaparHTML
             boxLogs.innerHTML += `<div class="diario-entrada-item"><div class="diario-entrada-fecha">📅 ${escaparHTML(log.timestamp)}</div><div class="diario-entrada-texto">${escaparHTML(log.texto)}</div></div>`;
         });
     }
@@ -1128,23 +1193,41 @@ window.alterarTorneosPerfil = function(v) {
     guardarBD();
 };
 
-function parsearYRenderizarShowdown() {
+// MODIFICADO: PARSEO E INYECCIÓN CON SOPORTE DE GIFS ANIMADOS DE POKEAPI
+window.parsearYRenderizarShowdown = function() {
     let raw = document.getElementById('perf-showdown-raw').value;
     let box = document.getElementById('visualizador-showdown-team');
     if(!box) return; box.innerHTML = '';
-    if(!raw.trim()) return;
+    if(!raw.trim() || raw === "Sin datos") return;
     let pokesRaw = raw.split(/\n\s*\n/);
     pokesRaw.forEach(bloque => {
         let lineas = bloque.split('\n').map(l => l.trim()).filter(l => l.length > 0);
         if(lineas.length === 0) return;
         let nombreCompleto = lineas[0]; let objeto = "Ninguno"; let habilidad = "Desconocida";
         if(nombreCompleto.includes('@')) { let partes = nombreCompleto.split('@'); nombreCompleto = partes[0].trim(); objeto = partes[1].trim(); }
+        
+        let nombreLimpioParaNick = nombreCompleto.split('(')[0].trim();
+        let nombreBusquedaApi = limpiarNombrePokemonParaUrl(nombreCompleto);
+
         lineas.forEach(linea => { if(linea.startsWith('Ability:')) habilidad = linea.replace('Ability:', '').trim(); });
-        box.innerHTML += `<div class="poke-card-showdown"><div class="poke-card-name">🧬 ${escaparHTML(nombreCompleto)}</div><div style="color:var(--texto-secundario)">Objeto: <span style="color:#fff;">${escaparHTML(objeto)}</span></div><div style="color:var(--texto-secundario)">Habilidad: <span style="color:#fff;">${escaparHTML(habilidad)}</span></div></div>`;
+        
+        // URL estructurada de los sprites animados de la base de PokeAPI (Gen 5)
+        let urlGif = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/${nombreBusquedaApi}.gif`;
+
+        box.innerHTML += `
+            <div class="poke-card-showdown">
+                <div class="poke-card-gif-box">
+                    <img src="${urlGif}" onerror="this.src='https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/0.png'; this.onerror=null;" alt="poke">
+                </div>
+                <div class="poke-card-info">
+                    <div class="poke-card-name">🧬 ${escaparHTML(nombreLimpioParaNick)}</div>
+                    <div style="color:var(--texto-secundario)">Objeto: <span style="color:#fff;">${escaparHTML(objeto)}</span></div>
+                    <div style="color:var(--texto-secundario)">Habilidad: <span style="color:#fff;">${escaparHTML(habilidad)}</span></div>
+                </div>
+            </div>`;
     });
 }
 
-// NUEVA FUNCIÓN SUGERIDA: CEMENTERIO DE PIXELES
 window.registrarBajaPokemon = function() {
     let u = baseDatos.jugadores[userSesion];
     let nom = document.getElementById('cem-input-nombre').value.trim();
@@ -1168,15 +1251,23 @@ window.registrarBajaPokemon = function() {
     alert("Pérdida registrada en el Cementerio y sellada permanentemente en la Bitácora.");
 };
 
+// MODIFICADO: EL PANEL DE RIVALES PÚBLICOS AHORA TAMBIÉN INYECTA LOS GIFS EN MINIATURA
 function renderizamientoInternoShowdownPlano(rawShowdown) {
     if(!rawShowdown || rawShowdown === "Sin datos" || !rawShowdown.trim()) return '<span style="color:var(--texto-secundario);">No hay datos de Showdown.</span>';
     let pokesRaw = rawShowdown.split(/\n\s*\n/);
-    let html = '<div style="display:grid; grid-template-columns:1fr 1fr; gap:5px; font-size:11px;">';
+    let html = '<div class="red-visor-pokes-grid-custom">';
     pokesRaw.forEach(bloque => {
         let lineas = bloque.split('\n').map(l => l.trim()).filter(l => l.length > 0);
         if(lineas.length === 0) return;
         let nom = lineas[0].split('@')[0].trim();
-        html += `<div style="background:#090d16; padding:5px; border-radius:4px; border:1px solid #24324f; color:#fff;">👾 ${escaparHTML(nom)}</div>`;
+        let apiName = limpiarNombrePokemonParaUrl(lineas[0]);
+        let urlGif = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/${apiName}.gif`;
+        
+        html += `
+            <div class="rival-poke-mini-card">
+                <img src="${urlGif}" onerror="this.src='https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/0.png'; this.onerror=null;">
+                <div class="rival-poke-mini-name">${escaparHTML(nom.split('(')[0].trim())}</div>
+            </div>`;
     });
     html += '</div>';
     return html;
@@ -1202,7 +1293,6 @@ function renderizarCementerioDOM() {
     });
 }
 
-// NUEVA FUNCIÓN SUGERIDA: GACHA DIARIO POR TIMESTAMP
 window.reclamarHackeoDiario = function() {
     let u = baseDatos.jugadores[userSesion];
     let ahora = Date.now();
@@ -1235,7 +1325,6 @@ window.reclamarHackeoDiario = function() {
     alert(`¡HACKEO EJECUTADO!\n${premioMsg}`);
 };
 
-// NUEVA FUNCIÓN SUGERIDA: FILTRO DE CATEGORÍAS
 window.aplicarFiltroCategoriaLegal = function() {
     filtroCategoriaGlobal = document.getElementById('filtro-categoria-legal').value;
     renderInitializeLoaders();
@@ -1393,7 +1482,6 @@ function redibujarConsolaAdminMaster() {
     });
 }
 
-// MEJORA TÉCNICA 1: Blindaje real y blindaje contra ejecuciones directas desde F12
 window.invocarTerminalMercader = function() {
     if (!userSesion || userSesion.toLowerCase() !== "srwiwa") {
         alert("ERROR CRÍTICO: Credenciales de Administrador corporativo no detectadas.");
@@ -1427,7 +1515,6 @@ window.comprarObjetoGamer = function(id) {
 
     let txtCoste = p.tienda === 'illegal' ? `${p.precioPf} PF` : `${precioFinalCalculado} P₠`;
 
-    // MEJORA ESTILOS QoL: Confirmación de compra nativa segura
     if(!confirm(`¿Deseas autorizar el desembolso por la adquisición de ${p.nombre} con un costo de ${txtCoste}?`)) return;
 
     let txtBitacora = "";
@@ -1473,7 +1560,6 @@ window.consumirObjetoMochilaGamer = function(itemUid, itemNombre, itemIcon) {
     }
 };
 
-// NUEVA FUNCIÓN SUGERIDA: VISOR PÚBLICO RIVAL EN TIEMPO REAL
 window.renderizarVisorRivalPublico = function() {
     let selector = document.getElementById('red-select-jugador');
     let target = selector.value;
@@ -1590,7 +1676,6 @@ function renderAparadorPublico(tiendaTipo, contenedorId, estaAbierta) {
         return;
     }
 
-    // NUEVO MÓDULO FILTRADO: Integración condicional p.cat === filtroCategoriaGlobal
     let prods = baseDatos.productos.filter(p => {
         let matchTienda = p.tienda === tiendaTipo;
         if(tiendaTipo === 'legal' && filtroCategoriaGlobal !== "") {
@@ -1635,7 +1720,6 @@ function renderAparadorPublico(tiendaTipo, contenedorId, estaAbierta) {
         let deshabilitado = p.stock <= 0 ? 'disabled' : '';
         let txtBoton = p.stock <= 0 ? 'AGOTADO' : `ADQUIRIR MÓDULO (${txtCoste})`;
         
-        // ESTILO QoL: Inyección condicional de clase de stock agotado
         let claseAgotado = p.stock <= 0 ? 'agotado' : '';
 
         htmlGrid += `
