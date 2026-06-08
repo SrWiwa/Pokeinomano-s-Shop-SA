@@ -991,7 +991,7 @@ function inyectarEntradaDiarioAutomatica(textoMsg) {
     let fechaActual = `${dia}/${mes}/${anio} ${horas}:${minutes}:${segundos}`;
     
     if(!u.diarioLogs) u.diarioLogs = [];
-    u.diarioLogs.push({ timestamp: fechaActual, texto: textoMsg });
+    u.diarioLogs.push({ timestamp: fechaActual, text: textoMsg, texto: textoMsg });
 }
 
 function cargarDatosPerfilEnDOM() {
