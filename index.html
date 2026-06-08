@@ -957,9 +957,9 @@ function escaparHTML(str) {
 }
 
 // NUEVA FUNCIÓN EXTRACTORA DE ID DE POKÉMON PARA LA URL DE ANIMACIÓN DE POKEAPI
-const nombreLimpio = limpiarNombrePokemonParaUrl(linea);
-imagen.src = "https://play.pokemonshowdown.com/sprites/dex/" + nombreLimpio + ".png";
-
+function limpiarNombrePokemonParaUrl(lineaShowdown) {
+    if (!lineaShowdown) return '';
+    
     // Extraer el nombre real: dentro de paréntesis si hay mote, o la primera palabra si no lo hay
     const matchNombre = lineaShowdown.match(/\((?![MF]\b)([^)]+)\)/);
     let base = matchNombre ? matchNombre[1] : lineaShowdown.split('@')[0].split(/\(([MF])\)/)[0].trim();
