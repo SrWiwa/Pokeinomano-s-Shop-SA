@@ -171,10 +171,10 @@
             border-color: var(--neon-packs);
         }
 
-        /* SHOWDOWN TEAM CONFIG CON SOPORTE DE IMAGEN */
+        /* SHOWDOWN TEAM CONFIG TEXTO LIMPIO */
         .showdown-team-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
             gap: 12px;
             margin-top: 12px;
         }
@@ -191,22 +191,7 @@
         .poke-card-info {
             flex: 1;
         }
-        .poke-card-gif-box {
-            width: 65px;
-            height: 65px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(6, 9, 20, 0.6);
-            border-radius: 6px;
-            border: 1px dashed #24324f;
-        }
-        .poke-card-gif-box img {
-            max-width: 60px;
-            max-height: 60px;
-            object-fit: contain;
-        }
-        .poke-card-name { font-weight: 800; color: var(--neon-legal); font-size: 13px; margin-bottom: 4px; text-transform: uppercase;}
+        .poke-card-name { font-weight: 800; color: var(--neon-legal); font-size: 13px; text-transform: uppercase;}
 
         /* BOLSA DE OBJETOS */
         .bolsa-contenedor {
@@ -361,7 +346,7 @@
         .pack-zone .item-card { background: var(--panel-packs); border-color: var(--borde-packs); }
         .illegal-zone .item-card { background: var(--panel-ilegal); border-color: var(--borde-ilegal); }
 
-        /* ESTILO QoL: STOCK AGOTADO */
+        /* ESTILO STOCK AGOTADO */
         .item-card.agotado {
             opacity: 0.4;
             filter: grayscale(90%);
@@ -422,7 +407,6 @@
             display: flex; align-items: center; justify-content: center;
         }
 
-        /* Oculto por defecto en CSS para evitar bypass en F12 */
         .pokeball-mercader-btn {
             display: none;
             position: fixed; bottom: 15px; left: 15px;
@@ -455,7 +439,6 @@
         .votos-no { background: #7f1d1d; color: #f87171; }
         .votos-escrow { background: #1e3a8a; color: #93c5fd; }
 
-        /* NUEVOS ESTILOS TEMÁTICOS */
         .graveyard-item {
             background: #14161d; border: 1px dashed #475569; padding: 12px; border-radius: 6px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;
         }
@@ -467,7 +450,7 @@
             background: #0f1422; color: #fff; border: 1px solid #1b4d3e; padding: 8px 12px; border-radius: 6px; margin-bottom: 15px; font-family: 'Orbitron'; font-size: 12px; cursor: pointer;
         }
 
-        /* PANEL RIVAL DE SHOWDOWN ADAPTADO PARA GIFS */
+        /* PANEL RIVAL SIN IMÁGENES */
         .red-visor-pokes-grid-custom {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
@@ -475,7 +458,7 @@
         }
         .rival-poke-mini-card {
             background: #090d16;
-            padding: 8px;
+            padding: 12px 8px;
             border-radius: 6px;
             border: 1px solid #24324f;
             color: #fff;
@@ -486,19 +469,15 @@
             justify-content: center;
             gap: 4px;
         }
-        .rival-poke-mini-card img {
-            max-width: 45px;
-            max-height: 45px;
-            object-fit: contain;
-        }
         .rival-poke-mini-name {
-            font-size: 10px;
+            font-size: 11px;
             font-weight: bold;
             text-transform: uppercase;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
             width: 100%;
+            color: var(--neon-legal);
         }
     </style>
 </head>
@@ -542,7 +521,7 @@
             </div>
 
             <div class="perfil-tabs">
-                <button class="subtab-btn active" id="subtab-equipo" onclick="cambiarSubPestanaPerfil('equipo')">EQUIPO POKÉMON</button>
+                <button class="subtab-btn active" id="subtab-equipo" onclick="cambiarSubPestanaPerfil('equipo')">EQUIPO</button>
                 <button class="subtab-btn" id="subtab-progreso" onclick="cambiarSubPestanaPerfil('progreso')">MEDALLAS Y TORNEOS</button>
                 <button class="subtab-btn" id="subtab-vidas" onclick="cambiarSubPestanaPerfil('vidas')" style="border-color: var(--neon-ilegal); color: var(--neon-ilegal);">❤️ CONTADOR DE VIDAS</button>
                 <button class="subtab-btn" id="subtab-cementerio" onclick="cambiarSubPestanaPerfil('cementerio')" style="border-color: #64748b; color: #cbd5e1;">💀 CEMENTERIO DE PIXELES</button>
@@ -570,7 +549,7 @@
                         <button class="btn-accion" style="border-color:var(--neon-legal); color:var(--neon-legal); width:auto; padding:6px 20px;" onclick="guardarEquipoShowdownActual()">💾 ENVIAR Y GUARDAR EQUIPO</button>
                     </div>
                 </div>
-                <p style="font-size:11px; color:var(--texto-secundario); margin:0 0 8px 0;">Pega aquí el código limpio de tu equipo exportado de Pokémon Showdown para la ranura seleccionada:</p>
+                <p style="font-size:11px; color:var(--texto-secundario); margin:0 0 8px 0;">Pega aquí el código limpio de tu equipo exportado de Showdown para la ranura seleccionada:</p>
                 <textarea id="perf-showdown-raw" class="input-textarea-custom" rows="4" placeholder="Pega el formato Showdown aquí..." oninput="parsearYRenderizarShowdown()"></textarea>
                 <div id="visualizador-showdown-team" class="showdown-team-grid"></div>
             </div>
@@ -626,7 +605,7 @@
                 <div style="background:#0d1117; padding:15px; border-radius:8px; border:1px solid #334155; margin-bottom:15px;">
                     <h4 style="margin:0 0 10px 0; font-family:'Orbitron'; color:#ef4444; font-size:13px;">REGISTRAR BAJA CONFIRMADA</h4>
                     <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:10px;">
-                        <input type="text" id="cem-input-nombre" placeholder="Nombre del Pokémon" class="admin-input-custom" style="padding:8px;">
+                        <input type="text" id="cem-input-nombre" placeholder="Nombre de la baja" class="admin-input-custom" style="padding:8px;">
                         <input type="text" id="cem-input-ruta" placeholder="Ruta / Líder de la caída" class="admin-input-custom" style="padding:8px;">
                     </div>
                     <input type="text" id="cem-input-epitafio" placeholder="Epitafio / Últimas palabras" class="admin-input-custom" style="padding:8px; margin-bottom:10px;">
@@ -688,12 +667,12 @@
                 <h3 style="font-family:'Orbitron'; color:var(--neon-intercambio); margin-top:0;">🔄 PROPONER TRUEQUE BIDIRECCIONAL</h3>
                 <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; margin-bottom:12px;">
                     <div>
-                        <label style="font-size:11px; color:var(--texto-secundario); font-weight: bold;">🎁 LO QUE TÚ OFRECES (Tus objetos/Pokes):</label>
-                        <input type="text" id="int-txt-ofrece" placeholder="Ej: 1 Gafas Elegidas + 1 Buceo Ball" class="admin-input-custom" style="padding:10px; font-size:13px; border-color: var(--neon-legal);">
+                        <label style="font-size:11px; color:var(--texto-secundario); font-weight: bold;">🎁 LO QUE TÚ OFRECES (Tus objetos/datos):</label>
+                        <input type="text" id="int-txt-ofrece" placeholder="Ej: 1 Gafas Elegidas" class="admin-input-custom" style="padding:10px; font-size:13px; border-color: var(--neon-legal);">
                     </div>
                     <div>
                         <label style="font-size:11px; color:var(--texto-secundario); font-weight: bold;">➡️ LO QUE PIDES A CAMBIO:</label>
-                        <input type="text" id="int-txt-pide" placeholder="Ej: 1 Piedra Fuego o un Gligar" class="admin-input-custom" style="padding:10px; font-size:13px; border-color: var(--neon-packs);">
+                        <input type="text" id="int-txt-pide" placeholder="Ej: 1 Piedra Fuego" class="admin-input-custom" style="padding:10px; font-size:13px; border-color: var(--neon-packs);">
                     </div>
                 </div>
                 <div style="display:grid; grid-template-columns: 2fr 1fr; gap:15px; margin-bottom:15px;">
@@ -817,7 +796,7 @@
             </div>
             
             <div id="form-bloque-pack-detalles" style="margin-bottom:10px; display:none;">
-                <input type="text" id="ins-pack-desc" placeholder="Contenido (Ej: 2 Buceo Ball + 1 Pepita)" style="width:100%; margin-bottom:8px; padding:8px; background:#060914; color:#fff; border:1px solid #1e293b; border-radius:4px; font-size:12px;">
+                <input type="text" id="ins-pack-desc" placeholder="Contenido (Ej: 2 Buceo Ball)" style="width:100%; margin-bottom:8px; padding:8px; background:#060914; color:#fff; border:1px solid #1e293b; border-radius:4px; font-size:12px;">
                 <input type="text" id="ins-pack-estrategia" placeholder="Enfoque estratégico (Opcional)" style="width:100%; padding:8px; background:#060914; color:#fff; border:1px solid #1e293b; border-radius:4px; font-size:12px;">
             </div>
             
@@ -896,16 +875,16 @@ const baseDatosInicial = [
     { id: 203, tienda: 'pack', cat: 'Pack Especial', nombre: 'Pack Combate Temprano', precio: 1300, pf: 11, stock: 99, icon: '📦', desc: '2 X Defensa + 2 X Velocidad', estrategia: 'Premia preparación.' },
     { id: 204, tienda: 'pack', cat: 'Pack Especial', nombre: 'Pack Supervivencia', precio: 460, pf: 7, stock: 99, icon: '📦', desc: '3 Baya Oran + 3 Baya Atania', estrategia: 'Ahorro pequeño pero constante.' },
     { id: 205, tienda: 'pack', cat: 'Pack Especial', nombre: 'Pack "Segundo Intento"', precio: 2800, pf: 6, stock: 99, icon: '📦', desc: '1 Banda Focus + 1 Hierro', estrategia: 'Supervivencia + mejora ligera.' },
-    { id: 301, tienda: 'illegal', cat: 'Hack de Sistema', nombre: 'Escudo Poke', precioPf: 5, stock: 1, icon: '🛡️', desc: 'Evita la muerte una vez.' },
-    { id: 302, tienda: 'illegal', cat: 'Hack de Sistema', nombre: 'Captura Selectiva', precioPf: 4, stock: 1, icon: '🎯', desc: 'Elige el Poke de una ruta.' },
+    { id: 301, tienda: 'illegal', cat: 'Hack de Sistema', nombre: 'Escudo Integral', precioPf: 5, stock: 1, icon: '🛡️', desc: 'Evita la muerte una vez.' },
+    { id: 302, tienda: 'illegal', cat: 'Hack de Sistema', nombre: 'Captura Selectiva', precioPf: 4, stock: 1, icon: '🎯', desc: 'Elige el encuentro de una ruta.' },
     { id: 303, tienda: 'illegal', cat: 'Hack de Sistema', nombre: 'Licencia De Caza', precioPf: 3, stock: 1, icon: '📜', desc: 'Permite repetir captura si huye.' },
-    { id: 304, tienda: 'illegal', cat: 'Hack de Sistema', nombre: 'Falsificación De Registro', precioPf: 5, stock: 1, icon: '🪪', desc: 'Sustituye 1 Poke clasificado.' },
+    { id: 304, tienda: 'illegal', cat: 'Hack de Sistema', nombre: 'Falsificación De Registro', precioPf: 5, stock: 1, icon: '🪪', desc: 'Sustituye 1 elemento clasificado.' },
     { id: 305, tienda: 'illegal', cat: 'Hack de Sistema', nombre: 'Plaza Fantasma', precioPf: 6, stock: 1, icon: '🪑', desc: 'Sustituye plaza muerta en torneo.' },
-    { id: 306, tienda: 'illegal', cat: 'Hack de Sistema', nombre: 'Evolución Forzada', precioPf: 5, stock: 1, icon: '💖', desc: 'Evoluciona Pokes de amistad.' },
+    { id: 306, tienda: 'illegal', cat: 'Hack de Sistema', nombre: 'Evolución Forzada', precioPf: 5, stock: 1, icon: '💖', desc: 'Evoluciona elementos por amistad.' },
     { id: 307, tienda: 'illegal', cat: 'Hack de Sistema', nombre: 'Reconfiguración', precioPf: 2, stock: 1, icon: '🔄', desc: 'Modifica movimientos post-líder.' },
-    { id: 308, tienda: 'illegal', cat: 'Hack de Sistema', nombre: 'Modificación Genética', precioPf: 4, stock: 1, icon: '🧬', desc: 'Cambia la habilidad del Poke.' },
+    { id: 308, tienda: 'illegal', cat: 'Hack de Sistema', nombre: 'Modificación Genética', precioPf: 4, stock: 1, icon: '🧬', desc: 'Cambia la habilidad del espécimen.' },
     { id: 309, tienda: 'illegal', cat: 'Hack de Sistema', nombre: 'Alteración De Personalidad', precioPf: 2, stock: 1, icon: '🎭', desc: 'Cambia la naturaleza.' },
-    { id: 310, tienda: 'illegal', cat: 'Hack de Sistema', nombre: 'Resurrección Robada', precioPf: 8, stock: 1, icon: '🔮', desc: 'Robas un Poke muerto de otro.' }
+    { id: 310, tienda: 'illegal', cat: 'Hack de Sistema', nombre: 'Resurrección Robada', precioPf: 8, stock: 1, icon: '🔮', desc: 'Robas un elemento caído de otro.' }
 ];
 
 let baseDatos = { productos: [], jugadores: {}, intercambios: {}, legalOpen: true, packOpen: true, illegalOpen: true, eventoSistema: "normal" };
@@ -914,22 +893,11 @@ let filtroCategoriaGlobal = "";
 const MAX_COMPRAS = 3;
 const MS_EN_6_HORAS = 6 * 60 * 60 * 1000;
 
-// MEJORA TÉCNICA 2: SANITIZACIÓN ANTI-XSS NATIVA
 function escaparHTML(str) {
     if (!str) return '';
     return str.replace(/[&<>'"]/g, 
         tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
     );
-}
-
-// NUEVA FUNCIÓN EXTRACTORA DE ID DE POKÉMON PARA LA URL DE ANIMACIÓN DE POKEAPI
-function limpiarNombrePokemonParaUrl(nombreCompleto) {
-    let base = nombreCompleto.split('(')[0].trim().split('-')[0].trim().toLowerCase();
-    base = base.replace(/[.:'’ ]/g, '');
-    if (base === 'meowstic') return 'meowstic-male';
-    if (base === 'pumpkaboo') return 'pumpkaboo-average';
-    if (base === 'gourgeist') return 'gourgeist-average';
-    return base;
 }
 
 onValue(ref(db, 'silph_co_market'), (snapshot) => {
@@ -1192,8 +1160,13 @@ window.alterarTorneosPerfil = function(v) {
     document.getElementById('perf-txt-torneos').innerText = u.torneos;
     guardarBD();
 };
-    
-}
+
+window.parsearYRenderizarShowdown = function() {
+    let rawShowdown = document.getElementById('perf-showdown-raw').value;
+    let box = document.getElementById('visualizador-showdown-team');
+    if(!box) return;
+    box.innerHTML = renderizamientoInternoShowdownPlano(rawShowdown);
+};
 
 window.registrarBajaPokemon = function() {
     let u = baseDatos.jugadores[userSesion];
@@ -1218,7 +1191,6 @@ window.registrarBajaPokemon = function() {
     alert("Pérdida registrada en el Cementerio y sellada permanentemente en la Bitácora.");
 };
 
-// MODIFICADO: EL PANEL DE RIVALES PÚBLICOS AHORA TAMBIÉN INYECTA LOS GIFS EN MINIATURA
 function renderizamientoInternoShowdownPlano(rawShowdown) {
     if(!rawShowdown || rawShowdown === "Sin datos" || !rawShowdown.trim()) return '<span style="color:var(--texto-secundario);">No hay datos de Showdown.</span>';
     let pokesRaw = rawShowdown.split(/\n\s*\n/);
@@ -1227,12 +1199,9 @@ function renderizamientoInternoShowdownPlano(rawShowdown) {
         let lineas = bloque.split('\n').map(l => l.trim()).filter(l => l.length > 0);
         if(lineas.length === 0) return;
         let nom = lineas[0].split('@')[0].trim();
-        let apiName = limpiarNombrePokemonParaUrl(lineas[0]);
-        let urlGif = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/${apiName}.gif`;
         
         html += `
             <div class="rival-poke-mini-card">
-                <img src="${urlGif}" onerror="this.src='https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/0.png'; this.onerror=null;">
                 <div class="rival-poke-mini-name">${escaparHTML(nom.split('(')[0].trim())}</div>
             </div>`;
     });
@@ -1283,8 +1252,8 @@ window.reclamarHackeoDiario = function() {
         premioMsg = "Acceso Concedido: Se ha transferido +1 Punto de Favor (PF) corporativo.";
     } else {
         if(!u.inventario) u.inventario = [];
-        u.inventario.push({ uid: "item_" + Date.now(), nombre: "Buceo Ball (Gacha)", icon: "🌐", fecha: new Date().toLocaleDateString() });
-        premioMsg = "Robo de Suministros: Has interceptado 1 Buceo Ball directamente en tu mochila.";
+        u.inventario.push({ uid: "item_" + Date.now(), nombre: "Suministro Crítico Ball", icon: "🌐", fecha: new Date().toLocaleDateString() });
+        premioMsg = "Robo de Suministros: Has interceptado 1 Unidad de Almacenamiento directamente en tu mochila.";
     }
 
     inyectarEntradaDiarioAutomatica(`[RECOMPENSA DIARIA] ${premioMsg}`);
@@ -1407,7 +1376,7 @@ function actualizarBannerAlertasVisuales() {
         banner.classList.add('active');
         banner.style.borderColor = "var(--neon-ilegal)";
         banner.style.color = "#ff3366";
-        banner.innerHTML = "⚠️ RED INESTABLE: Sanción económica de la Liga Pokémon aplicada. +50% de recargo en costes P₠.";
+        banner.innerHTML = "⚠️ RED INESTABLE: Sanción económica de la Liga aplicada. +50% de recargo en costes P₠.";
     } else if(ev === "bonus_pf") {
         banner.classList.add('active');
         banner.style.borderColor = "var(--neon-packs)";
