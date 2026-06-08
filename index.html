@@ -1192,40 +1192,7 @@ window.alterarTorneosPerfil = function(v) {
     document.getElementById('perf-txt-torneos').innerText = u.torneos;
     guardarBD();
 };
-
-// MODIFICADO: PARSEO E INYECCIÓN CON SOPORTE DE GIFS ANIMADOS DE POKEAPI
-window.parsearYRenderizarShowdown = function() {
-    let raw = document.getElementById('perf-showdown-raw').value;
-    let box = document.getElementById('visualizador-showdown-team');
-    if(!box) return; box.innerHTML = '';
-    if(!raw.trim() || raw === "Sin datos") return;
-    let pokesRaw = raw.split(/\n\s*\n/);
-    pokesRaw.forEach(bloque => {
-        let lineas = bloque.split('\n').map(l => l.trim()).filter(l => l.length > 0);
-        if(lineas.length === 0) return;
-        let nombreCompleto = lineas[0]; let objeto = "Ninguno"; let habilidad = "Desconocida";
-        if(nombreCompleto.includes('@')) { let partes = nombreCompleto.split('@'); nombreCompleto = partes[0].trim(); objeto = partes[1].trim(); }
-        
-        let nombreLimpioParaNick = nombreCompleto.split('(')[0].trim();
-        let nombreBusquedaApi = limpiarNombrePokemonParaUrl(nombreCompleto);
-
-        lineas.forEach(linea => { if(linea.startsWith('Ability:')) habilidad = linea.replace('Ability:', '').trim(); });
-        
-        // URL estructurada de los sprites animados de la base de PokeAPI (Gen 5)
-        let urlGif = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/${nombreBusquedaApi}.gif`;
-
-        box.innerHTML += `
-            <div class="poke-card-showdown">
-                <div class="poke-card-gif-box">
-                    <img src="${urlGif}" onerror="this.src='https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/0.png'; this.onerror=null;" alt="poke">
-                </div>
-                <div class="poke-card-info">
-                    <div class="poke-card-name">🧬 ${escaparHTML(nombreLimpioParaNick)}</div>
-                    <div style="color:var(--texto-secundario)">Objeto: <span style="color:#fff;">${escaparHTML(objeto)}</span></div>
-                    <div style="color:var(--texto-secundario)">Habilidad: <span style="color:#fff;">${escaparHTML(habilidad)}</span></div>
-                </div>
-            </div>`;
-    });
+    
 }
 
 window.registrarBajaPokemon = function() {
