@@ -958,24 +958,18 @@ function escaparHTML(str) {
 
 // NUEVA FUNCIÓN EXTRACTORA DE ID DE POKÉMON PARA LA URL DE ANIMACIÓN DE POKEAPI
 function limpiarNombrePokemonParaUrl(lineaShowdown) {
-    // 1. Si hay un mote, Showdown pone el nombre real dentro de paréntesis.
-    // Buscamos el primer paréntesis que NO sea de género (M) o (F).
+    if (!lineaShowdown) return '';
+
+    // Extraer el nombre real: dentro de paréntesis si hay mote, o la primera palabra si no lo hay
     const matchNombre = lineaShowdown.match(/\((?![MF]\b)([^)]+)\)/);
-    
-    let base = '';
-    
-    if (matchNombre) {
-        // Caso con mote: nos quedamos con lo que hay dentro del paréntesis
-        base = matchNombre[1];
-    } else {
-        // Caso sin mote: nos quedamos con todo lo que haya antes del género (M/F) o del objeto (@)
-        base = lineaShowdown.split('@')[0].split(/\(([MF])\)/)[0].trim();
-    }
+    let base = matchNombre ? matchNombre[1] : lineaShowdown.split('@')[0].split(/\(([MF])\)/)[0].trim();
 
-    // 2. Limpieza final: pasarlo a minúsculas y quitar espacios, puntos o comillas
-    base = base.toLowerCase().replace(/[.:'’\s-]/g, '');
+    // Limpieza estándar de Showdown para imágenes fijas
+    base = base.toLowerCase()
+               .replace(/[.:'’]/g, '') // Quita puntos y comillas (ej: Farfetch'd)
+               .replace(/\s+/g, '-');  // Cambia espacios por guiones (ej: Tapu Koko -> tapu-koko)
 
-    // 3. Excepciones conocidas de formas base
+    // Casos ultra especiales que Showdown nombra diferente en su base de datos
     if (base === 'meowstic') return 'meowstic-male';
     if (base === 'pumpkaboo') return 'pumpkaboo-average';
     if (base === 'gourgeist') return 'gourgeist-average';
