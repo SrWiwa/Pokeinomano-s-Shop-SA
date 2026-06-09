@@ -956,27 +956,6 @@ function escaparHTML(str) {
     );
 }
 
-// NUEVA FUNCIÓN EXTRACTORA DE ID DE POKÉMON PARA LA URL DE ANIMACIÓN DE POKEAPI
-function limpiarNombrePokemonParaUrl(lineaShowdown) {
-    if (!lineaShowdown) return '';
-    
-    // Extraer el nombre real: dentro de paréntesis si hay mote, o la primera palabra si no lo hay
-    const matchNombre = lineaShowdown.match(/\((?![MF]\b)([^)]+)\)/);
-    let base = matchNombre ? matchNombre[1] : lineaShowdown.split('@')[0].split(/\(([MF])\)/)[0].trim();
-
-    // Limpieza estándar de Showdown para imágenes fijas
-    base = base.toLowerCase()
-               .replace(/[.:'’]/g, '') // Quita puntos y comillas (ej: Farfetch'd)
-               .replace(/\s+/g, '-');  // Cambia espacios por guiones (ej: Tapu Koko -> tapu-koko)
-
-    // Casos ultra especiales que Showdown nombra diferente en su base de datos
-    if (base === 'meowstic') return 'meowstic-male';
-    if (base === 'pumpkaboo') return 'pumpkaboo-average';
-    if (base === 'gourgeist') return 'gourgeist-average';
-
-    return base;
-}
-
 onValue(ref(db, 'silph_co_market'), (snapshot) => {
     const data = snapshot.val();
     if (data) {
