@@ -1340,21 +1340,71 @@ window.reclamarHackeoDiario = function() {
     }
 
     u.ultimoHackeo = ahora;
+    
+    // 1. Base de datos de objetos reales y usables de Gen 7
+    const itemsGen7 = [
+        // Poké Balls (Clásicas, Alola y Johto de Gen 7)
+        { nombre: "Poké Ball", icon: "🔴" }, { nombre: "Super Ball", icon: "🔵" }, { nombre: "Ultra Ball", icon: "🟡" }, { nombre: "Master Ball", icon: "🟣" },
+        { nombre: "Sana Ball", icon: "🌸" }, { nombre: "Malla Ball", icon: "🕸️" }, { nombre: "Buceo Ball", icon: "🌐" }, { nombre: "Nido Ball", icon: "🪺" },
+        { nombre: "Acopio Ball", icon: "🔁" }, { nombre: "Turno Ball", icon: "⏳" }, { nombre: "Lujo Ball", icon: "✨" }, { nombre: "Veloz Ball", icon: "⚡" },
+        { nombre: "Ocaso Ball", icon: "🌌" }, { nombre: "Ente Ball", icon: "🌀" }, { nombre: "Amigo Ball", icon: "💚" }, { nombre: "Amor Ball", icon: "💖" },
+        { nombre: "Peso Ball", icon: "⚙️" }, { nombre: "Nivel Ball", icon: "📈" }, { nombre: "Cebo Ball", icon: "🎣" }, { nombre: "Luna Ball", icon: "🌙" },
+        
+        // Curativos y Vitaminas
+        { nombre: "Poción", icon: "🧪" }, { nombre: "Superpoción", icon: "🧪" }, { nombre: "Hiperpoción", icon: "🧪" }, { nombre: "Restaurar Todo", icon: "💊" },
+        { nombre: "Revivir", icon: "🔺" }, { nombre: "Max. Revivir", icon: "⭐" }, { nombre: "Caramelo Raro", icon: "🍬" }, { nombre: "Más PP", icon: "🔋" },
+        { nombre: "Nutriente", icon: "🥛" }, { nombre: "Calcio", icon: "🥛" }, { nombre: "Proteína", icon: "🥛" }, { nombre: "Hierro", icon: "🥛" },
+        
+        // Piedras Evolutivas e Ítems Especiales
+        { nombre: "Piedra Fuego", icon: "🔥" }, { nombre: "Piedra Agua", icon: "💧" }, { nombre: "Piedra Trueno", icon: "⚡" }, { nombre: "Piedra Hoja", icon: "🍃" },
+        { nombre: "Piedra Lunar", icon: "🌙" }, { nombre: "Piedra Solar", icon: "☀️" }, { nombre: "Piedra Día", icon: "☀️" }, { nombre: "Piedra Noche", icon: "👁️" },
+        { nombre: "Piedra Hielo", icon: "❄️" }, { nombre: "Escama Bella", icon: "🧜‍♀️" }, { nombre: "Roca del Rey", icon: "👑" }, { nombre: "Revestimiento Metálico", icon: "🔩" },
+        
+        // Objetos de Combate y Recios
+        { nombre: "Vidaesfera", icon: "🔮" }, { nombre: "Banda Focus", icon: "🧣" }, { nombre: "Chaleco Asalto", icon: "🦺" }, { nombre: "Mineral Evolutivo", icon: "💎" },
+        { nombre: "Restos", icon: "🍏" }, { nombre: "Casco Dentado", icon: "🪖" }, { nombre: "Baya Cidra", icon: "🍒" }, { nombre: "Baya Ziuela", icon: "🍒" },
+        
+        // Objetos Valiosos (Para vender)
+        { nombre: "Pepita", icon: "🪙" }, { nombre: "Maxipepita", icon: "💰" }, { nombre: "Perla", icon: "🦪" }, { nombre: "Gran Perla", icon: "💎" },
+        { nombre: "Seta Aroma", icon: "🍄" }, { nombre: "Trozo Estrella", icon: "💫" }, { nombre: "Chapa de Plata", icon: "🥈" }, { nombre: "Chapa de Oro", icon: "🥇" }
+    ];
+
+    // 2. Cálculos de rangos aleatorios (Mínimos y Máximos)
+    // Dinero: Entre 1,000 y 10,000 Pokedólares
+    let dineroGanado = Math.floor(Math.random() * (10000 - 1000 + 1)) + 1000;
+    
+    // PF: Entre 1 y 10 Puntos de Favor
+    let pfGanado = Math.floor(Math.random() * (10 - 1 + 1)) + 1;
+    
+    // Selección de objeto aleatorio
+    let itemAleatorio = itemsGen7[Math.floor(Math.random() * itemsGen7.length)];
+
+    // 3. Elección del tipo de recompensa (33.3% de probabilidad para cada una)
     let numRand = Math.random();
     let premioMsg = "";
 
-    if(numRand < 0.4) {
-        u.dinero += 250;
-        premioMsg = "Hackeo Exitoso: Se han inyectado +250 P₠ en tus balances de red.";
-    } else if(numRand < 0.8) {
-        u.pf += 1;
-        premioMsg = "Acceso Concedido: Se ha transferido +1 Punto de Favor (PF) corporativo.";
+    if (numRand < 0.33) {
+        // Recompensa de Dinero
+        u.dinero = (u.dinero || 0) + dineroGanado;
+        premioMsg = `Hackeo Exitoso: Se han inyectado +${dineroGanado.toLocaleString()} P₠ en tus balances de red.`;
+    } else if (numRand < 0.66) {
+        // Recompensa de PF
+        u.pf = (u.pf || 0) + pfGanado;
+        premioMsg = `Acceso Concedido: Se han transferido +${pfGanado} Puntos de Favor (PF) corporativos.`;
     } else {
-        if(!u.inventario) u.inventario = [];
-        u.inventario.push({ uid: "item_" + Date.now(), nombre: "Buceo Ball (Gacha)", icon: "🌐", fecha: new Date().toLocaleDateString() });
-        premioMsg = "Robo de Suministros: Has interceptado 1 Buceo Ball directamente en tu mochila.";
+        // Recompensa de Objeto
+        if (!u.inventario) u.inventario = [];
+        
+        u.inventario.push({ 
+            uid: "item_" + Date.now(), 
+            nombre: itemAleatorio.nombre, 
+            icon: itemAleatorio.icon, 
+            fecha: new Date().toLocaleDateString() 
+        });
+        premioMsg = `Robo de Suministros: Has interceptado 1x [${itemAleatorio.icon} ${itemAleatorio.nombre}] directamente en tu mochila.`;
     }
 
+    // 4. Guardado y logs
     inyectarEntradaDiarioAutomatica(`[RECOMPENSA DIARIA] ${premioMsg}`);
     guardarBD();
     alert(`¡HACKEO EJECUTADO!\n${premioMsg}`);
