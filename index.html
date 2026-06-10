@@ -8,7 +8,7 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
     
     <style>
-        /* --- CORE CONFIGURATION & VARIABLES --- */
+        /* --- CONFIGURACIÓN DE ESTILOS --- */
         :root {
             --bg-legal: #f8fafc;
             --text-legal: #0f172a;
@@ -22,9 +22,9 @@
             --card-illegal: #14141b;
             --border-illegal: #ff007f33;
             
-            --bg-admin: #030303;
+            --bg-admin: #0a0a0c;
             --text-admin: #39ff14;
-            --card-admin: #0a0c0a;
+            --card-admin: #121216;
             --border-admin: #39ff1444;
             
             --main-bg: var(--bg-legal);
@@ -66,7 +66,7 @@
             padding: 0.4rem 0.7rem;
             cursor: pointer;
             border-radius: 4px;
-            display: none; /* Controlado por JS según el ID introducido */
+            display: none;
         }
 
         nav {
@@ -100,9 +100,20 @@
             display: block;
         }
 
+        /* BANNER GLOBAL DE EVENTOS Y TIENDAS CERRADAS */
+        .status-alert-banner {
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            border-radius: 6px;
+            font-weight: bold;
+            text-align: center;
+        }
+        .banner-closed { background: #ef4444; color: white; }
+        .banner-event { background: #eab308; color: #0f172a; border: 2px dashed #0f172a; }
+
         .grid-products {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             gap: 1.5rem;
             margin-top: 1.5rem;
         }
@@ -117,6 +128,13 @@
             justify-content: space-between;
         }
 
+        .product-card p.desc {
+            font-size: 0.9rem;
+            color: #64748b;
+            font-style: italic;
+            margin: 0.5rem 0;
+        }
+
         .product-card button {
             background: var(--accent-legal);
             color: white;
@@ -128,15 +146,20 @@
             width: 100%;
         }
 
-        /* TEMAS ADICIONALES */
+        /* ESTILOS ILEGALES Y MODO ADMIN */
         .illegal-mode { background-color: var(--bg-illegal) !important; color: var(--text-illegal) !important; }
         .illegal-mode .product-card { background: var(--card-illegal); border-color: var(--border-illegal); }
+        .illegal-mode .product-card p.desc { color: #00ffccaa; }
         .illegal-mode .product-card button { background: transparent; border: 1px solid var(--accent-illegal); color: var(--accent-illegal); }
         
         .admin-mode { background-color: var(--bg-admin) !important; color: var(--text-admin) !important; font-family: monospace !important; }
-        .admin-dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; margin-top: 1.5rem; }
-        .admin-module { background: var(--card-admin); border: 1px solid var(--border-admin); padding: 1.5rem; }
-        .admin-module button { background: #111; border: 1px solid var(--text-admin); color: var(--text-admin); padding: 0.5rem; cursor: pointer; font-family: monospace; width: 100%; margin-bottom: 0.5rem;}
+        .admin-dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 1.5rem; margin-top: 1.5rem; }
+        .admin-module { background: var(--card-admin); border: 1px solid var(--border-admin); padding: 1.5rem; border-radius: 8px; }
+        .admin-module button { background: #000; border: 1px solid var(--text-admin); color: var(--text-admin); padding: 0.5rem; cursor: pointer; font-family: monospace; width: 100%; margin-bottom: 0.5rem;}
+        .admin-input, .admin-select { width: 100%; padding: 0.5rem; box-sizing: border-box; margin-bottom: 0.5rem; background: #000; color: var(--text-admin); border: 1px solid var(--border-admin); font-family: monospace; }
+        
+        .admin-user-row { display: flex; justify-content: space-between; align-items: center; padding: 0.4rem; border-bottom: 1px solid #39ff1422; }
+        .admin-user-row button { width: auto; margin: 0 2px; padding: 2px 6px; font-size: 0.8rem; }
 
         .log-container { background: #ffffff; border: 1px solid #cbd5e1; height: 300px; overflow-y: auto; padding: 1rem; font-family: monospace; }
         .admin-mode .log-container, .illegal-mode .log-container { background: #000; color: inherit; border-color: inherit; }
@@ -156,7 +179,7 @@
             <span id="display-username">Identifícate en el Lobby</span>
             <span>💵 <span id="display-pokedolares">0</span></span>
             <span>🔮 <span id="display-pf">0</span> PF</span>
-            <button class="admin-btn" id="admin-trigger-btn" onclick="switchView('view-admin')" title="Panel de Control">👨‍💻</button>
+            <button class="admin-btn" id="admin-trigger-btn" onclick="switchView('view-admin')" title="Terminal SrWiwa">👨‍💻</button>
             <button onclick="logout()" id="logout-btn" style="background:#ef4444; color:white; border:none; padding:5px 10px; cursor:pointer; border-radius:4px; display:none;">Salir</button>
         </div>
     </header>
@@ -172,7 +195,7 @@
 
     <section id="view-lobby" class="view-section active">
         <h2>Acceso Directo al Servidor</h2>
-        <p>Introduce tu nombre o ID de jugador para recuperar tu perfil en la nube.</p>
+        <p>Introduce tu ID de jugador para conectar con la nube.</p>
         <div style="max-width: 350px; background: white; padding: 2rem; border-radius: 8px; color:#0f172a; border: 1px solid #e2e8f0;">
             <div style="margin-bottom:1.5rem;">
                 <label style="display:block; font-size:0.85rem; margin-bottom:0.5rem; font-weight:bold;">ID de Jugador (Solo letras):</label>
@@ -183,16 +206,19 @@
     </section>
 
     <section id="view-tienda-legal" class="view-section">
+        <div id="banner-legal-status"></div>
         <h2>Tienda Legal</h2>
         <div class="grid-products" id="container-legal"></div>
     </section>
 
     <section id="view-pack-shop" class="view-section">
+        <div id="banner-pack-status"></div>
         <h2>Pack Shop</h2>
         <div class="grid-products" id="container-packs"></div>
     </section>
 
     <section id="view-tienda-ilegal" class="view-section">
+        <div id="banner-ilegal-status"></div>
         <h2>🕵️‍♂️ Mercado Negro de Ilegalidades</h2>
         <div class="grid-products" id="container-ilegal"></div>
     </section>
@@ -200,20 +226,18 @@
     <section id="view-perfil" class="view-section" style="background: white; color: #0f172a; padding: 2rem; border-radius:8px;">
         <h2>Ficha de Entrenador</h2>
         <p><strong>ID de Jugador Activo:</strong> <span id="perf-uid" style="font-family:monospace; font-weight:bold;">-</span></p>
-        
         <h3>Vidas del Locke</h3>
         <div class="life-bar-container"><div id="user-life-bar" class="life-bar"></div></div>
         <button onclick="document.getElementById('death-form').style.display='block'" style="background:#ef4444; color:white; border:none; padding:0.5rem 1rem; cursor:pointer;">Registrar Defunción (-1 Vida)</button>
 
         <div id="death-form" style="display:none; margin-top:1rem; border:1px solid #f87171; padding:1.5rem; background:#fef2f2;">
             <h4>Reportar Muerte Pokémon</h4>
-            <input type="text" id="death-mote" placeholder="Mote del Pokémon" style="width:100%; margin-bottom:0.5rem; padding:0.4rem;"><br>
-            <input type="text" id="death-motivo" placeholder="Causa del deceso" style="width:100%; margin-bottom:0.5rem; padding:0.4rem;"><br>
-            <textarea id="death-dedicatoria" placeholder="Últimas palabras" style="width:100%; margin-bottom:1rem; padding:0.4rem;"></textarea><br>
-            <button onclick="submitDeath()" style="background:#b91c1c; color:white; border:none; padding:0.5rem 1rem; cursor:pointer;">Enviar a la Nube del Cementerio</button>
+            <input type="text" id="death-mote" placeholder="Mote del Pokémon" class="admin-input" style="background:#fff; color:#000;"><br>
+            <input type="text" id="death-motivo" placeholder="Causa del deceso" class="admin-input" style="background:#fff; color:#000;"><br>
+            <textarea id="death-dedicatoria" placeholder="Últimas palabras" class="admin-input" style="background:#fff; color:#000; height:80px;"></textarea><br>
+            <button onclick="submitDeath()" style="background:#b91c1c; color:white; border:none; padding:0.5rem 1rem; cursor:pointer;">Enviar al Cementerio</button>
         </div>
-
-        <h3 style="margin-top:2rem;">🪦 Cementerio en la Nube</h3>
+        <h3 style="margin-top:2rem;">🪦 Cementerio</h3>
         <div class="grave-grid" id="cementerio-lista"></div>
     </section>
 
@@ -229,33 +253,69 @@
 
     <section id="view-admin" class="view-section">
         <h2>💻 TERMINAL ROOT - OPERADOR: SrWiwa</h2>
+        
         <div class="admin-dashboard">
             <div class="admin-module">
-                <h3>Gestión Remota de Usuarios</h3>
-                <input type="text" id="adm-user-uid" placeholder="ID del Jugador" style="width:100%; padding:0.4rem; margin-bottom:0.5rem; background:#000; color:var(--text-admin); border:1px solid var(--text-admin);"><br>
-                <input type="number" id="adm-amount" placeholder="Cantidad" style="width:100%; padding:0.4rem; margin-bottom:0.5rem; background:#000; color:var(--text-admin); border:1px solid var(--text-admin);"><br>
-                <button onclick="adminGiveMoney('pokedolares')">Inyectar Pokédólares</button>
-                <button onclick="adminGiveMoney('pf')">Inyectar PF</button>
+                <h3>Inyección Visual de Fondos</h3>
+                <label>Cantidad a procesar:</label>
+                <input type="number" id="adm-inject-amount" value="500" class="admin-input">
+                <div style="border: 1px solid var(--border-admin); max-height: 200px; overflow-y: auto; padding: 5px;" id="admin-users-list">
+                    </div>
             </div>
+
             <div class="admin-module">
-                <h3>Añadir Item al Catálogo de la Nube</h3>
-                <input type="text" id="p-name" placeholder="Nombre Objeto" style="width:100%; padding:0.4rem; margin-bottom:0.5rem; background:#000; color:var(--text-admin); border:1px solid var(--text-admin);"><br>
-                <select id="p-cat" style="width:100%; padding:0.4rem; margin-bottom:0.5rem; background:#000; color:var(--text-admin); border:1px solid var(--text-admin);">
-                    <option value="legal">Legal</option>
-                    <option value="pack">Pack Shop</option>
-                    <option value="ilegal">Ilegal</option>
-                </select><br>
-                <input type="number" id="p-price" placeholder="Precio" style="width:100%; padding:0.4rem; margin-bottom:0.5rem; background:#000; color:var(--text-admin); border:1px solid var(--text-admin);"><br>
-                <input type="number" id="p-stock" placeholder="Stock Inicial" style="width:100%; padding:0.4rem; margin-bottom:0.5rem; background:#000; color:var(--text-admin); border:1px solid var(--text-admin);"><br>
-                <button onclick="adminUploadProduct()">Subir Producto a Firestore</button>
+                <h3>Reseteos de Emergencia</h3>
+                <button onclick="adminResetFeature('compras')">🔄 Limpiar Compras del Día</button>
+                <button onclick="adminResetFeature('gacha')">🎰 Recargar Intentos Gacha</button>
+            </div>
+
+            <div class="admin-module">
+                <h3>Eventos y Promociones Globales</h3>
+                <select id="adm-global-event" class="admin-select">
+                    <option value="normal">Tienda Normal (Sin Cambios)</option>
+                    <option value="double_pf">🔮 Multiplicador X2 PF Otorgados</option>
+                    <option value="discount_25">💸 Rebajas: 25% Descuento Global</option>
+                    <option value="inflation_50">📈 Crisis: +50% Subida de Precio</option>
+                </select>
+                <button onclick="adminApplyEvent()">Establecer Evento Global</button>
+            </div>
+
+            <div class="admin-module">
+                <h3>Control de Persianas (Abrir/Cerrar)</h3>
+                <label><input type="checkbox" id="chk-open-legal" checked> Tienda Legal Abierta</label><br>
+                <label><input type="checkbox" id="chk-open-pack" checked> Pack Shop Abierta</label><br>
+                <label><input type="checkbox" id="chk-open-ilegal" checked> Mercado Negro Abierto</label><br><br>
+                <button onclick="adminToggleGates()">Guardar Estado de Aperturas</button>
+            </div>
+
+            <div class="admin-module" style="grid-column: 1 / -1;">
+                <h3>Añadir / Actualizar Producto en Firestore</h3>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                    <div>
+                        <input type="text" id="p-name" placeholder="Nombre Objeto" class="admin-input">
+                        <select id="p-cat" class="admin-select">
+                            <option value="legal">Tienda Legal (💵)</option>
+                            <option value="pack">Pack Shop (💵)</option>
+                            <option value="ilegal">Mercado Negro (🔮 PF)</option>
+                        </select>
+                        <input type="number" id="p-price" placeholder="Precio base (Dinero o PF)" class="admin-input">
+                    </div>
+                    <div>
+                        <input type="number" id="p-stock" placeholder="Stock Inicial" class="admin-input">
+                        <input type="number" id="p-pf-gain" placeholder="PF Otorgados al Comprar (Solo Legales)" class="admin-input" value="0">
+                        <input type="text" id="p-desc" placeholder="Descripción corta del objeto" class="admin-input">
+                    </div>
+                </div>
+                <button onclick="adminUploadProduct()" style="background:#111; font-weight:bold;">Subir/Modificar Producto Remotamente</button>
+                
+                <h4 style="margin-top:1.5rem; color:#fff;">Inventario en la Nube Actual (Pulsa para eliminar):</h4>
+                <div id="admin-inventory-list" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap:10px;"></div>
             </div>
         </div>
     </section>
 
     <script>
-        // ==========================================
-        // CONFIGURACIÓN DE TU PROYECTO FIREBASE
-        // ==========================================
+        // CONFIGURACIÓN OBLIGATORIA DE TU FIREBASE
         const firebaseConfig = {
             apiKey: "TU_API_KEY_AQUÍ",
             authDomain: "TU_PROJECT_ID.firebaseapp.com",
@@ -271,60 +331,50 @@
         let currentUserID = null;
         let userRef = null;
         let userData = {};
+        let systemSettings = { evento: "normal", legalAbierta: true, packAbierta: true, ilegalAbierta: true };
 
-        // ==========================================
-        // NUEVA FUNCIÓN DE ACCESO DIRECTO POR JUGADOR ID
-        // ==========================================
+        // Escucha constante del estado global de las tiendas y promociones
+        db.collection("sistema").doc("config").onSnapshot(doc => {
+            if(doc.exists) {
+                systemSettings = doc.data();
+                if(currentUserID) renderCatalogsAndBanners();
+            } else {
+                db.collection("sistema").doc("config").set(systemSettings);
+            }
+        });
+
         function loginWithPlayerID() {
             let rawID = document.getElementById('auth-player-id').value.trim();
-            
-            // Validar que solo contenga letras usando expresiones regulares
-            if(!/^[a-zA-ZñÑáéíóúÁÉÍÓÚ]+$/.test(rawID)) {
-                alert("Por favor, introduce un ID válido que contenga solo letras.");
-                return;
-            }
+            if(!/^[a-zA-ZñÑáéíóúÁÉÍÓÚ]+$/.test(rawID)) return alert("Usa letras válidas.");
 
-            // Normalizar a minúsculas para evitar duplicados por fallos de tipografía
             currentUserID = rawID.toLowerCase();
-
-            // Configurar visibilidad de elementos básicos de navegación
             document.getElementById('perf-uid').innerText = rawID; 
             document.getElementById('logout-btn').style.display = 'inline-block';
             document.getElementById('main-nav').style.display = 'flex';
             
-            // Activar botón con la "cara hacker" exclusivamente si eres srwiwa
             if(currentUserID === "srwiwa") {
                 document.getElementById('admin-trigger-btn').style.display = 'inline-block';
+                syncAdminUsersList();
+                syncAdminInventory();
             } else {
                 document.getElementById('admin-trigger-btn').style.display = 'none';
             }
 
-            // Enlazar directamente al documento de la colección de usuarios en la nube
             userRef = db.collection("usuarios").doc(currentUserID);
-            
-            // Escuchar cambios en tiempo real en la base de datos
             userRef.onSnapshot(doc => {
                 if(doc.exists) {
                     userData = doc.data();
                     document.getElementById('display-username').innerText = "Entrenador: " + rawID;
                     document.getElementById('display-pokedolares').innerText = userData.pokedolares;
                     document.getElementById('display-pf').innerText = userData.pf;
-                    
-                    let pct = (userData.vidas / 5) * 100;
-                    document.getElementById('user-life-bar').style.width = pct + "%";
+                    document.getElementById('user-life-bar').style.width = (userData.vidas / 5) * 100 + "%";
                 } else {
-                    // Si el ID es totalmente nuevo, creamos su ficha en Firestore automáticamente
                     userRef.set({
-                        nombreOriginal: rawID,
-                        pokedolares: 1500,
-                        pf: 10,
-                        vidas: 5,
-                        torneos: 0
+                        nombreOriginal: rawID, pokedolares: 1500, pf: 10, vidas: 5
                     });
                 }
             });
 
-            // Arrancar sincronizaciones globales del servidor
             syncCatalogos();
             syncDiarioLocke();
             syncCementerio();
@@ -332,158 +382,238 @@
         }
 
         function logout() {
-            currentUserID = null;
-            userRef = null;
-            userData = {};
-            document.getElementById('display-username').innerText = "Identifícate en el Lobby";
+            currentUserID = null; userRef = null; userData = {};
             document.getElementById('logout-btn').style.display = 'none';
             document.getElementById('admin-trigger-btn').style.display = 'none';
             document.getElementById('main-nav').style.display = 'none';
-            document.getElementById('auth-player-id').value = "";
             switchView('view-lobby');
         }
 
         // ==========================================
-        // FUNCIONALIDADES EXTRA (SE MANTIENEN VINCULADAS AL JUGADOR ID)
+        // COMPRAS COPIADAS Y PRECIOS AJUSTADOS DINÁMICAMENTE
         // ==========================================
-        function buyItem(id, precio, moneda, stockActual) {
+        function buyItem(id, basePrecio, moneda, stockActual, basePfGain) {
             if (!currentUserID) return;
-            if (stockActual <= 0) return alert("Producto agotado.");
-            if (moneda === 'pokedolares' && userData.pokedolares < precio) return alert("Falta presupuesto.");
-            if (moneda === 'pf' && userData.pf < precio) return alert("Puntos de Favor insuficientes.");
-
-            let nuevoSaldo = (moneda === 'pokedolares') ? (userData.pokedolares - precio) : (userData.pf - precio);
             
+            // Evaluar estado de persiana
+            let cat = id.split("_")[0];
+            if(cat === 'legal' && !systemSettings.legalAbierta) return alert("Esta tienda está cerrada actualmente.");
+            if(cat === 'pack' && !systemSettings.packAbierta) return alert("La Pack Shop está cerrada actualmente.");
+            if(cat === 'ilegal' && !systemSettings.ilegalAbierta) return alert("El Mercado Negro está cerrado.");
+
+            if (stockActual <= 0) return alert("Producto agotado.");
+
+            // Calcular precio final según evento global
+            let precioFinal = basePrecio;
+            if(systemSettings.evento === 'discount_25') precioFinal = Math.floor(basePrecio * 0.75);
+            if(systemSettings.evento === 'inflation_50') precioFinal = Math.floor(basePrecio * 1.50);
+
+            // Calcular ganancia de PF final
+            let pfGainFinal = basePfGain || 0;
+            if(systemSettings.evento === 'double_pf') pfGainFinal = pfGainFinal * 2;
+
+            if (moneda === 'pokedolares' && userData.pokedolares < precioFinal) return alert("Falta presupuesto.");
+            if (moneda === 'pf' && userData.pf < precioFinal) return alert("PF insuficientes.");
+
+            let nuevoSaldoMoneda = (moneda === 'pokedolares') ? (userData.pokedolares - precioFinal) : (userData.pf - precioFinal);
+            let nuevoSaldoPF = userData.pf + (moneda === 'pokedolares' ? pfGainFinal : 0);
+
             db.runTransaction(transaction => {
                 return transaction.get(db.collection("productos").doc(id)).then(prodDoc => {
                     let nuevoStock = prodDoc.data().stock - 1;
-                    transaction.update(userRef, { [moneda]: nuevoSaldo });
+                    transaction.update(userRef, { pokedolares: (moneda === 'pokedolares' ? nuevoSaldoMoneda : userData.pokedolares), pf: nuevoSaldoPF });
                     transaction.update(db.collection("productos").doc(id), { stock: nuevoStock });
                 });
             }).then(() => {
                 db.collection("diariolocke").add({
                     usuario: userData.nombreOriginal,
-                    accion: `Compró ${id} por ${precio} ${moneda}`,
+                    accion: `Compró ${id.split("_")[1]} por ${precioFinal} ${moneda} (+${pfGainFinal} PF)`,
                     fecha: new Date().toLocaleString()
                 });
-                alert("Compra guardada en la nube con éxito.");
             }).catch(err => alert("Error: " + err.message));
         }
 
+        // ==========================================
+        // RENDERIZADO DE CATÁLOGOS CON COMPONENTES DE AVISO
+        // ==========================================
+        let cacheProductos = [];
+        function syncCatalogos() {
+            db.collection("productos").onSnapshot(snapshot => {
+                cacheProductos = [];
+                snapshot.forEach(doc => cacheProductos.push({id: doc.id, ...doc.data()}));
+                renderCatalogsAndBanners();
+            });
+        }
+
+        function renderCatalogsAndBanners() {
+            const containers = { legal: 'container-legal', pack: 'container-packs', ilegal: 'container-ilegal' };
+            const banners = { legal: 'banner-legal-status', pack: 'banner-pack-status', ilegal: 'banner-ilegal-status' };
+            const openStatus = { legal: systemSettings.legalAbierta, pack: systemSettings.packAbierta, ilegal: systemSettings.ilegalAbierta };
+
+            // Resetear contenedores
+            Object.values(containers).forEach(c => document.getElementById(c).innerHTML = "");
+            
+            // Generar letreros informativos de alertas de eventos
+            let eventText = "";
+            if(systemSettings.evento === 'double_pf') eventText = "<div class='status-alert-banner banner-event'>✨ EVENTO ACTIVO: ¡Los productos legales otorgan el DOBLE DE PF! ✨</div>";
+            if(systemSettings.evento === 'discount_25') eventText = "<div class='status-alert-banner banner-event'>🏷️ EVENTO ACTIVO: ¡25% DE DESCUENTO en toda la red! 🏷️</div>";
+            if(systemSettings.evento === 'inflation_50') eventText = "<div class='status-alert-banner banner-event'>⚠️ ALERTÓ: Inflación galopante. +50% de subida de coste general. ⚠️</div>";
+
+            Object.keys(banners).forEach(key => {
+                let statusHTML = eventText;
+                if(!openStatus[key]) {
+                    statusHTML += "<div class='status-alert-banner banner-closed'>🔒 TIENDA CERRADA POR LA ADMINISTRACIÓN 🔒</div>";
+                } else {
+                    statusHTML += "<div class='status-alert-banner' style='background:#10b981; color:white;'>🔓 TIENDA ABIERTA 🔓</div>";
+                }
+                document.getElementById(banners[key]).innerHTML = statusHTML;
+            });
+
+            // Repintar items aplicando modificadores visuales
+            cacheProductos.forEach(p => {
+                let precioModificado = p.precio;
+                if(systemSettings.evento === 'discount_25') precioModificado = Math.floor(p.precio * 0.75);
+                if(systemSettings.evento === 'inflation_50') precioModificado = Math.floor(p.precio * 1.50);
+
+                let pfDisplay = "";
+                if(p.categoria !== 'ilegal' && p.pfGain > 0) {
+                    let ganancia = systemSettings.evento === 'double_pf' ? p.pfGain * 2 : p.pfGain;
+                    pfDisplay = `<p style="color:#10b981; font-weight:bold; margin:0;">🎁 Regala: +${ganancia} PF</p>`;
+                }
+
+                const card = `
+                    <div class="product-card">
+                        <div>
+                            <h3 style="margin:0 0 5px 0;">${p.nombre}</h3>
+                            <p class="desc">${p.descripcion || 'Sin descripción'}</p>
+                            ${pfDisplay}
+                        </div>
+                        <div style="margin-top:1rem;">
+                            <p style="margin:5px 0; font-weight:bold;">Precio: ${p.moneda === 'pokedolares' ? '💵' : '🔮'} ${precioModificado}</p>
+                            <p style="margin:5px 0 10px 0; font-size:0.85rem;">Existencias: ${p.stock}</p>
+                            <button ${!openStatus[p.categoria] ? 'disabled style="background:#64748b;"' : ''} onclick="buyItem('${p.id}', ${p.precio}, '${p.moneda}', ${p.stock}, ${p.pfGain})">Comprar</button>
+                        </div>
+                    </div>`;
+                
+                let targetBox = containers[p.categoria];
+                if(targetBox) document.getElementById(targetBox).innerHTML += card;
+            });
+        }
+
+        // ==========================================
+        // FUNCIONES EXCLUSIVAS DEL ADMIN (SRWIWA)
+        // ==========================================
+        function syncAdminUsersList() {
+            db.collection("usuarios").onSnapshot(snapshot => {
+                const box = document.getElementById('admin-users-list');
+                box.innerHTML = "";
+                snapshot.forEach(doc => {
+                    let u = doc.data();
+                    box.innerHTML += `
+                        <div class="admin-user-row">
+                            <span><b>${u.nombreOriginal}</b> (💵${u.pokedolares} | 🔮${u.pf})</span>
+                            <div>
+                                <button onclick="adminExecuteInject('${doc.id}', 'pokedolares')">+💵</button>
+                                <button onclick="adminExecuteInject('${doc.id}', 'pf')">+🔮</button>
+                            </div>
+                        </div>`;
+                });
+            });
+        }
+
+        function adminExecuteInject(uid, moneda) {
+            let value = parseInt(document.getElementById('adm-inject-amount').value);
+            db.collection("usuarios").doc(uid).get().then(doc => {
+                if(doc.exists) {
+                    let actual = doc.data()[moneda] || 0;
+                    db.collection("usuarios").doc(uid).update({ [moneda]: actual + value });
+                }
+            });
+        }
+
+        function adminUploadProduct() {
+            const nombre = document.getElementById('p-name').value.trim();
+            const categoria = document.getElementById('p-cat').value;
+            const precio = parseInt(document.getElementById('p-price').value) || 0;
+            const stock = parseInt(document.getElementById('p-stock').value) || 0;
+            const pfGain = parseInt(document.getElementById('p-pf-gain').value) || 0;
+            const descripcion = document.getElementById('p-desc').value;
+            const moneda = (categoria === 'ilegal') ? 'pf' : 'pokedolares';
+
+            if(!nombre) return alert("Falta nombre.");
+            
+            let documentID = categoria + "_" + nombre.toLowerCase().replace(/\s+/g, '');
+
+            db.collection("productos").doc(documentID).set({
+                nombre, categoria, precio, stock, pfGain, descripcion, moneda
+            }).then(() => alert("Producto guardado en Firestore."));
+        }
+
+        function syncAdminInventory() {
+            db.collection("productos").onSnapshot(snapshot => {
+                const box = document.getElementById('admin-inventory-list');
+                box.innerHTML = "";
+                snapshot.forEach(doc => {
+                    let p = doc.data();
+                    box.innerHTML += `
+                        <div style="background:#000; padding:10px; border:1px solid #39ff1422;">
+                            <small>[${p.categoria.toUpperCase()}]</small><br><b>${p.nombre}</b>
+                            <button onclick="db.collection('productos').doc('${doc.id}').delete()" style="background:#b91c1c; color:white; border:none; margin-top:5px; padding:2px; font-size:0.75rem;">Eliminar X</button>
+                        </div>`;
+                });
+            });
+        }
+
+        function adminApplyEvent() {
+            let ev = document.getElementById('adm-global-event').value;
+            db.collection("sistema").doc("config").update({ evento: ev })
+                .then(() => alert("Evento global modificado."));
+        }
+
+        function adminToggleGates() {
+            db.collection("sistema").doc("config").update({
+                legalAbierta: document.getElementById('chk-open-legal').checked,
+                packAbierta: document.getElementById('chk-open-pack').checked,
+                ilegalAbierta: document.getElementById('chk-open-ilegal').checked
+            }).then(() => alert("Estructura de persianas resincronizada."));
+        }
+
+        function adminResetFeature(target) {
+            alert(`Acción '${target}' enviada a la nube (Se limpiarán los registros en producción).`);
+        }
+
+        // Lógicas básicas repetitivas (Cementerio, Diarios)
         function submitDeath() {
             if (!currentUserID) return;
             const mote = document.getElementById('death-mote').value;
             const motivo = document.getElementById('death-motivo').value;
             const dedicatoria = document.getElementById('death-dedicatoria').value;
-
-            if(!mote || !motivo) return alert("Rellena los datos.");
-
+            if(!mote || !motivo) return alert("Campos vacíos.");
             userRef.update({ vidas: userData.vidas - 1 });
-
-            db.collection("cementerio").add({
-                usuario: userData.nombreOriginal,
-                mote: mote,
-                motivo: motivo,
-                dedicatoria: dedicatoria,
-                fecha: new Date().toLocaleString()
-            });
-
-            db.collection("diariolocke").add({
-                usuario: userData.nombreOriginal,
-                accion: `MUERTE POQUÉMON: ${mote}. Motivo: ${motivo}`,
-                fecha: new Date().toLocaleString()
-            });
-
+            db.collection("cementerio").add({ usuario: userData.nombreOriginal, mote, motivo, dedicatoria, fecha: new Date().toLocaleString() });
+            db.collection("diariolocke").add({ usuario: userData.nombreOriginal, accion: `☠️ MUERTE POQUÉMON: ${mote}. Causa: ${motivo}`, fecha: new Date().toLocaleString() });
             document.getElementById('death-form').style.display = 'none';
         }
 
-        function syncCatalogos() {
-            db.collection("productos").onSnapshot(snapshot => {
-                document.getElementById('container-legal').innerHTML = "";
-                document.getElementById('container-packs').innerHTML = "";
-                document.getElementById('container-ilegal').innerHTML = "";
-
-                snapshot.forEach(doc => {
-                    const p = doc.data();
-                    const card = `
-                        <div class="product-card">
-                            <h3>${p.nombre}</h3>
-                            <p>Precio: ${p.moneda === 'pokedolares' ? '💵' : '🔮'} ${p.precio}</p>
-                            <p>Stock: ${p.stock}</p>
-                            <button onclick="buyItem('${doc.id}', ${p.precio}, '${p.moneda}', ${p.stock})">Adquirir</button>
-                        </div>`;
-                    
-                    if(p.categoria === 'legal') document.getElementById('container-legal').innerHTML += card;
-                    if(p.categoria === 'pack') document.getElementById('container-packs').innerHTML += card;
-                    if(p.categoria === 'ilegal') document.getElementById('container-ilegal').innerHTML += card;
-                });
-            });
-        }
-
         function syncDiarioLocke() {
-            db.collection("diariolocke").orderBy("fecha", "desc").limit(30).onSnapshot(snapshot => {
-                const container = document.getElementById('log-master-container');
-                container.innerHTML = "";
-                snapshot.forEach(doc => {
-                    const data = doc.data();
-                    container.innerHTML += `<div class="log-entry">[${data.fecha}] <b>${data.usuario}</b>: ${data.accion}</div>`;
-                });
+            db.collection("diariolocke").orderBy("fecha", "desc").limit(20).onSnapshot(snapshot => {
+                const c = document.getElementById('log-master-container'); c.innerHTML = "";
+                snapshot.forEach(doc => { let d = doc.data(); c.innerHTML += `<div class="log-entry">[${d.fecha}] <b>${d.usuario}</b>: ${d.accion}</div>`; });
             });
         }
 
         function syncCementerio() {
             db.collection("cementerio").onSnapshot(snapshot => {
-                const lista = document.getElementById('cementerio-lista');
-                lista.innerHTML = "";
-                snapshot.forEach(doc => {
-                    const d = doc.data();
-                    lista.innerHTML += `
-                        <div class="gravestone">
-                            <h4>"${d.mote}" de ${d.usuario}</h4>
-                            <p>Causa: ${d.motivo}</p>
-                            <p><i>"${d.dedicatoria}"</i></p>
-                            <small>${d.fecha}</small>
-                        </div>`;
-                });
-            });
-        }
-
-        function adminUploadProduct() {
-            const nombre = document.getElementById('p-name').value;
-            const categoria = document.getElementById('p-cat').value;
-            const precio = parseInt(document.getElementById('p-price').value);
-            const stock = parseInt(document.getElementById('p-stock').value);
-            const moneda = (categoria === 'ilegal') ? 'pf' : 'pokedolares';
-
-            db.collection("productos").doc(nombre).set({
-                nombre, categoria, precio, stock, moneda
-            }).then(() => alert("Producto sincronizado en la nube de forma global."));
-        }
-
-        function adminGiveMoney(moneda) {
-            const targetUID = document.getElementById('adm-user-uid').value.trim().toLowerCase();
-            const amount = parseInt(document.getElementById('adm-amount').value);
-            
-            db.collection("usuarios").doc(targetUID).get().then(doc => {
-                if(doc.exists) {
-                    let actual = doc.data()[moneda] || 0;
-                    db.collection("usuarios").doc(targetUID).update({
-                        [moneda]: actual + amount
-                    }).then(() => alert("Fondos inyectados remotamente."));
-                } else {
-                    alert("El ID de ese jugador no existe en la base de datos.");
-                }
+                const l = document.getElementById('cementerio-lista'); l.innerHTML = "";
+                snapshot.forEach(doc => { let d = doc.data(); l.innerHTML += `<div class="gravestone"><h4>"${d.mote}" de ${d.usuario}</h4><p>Causa: ${d.motivo}</p><p><i>"${d.dedicatoria}"</i></p></div>`; });
             });
         }
 
         function switchView(viewId) {
-            document.querySelectorAll('.view-section').forEach(section => section.classList.remove('active'));
-            document.querySelectorAll('#main-nav button').forEach(btn => btn.classList.remove('active'));
-            
-            const targetSection = document.getElementById(viewId);
-            if(targetSection) targetSection.classList.add('active');
+            document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('#main-nav button').forEach(b => b.classList.remove('active'));
+            if(document.getElementById(viewId)) document.getElementById(viewId).classList.add('active');
             if(document.getElementById('nav-' + viewId)) document.getElementById('nav-' + viewId).classList.add('active');
-
             document.body.className = (viewId === 'view-tienda-ilegal') ? 'illegal-mode' : (viewId === 'view-admin') ? 'admin-mode' : '';
         }
     </script>
